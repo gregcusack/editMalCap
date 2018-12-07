@@ -2,6 +2,7 @@ import sys
 from scapy.all import *
 from TransPkt import TransPkt
 from TestTransPkt import TestTransPkt
+from FlowFilter import FlowFilter
 
 def check_input():
     if len(sys.argv) != 3:
@@ -15,11 +16,13 @@ def check_input():
 
 def main(iname, oname):
     pkts = rdpcap(iname)
+
+    # This needs to be read from a config file (some config object?)
+    flow_filter_config = ["5Tuple_0", "5Tuple_1", "5Tuple_2", (4, '155.98.38.79', 23, '142.44.154.169', 42)]
+    flow_filter = FlowFilter(flow_filter_config)       #define filter to check for 5 tuples
+
     for pkt in pkts:
         tpkt = TransPkt(pkt)
-
-        Test = TestTransPkt(tpkt, pkt)
-        Test.run_test()
 
         tpkt.ts = 5
         print(tpkt.ts)
@@ -50,6 +53,16 @@ def main(iname, oname):
         print(tpkt.ip_flags)
         tpkt.unset_DF()
         print(tpkt.ip_flags)
+
+
+        if flow_filter.proc_pkt(tpkt):
+            print("Forward pkt for processing")
+        else:
+            print("Forward pkt to pkt merger")
+
+
+        Test = TestTransPkt(tpkt, pkt)
+        Test.run_test()
 
 
 

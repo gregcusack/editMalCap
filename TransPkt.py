@@ -10,7 +10,7 @@ class TCP_FLAGS(Enum):
     URG = 0x20
     ECE = 0x40
     CWR = 0x80
-    DF = 0x02 	# don't fragment flag in IP. check is set via: DF & ip_flags
+    DF = 0x02 	# don't fragment flag in IP. check if set via: DF & ip_flags
 
 class TransFlow:
     def __init__(self):
