@@ -207,3 +207,11 @@ class TransPkt:
     # Write Packet to File (Append)
     def write_pcap(self, file):
         wrpcap(file, self.pkt, append=True)
+
+    # Functions for Sorting
+    def __lt__(self, other):
+        return self.ts < other.ts
+    def __le__(self, other):
+        return(self.ts <= other.ts)
+    def __repr__(self):
+        return "PktTS({})".format(self.ts)

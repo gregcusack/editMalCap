@@ -1,5 +1,6 @@
 from scapy.all import *
 from TransPkt import TransPkt
+from PktMerger import PktMerger
 
 class TestTransPkt:
     def __init__(self, tPkt, sPkt):
@@ -10,6 +11,9 @@ class TestTransPkt:
         self.sPkt = sPkt
 
     def run_test(self):
+        self.check_scapy_compatibility()
+
+    def check_scapy_compatibility(self):
         # Assert general pkt features
         assert self.tPkt.ts == self.sPkt.time
         assert self.tPkt.frame_len == len(self.sPkt)
@@ -37,3 +41,5 @@ class TestTransPkt:
         # Assert HTTP Features
         if Raw in self.sPkt:
             assert self.tPkt.http_pload == self.sPkt[Raw].load
+
+
