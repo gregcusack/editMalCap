@@ -1,7 +1,7 @@
 from FlowTable import FlowTable, FlowFilter
 from TransPkt import TransPkt
 from PktMerger import PktMerger
-from Transform import Transform
+from TransformationController import TransformationController as TC
 
 class NetSploit:
     def __init__(self, config):             # this should be a map of our config file
@@ -58,7 +58,7 @@ class NetSploit:
         else:
             print("Time to Transform!  Flow Tuple: {}".format(pkt_5_tuple))
 
-        _transform = Transform(self.config.flows[pkt_5_tuple], self.flowTable.FT[pkt_5_tuple])
+        _transform = TC(self.config.flows[pkt_5_tuple], self.flowTable.FT[pkt_5_tuple])
         _transform.buildTransformations()
         _transform.runTransformations()
         #TODO: Transform Flow!  Call: TransPktLens.py
