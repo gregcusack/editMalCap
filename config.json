@@ -1,0 +1,48 @@
+{
+  "sysConfig": {
+    "pkt_thresh": 10,
+    "timeout": 100,
+    "merge_batch_size": 20
+  },
+  "flowFeatures": {
+    "6, 155.98.38.79, 80, 142.44.154.169, 38130": {
+      "pktLens": {
+        "avg": 200,
+        "min": 64,
+        "max": 1500
+      },
+      "iaTimes": {
+        "avg": 60,
+        "min": 1,
+        "max": 200
+      },
+      "numPkts": 40
+    },
+    "6, 155.98.38.150, 80, 87.118.116.12, 36865": {
+      "pktLens": {
+        "avg": 100,
+        "min": 70,
+        "max": 200
+      },
+      "iaTimes": {
+        "avg": 50,
+        "min": 2,
+        "max": 100
+      },
+      "numPkts": 60
+    },
+    "6, 87.118.116.12, 36865, 155.98.38.150, 80": {
+      "pktLens": {
+        "avg": 400,
+        "min": 200,
+        "max": 1500
+      },
+      "iaTimes": {
+        "avg": 100,
+        "min": 50,
+        "max": 500
+      },
+      "numPkts": 15
+    }
+  }
+}

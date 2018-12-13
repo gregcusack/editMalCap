@@ -7,4 +7,8 @@ Need Config input
 """
 
 class TransPktLens:
-    def __init__(self, ):
+    def __init__(self):
+        print("Creating new TransPktLens Object")
+
+    def Process(self, pktList):
+        print("Transforming Pkt Lengths on these pkts: {}".format(pktList))

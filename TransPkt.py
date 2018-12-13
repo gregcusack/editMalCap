@@ -12,18 +12,6 @@ class TCP_FLAGS(Enum):
     CWR = 0x80
     DF = 0x02 	# don't fragment flag in IP. check if set via: DF & ip_flags
 
-class TransFlow:
-    def __init__(self):
-        self.tpkts = {}
-
-    def add_pkt(self, tpkt):
-        if not isinstance(tpkt, TransPkt):
-            print("ERROR: Trying to initialize a flow with a non-transPkt type")
-            exit()
-        if tpkt.flow_tuple not in self.tpkts:
-            self.tpkts[tpkt.flow_tuple] = []
-        self.tpkts[tpkt.flow_tuple].append(tpkt)
-
 class TransPkt:
     def __init__(self, pkt):
         if not isinstance(pkt, scapy.layers.l2.Ether):
@@ -214,4 +202,4 @@ class TransPkt:
     def __le__(self, other):
         return(self.ts <= other.ts)
     def __repr__(self):
-        return "PktTS({})".format(self.ts)
+        return "Pkt({} @ ts: {})".format(self.flow_tuple, self.ts)

@@ -24,7 +24,7 @@ def main(iname, oname):
     #flow_filter_config = ["5Tuple_0", "5Tuple_1", "5Tuple_2", (6, '155.98.38.79', 80, '142.44.154.169', 38130)]
     #flow_filter = FlowFilter(flow_filter_config)       #define filter to check for 5 tuples
 
-    config = Config("config_file.txt")      # TODO: this is not actually a file yet
+    config = Config("config.json")      # TODO: this is not actually a file yet
     NS = NetSploit(config)
 
 
