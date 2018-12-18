@@ -26,7 +26,7 @@ class TransPkt:
         return self.pkt.time
     @property
     def frame_len(self):
-        return len(self.pkt)
+        return self.pkt.len
 
     # Getter: Ethernet Features
     @property
@@ -91,7 +91,7 @@ class TransPkt:
         self.pkt.time = ts
     @frame_len.setter
     def frame_len(self, fLen):
-        self.pkt.frame_len = fLen
+        self.pkt.len = fLen
 
     # Setter: Ethernet Features
     @eth_src.setter

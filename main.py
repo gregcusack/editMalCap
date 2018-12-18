@@ -1,10 +1,9 @@
-import sys
 from scapy.all import *
-from TransPkt import TransPkt
-from TestTransPkt import TestTransPkt
+from TransformClasses.TransPkt import TransPkt
+from TestClasses.TestTransPkt import TestTransPkt
 from NetSploit import NetSploit
 from Config import Config
-from TestNetSploit import TestNetSploit
+from TestClasses.TestNetSploit import TestNetSploit
 
 
 def check_input():
@@ -30,8 +29,9 @@ def main(iname, oname):
 
     for pkt in pkts:
         tpkt = TransPkt(pkt)
+        NS.loadFlowTable(tpkt)
 
-        NS.Process(tpkt)
+
 
         # tpkt.ts = 5
         # print(tpkt.ts)
@@ -63,8 +63,10 @@ def main(iname, oname):
         # tpkt.unset_DF()
         # print(tpkt.ip_flags)
 
-        Test = TestTransPkt(tpkt, pkt)
-        Test.run_test()
+        # Test = TestTransPkt(tpkt, pkt)
+        # Test.run_test()
+
+    NS.ProcessFlows()
 
     print(NS.pktMerger.inQueue)
     TestNetSploit(merger=NS.pktMerger)

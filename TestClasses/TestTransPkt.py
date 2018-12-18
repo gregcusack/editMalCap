@@ -1,6 +1,6 @@
 from scapy.all import *
-from TransPkt import TransPkt
-from PktMerger import PktMerger
+from TransformClasses.TransPkt import TransPkt
+
 
 class TestTransPkt:
     def __init__(self, tPkt, sPkt):

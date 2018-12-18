@@ -1,6 +1,3 @@
-from TransPkt import TransPkt
-
-
 class TransIATimes():
     def __init__(self):
         print("Creating new TransIATimes Object")
