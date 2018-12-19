@@ -6,6 +6,10 @@ class Flow:
         self.pkts = []
         self.flowStats = FlowStats()
         self.flowKey = flow_tuple
+        self.biFlowKey = (flow_tuple[0], flow_tuple[3], flow_tuple[4], flow_tuple[1], flow_tuple[2])
+        self.biPkts = None
+        #print(self.flowKey)
+        #print(self.biFlowKey)
 
     def addPkt(self, pkt):
         self.pkts.append(pkt)
@@ -91,7 +95,6 @@ class FlowTable:
         if pkt.flow_tuple not in self.FT:
             self.FT[pkt.flow_tuple] = Flow(pkt.flow_tuple)
         self.FT[pkt.flow_tuple].addPkt(pkt)
-
 
 class FlowFilter:
     def __init__(self, list): #TODO: this list needs to be the global config_file

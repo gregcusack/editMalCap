@@ -44,6 +44,9 @@ class TransPkt:
     def ip_len(self):
         return self.pkt[IP].len
     @property
+    def ip_id(self):
+        return self.pkt[IP].id
+    @property
     def ip_flags(self):
         return self.pkt[IP].flags
     @property
@@ -82,7 +85,10 @@ class TransPkt:
     # Getter: HTTP Features
     @property
     def http_pload(self):
-        return self.pkt[Raw].load
+        #print(self.pkt[Raw].load)
+        if "Raw" in self.pkt:
+            return self.pkt[Raw].load
+        return None
 
 
     # Setter: General Packet Features
@@ -108,6 +114,9 @@ class TransPkt:
     @ip_len.setter
     def ip_len(self, len):
         self.pkt[IP].len = len
+    @ip_id.setter
+    def ip_id(self, id):
+        self.pkt[IP].id = id
     @ip_chksum.setter
     def ip_chksum(self, chksum):
         self.pkt[IP].chksum = chksum
@@ -202,4 +211,5 @@ class TransPkt:
     def __le__(self, other):
         return(self.ts <= other.ts)
     def __repr__(self):
-        return "Pkt({} @ ts: {})".format(self.flow_tuple, self.ts)
+        return "Pkt({} @ ts: {}, ip_len: {}, ip_id: {}, seq_num: {}, ack_num: {}, pload: {})"\
+            .format(self.flow_tuple, self.ts, self.ip_len, self.ip_id, self.seq_num, self.ack_num, str(self.http_pload))

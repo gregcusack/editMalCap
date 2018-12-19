@@ -20,12 +20,12 @@ class NetSploit:
 
     def ProcessFlows(self):
        for tuple,flow in self.flowTable.FT.items():
-           #flow.calcPktStats()
-           self.transformFlow(tuple)
+           flow.biPkts = self.flowTable.FT[flow.biFlowKey].pkts      # give flow access to opposite dir flow
+           self.transformFlow(flow)
 
-    def transformFlow(self, pkt_5_tuple):
+    def transformFlow(self, flow):
 
-        tf = TC(self.config.flows[pkt_5_tuple], self.flowTable.FT[pkt_5_tuple]) #(config.5_tuple, Flow)
+        tf = TC(self.config.flows[flow.flowKey], flow) #(config.5_tuple, Flow)
         tf.buildTransformations()
         tf.runTransformations()
         #TODO: Transform Flow!  Call: TransPktLens.py
