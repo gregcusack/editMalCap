@@ -17,12 +17,40 @@ class TransPktLens(Transform):
 
     def Process(self):
         self.flow.calcPktLenStats()
-        self.splitPkt(self.flow.pkts[0])
-        print("Transforming Pkt Lengths on these pkts: {}".format(self.flow))
-        print(self.flow.biPkts)
+        #print(self.flow.flowStats)
+        #self.testPktSplit()
 
-    def mergePkt(self):
-        print("Merging Pkts")
+        self.mergePkt(self.flow.pkts[9], self.flow.pkts[10])
+
+
+        self.flow.calcPktLenStats()
+        #print(self.flow.biPkts)
+
+    def mergePkt(self, pkt, npkt):
+        print("Merging Pkts") # probably shouldn't/can't merge pkts without a payload???
+
+        if pkt.http_pload and npkt.http_pload:# and (pkt.tcp_flags == npkt.tcp_flags): # make sure both pkts have payload and same flags
+            print("prePKT: {}".format(pkt))
+            print("preNPKT: {}".format(npkt))
+
+            pkt.http_pload += npkt.http_pload
+            pkt.ip_len = pkt.ip_len + len(npkt.http_pload)
+
+            print("postPKT: {}".format(pkt))
+            print("postNPKT: {}".format(npkt))
+
+            self.flow.pkts.remove(npkt)
+        else:
+            print("CAN'T MERGE PACKETS")
+
+
+        # pkt.pload += npkt.pload
+        # increase ip.len of pkt
+        # think we can leave the seq # and ack num alone for these
+        # keep ts of pkt
+        # delete npkt
+
+
         # Probably create new pkt from 1
         self.deletePkt()
 
@@ -30,74 +58,62 @@ class TransPktLens(Transform):
         print("Deleting Pkt")
 
     def splitPkt(self, pkt):
-        print("Splitting Pkt")
-        dupPkt = copy.deepcopy(pkt) #pkt.copy() #self.duplicatePkt()
-        # if pkt[TCP].len
+        dupPkt = copy.deepcopy(pkt)
+
         if pkt.http_pload:
-            len_payload = len(pkt.http_pload)
-            ip_hdr_len = pkt.ip_len - len_payload
-            dupPkt.http_pload = pkt.http_pload[len_payload//2:]
-            pkt.http_pload = pkt.http_pload[:len_payload//2]
-
-            print("Change IP len")
-            pkt.ip_len = ip_hdr_len + len(pkt.http_pload)
-            dupPkt.ip_len = ip_hdr_len + len(pkt.http_pload)
-
-            print("split seq num")
-            dupPkt.seq_num += len(pkt.http_pload)
-
+            self.splitPayload(pkt, dupPkt)
         else:
-            print("split ack num")
-            # pkt ack_num stays same
-            # need length of last Rx packet with len > 66 in other direction
+            self.fixACKnum(pkt, dupPkt)
 
-            # Gets most recent biPkt.  need length
-            #TODO: you need to loop through biPkt list from end to start (aka most recent to most distant)
-            biPkt = self.getMostRecentBiPkt(dupPkt)
-            if biPkt:
-                print(dupPkt)
-                print(biPkt)
-                if not biPkt.http_pload:
-                    print("ERROR: ACKing an ACK.  uh oh!  biPkt should have a payload!")
-                    exit(-1)
-                dupPkt.ack_num += len(biPkt.http_pload)
-
-
-
-
-            #dupPkt.
-
-        # change IP ID
+        # update IP ID
         dupPkt.ip_id += 1  # increment ipID (this will need to be adjusted at end of flow processing)
-
-        print(pkt)
-        print(dupPkt)
-
         return dupPkt
 
+    def splitPayload(self, pkt, dupPkt):
+        len_payload = len(pkt.http_pload)
+        ip_hdr_len = pkt.ip_len - len_payload
+        dupPkt.http_pload = pkt.http_pload[len_payload // 2:]
+        pkt.http_pload = pkt.http_pload[:len_payload // 2]
 
-    def duplicatePkt(self, pkt):
-        print("Duplicating Pkt")
-        return pkt.copy()
+        pkt.ip_len = ip_hdr_len + len(pkt.http_pload)
+        dupPkt.ip_len = ip_hdr_len + len(pkt.http_pload)
 
-    # TODO (high): need to loop from most recent pkt to most distant pkt
-    # That way we find the closes biPkt to dupPkt that has payload w/o storing a bunch of pkts
+
+
+        dupPkt.seq_num += len(pkt.http_pload)
+
+    def fixACKnum(self, pkt, dupPkt):
+        biPkt = self.getMostRecentBiPkt(dupPkt)
+        if biPkt:
+            if not biPkt.http_pload:
+                print("ERROR: ACKing an ACK.  uh oh!  biPkt should have a payload!")
+                exit(-1)
+            pkt.ack_num -= len(biPkt.http_pload) // 2
+
+    # Find the closest biPkt to dupPkt that has payload w/o storing a bunch of pkts
     # TODO (low): optimize to do O(log n) search since biPkt list is sorted
     def getMostRecentBiPkt(self, pkt):
         flag = False
-        biPkt = self.flow.biPkts[0]
-        for biPktObj in self.flow.biPkts:  # start at 1st element in list not 0th
-            if biPktObj.ts < pkt.ts:
+        biPkt = self.flow.biPkts[len(self.flow.biPkts)-1]
+        for biPktObj in reversed(self.flow.biPkts):
+            if biPktObj.ts < pkt.ts and biPktObj.http_pload:
                 flag = True
                 biPkt = biPktObj
-            else:
                 break
         if flag:
             return biPkt
         else:
             return flag
 
-
+    def testPktSplit(self):
+        print(self.flow.flowStats)
+        newPkts = []
+        for p in self.flow.pkts:
+            newPkts.append(self.splitPkt(p))
+        self.flow.pkts += newPkts
+        self.flow.pkts.sort()
+        # self.splitPkt(self.flow.pkts[17])
+        # print("Transforming Pkt Lengths on these pkts: {}".format(self.flow))
 
 class TransIATimes(Transform):
     def __init__(self, flowObj, config):
