@@ -5,23 +5,25 @@ from TransformClasses.TransformationController import TransformationController a
 class NetSploit:
     def __init__(self, config):             # this should be a map of our config file
         # try to keep this just objects
-        self.flowTable = FlowTable()
         self.filter = FlowFilter(config.flows)
+        self.flowTable = FlowTable()
         self.pktMerger = PktMerger(config.merge_batch_size)
         self.config = config
 
     def loadFlowTable(self, pkt):
-        if self.filter.needsTrans(pkt.flow_tuple):
+        addToFT = self.filter.needsTrans(pkt.flow_tuple)
+        if addToFT:
             #print("Send packet for transformation")
-            self.flowTable.procPkt(pkt)
+            self.flowTable.procPkt(pkt, addToFT)
         else:
             #print("No Transformation needed.  Sending to Pkt Merger")
             self.pktMerger.mergePkt(pkt)
 
     def ProcessFlows(self):
        for tuple,flow in self.flowTable.FT.items():
-           flow.biPkts = self.flowTable.FT[flow.biFlowKey].pkts      # give flow access to opposite dir flow
-           self.transformFlow(flow)
+           if flow.procFlag:
+               flow.biPkts = self.flowTable.FT[flow.biFlowKey].pkts      # give flow access to opposite dir flow
+               self.transformFlow(flow)
 
     def transformFlow(self, flow):
 

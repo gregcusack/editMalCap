@@ -26,4 +26,4 @@ class Config:
             key = tuple(key)
             self.flows[key] = v
 
-        print(self.flows[(6, '155.98.38.79', 80, '142.44.154.169', 38130)]["pktLens"])
+        #print(self.flows[(6, '155.98.38.79', 80, '142.44.154.169', 38130)]["pktLens"])
