@@ -1,6 +1,9 @@
 import copy
 from FlowTable import FlowTable
 
+MAX_PKT_LOOPS = 4
+MAX_FRAME_SIZE = 3000
+
 class Transform:
     def __init__(self, flowObj, config):
         self.flow = flowObj
@@ -18,6 +21,7 @@ class TransPktLens(Transform):
 
     def Process(self):
         self.flow.calcPktLenStats()
+        self.flow.calcPktIAStats()
         print(self.config)
         print(self.flow.flowStats)
         #self.testPktSplit()
@@ -30,13 +34,18 @@ class TransPktLens(Transform):
 
         # Need some sort of iteration
         if self.flow.flowStats.avgLen < self.config["pktLens"]["avg"]:
-            i = 0
+            i = totalLoops = 0
+            # MERGE PACKETS
             while self.flow.flowStats.avgLen < self.config["pktLens"]["avg"]:
                 if i+1 == self.flow.flowStats.flowLen:
-                    print("Reached end of pkt list, can't merge more pkts.  avg still < target avg")
-                    print("i: {}".format(i))
-                    break
-                if self.flow.pkts[i].frame_len + self.flow.pkts[i+1].frame_len >= 3000:
+                    if totalLoops == MAX_PKT_LOOPS:
+                        print("Reached max pkt loops, can't merge more pkts.  avg still < target avg")
+                        print("i: {}".format(i))
+                        break
+                    i = 0
+                    totalLoops += 1
+                    continue
+                if self.flow.pkts[i].frame_len + self.flow.pkts[i+1].frame_len >= MAX_FRAME_SIZE:
                     i += 1
                 else:
                     if self.mergePkt(self.flow.pkts[i], self.flow.pkts[i+1]):
@@ -53,18 +62,22 @@ class TransPktLens(Transform):
                 # self.flow.calcPktLenStats()
                 #i += 1
         elif self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
-            i = 0
+            i = totalLoops = 0
+            # SPLIT PACKETS
             while self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
                 if i == self.flow.flowStats.flowLen:
-                    print("Reached end of pkt list, can't split more pkts.  avg still > target avg")
-                    print("i: {}".format(i))
-                    break
+                    if totalLoops == MAX_PKT_LOOPS:
+                        print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
+                        print("i: {}".format(i))
+                        break
+                    i = 0
+                    totalLoops += 1
+                    continue
                 self.splitPkt(self.flow.pkts[i], i)
                 self.flow.calcPktLenStats()
                 i += 2
 
 
-        #while self.config.
         """
         i=0
         while pkt len avg < target_avg
@@ -89,7 +102,7 @@ class TransPktLens(Transform):
 
         #self.flow.calcPktLenStats()
         #self.flow.get
-        print(self.flow.flowStats)
+        #print(self.flow.flowStats)
         #print(self.flow.biPkts)
 
     def mergePkt(self, pkt, npkt):
