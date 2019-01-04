@@ -34,49 +34,9 @@ class TransPktLens(Transform):
 
         # Need some sort of iteration
         if self.flow.flowStats.avgLen < self.config["pktLens"]["avg"]:
-            i = totalLoops = 0
-            # MERGE PACKETS
-            while self.flow.flowStats.avgLen < self.config["pktLens"]["avg"]:
-                if i+1 == self.flow.flowStats.flowLen:
-                    if totalLoops == MAX_PKT_LOOPS:
-                        print("Reached max pkt loops, can't merge more pkts.  avg still < target avg")
-                        print("i: {}".format(i))
-                        break
-                    i = 0
-                    totalLoops += 1
-                    continue
-                if self.flow.pkts[i].frame_len + self.flow.pkts[i+1].frame_len >= MAX_FRAME_SIZE:
-                    i += 1
-                else:
-                    if self.mergePkt(self.flow.pkts[i], self.flow.pkts[i+1]):
-                        self.flow.calcPktLenStats()
-                    else:
-                        i += 1
-                    # TODO: figure out how to iterate over packets when you remove one in the list
-                    # two iterators, adjust accordingly based on how lists change when iterating through them
-                    # Everything shifts down one when an element is removed
-                    # packet was removed
-                # else:
-                #     i += 1
-
-                # self.flow.calcPktLenStats()
-                #i += 1
+            self.mergeLooper()
         elif self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
-            i = totalLoops = 0
-            # SPLIT PACKETS
-            while self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
-                if i == self.flow.flowStats.flowLen:
-                    if totalLoops == MAX_PKT_LOOPS:
-                        print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
-                        print("i: {}".format(i))
-                        break
-                    i = 0
-                    totalLoops += 1
-                    continue
-                self.splitPkt(self.flow.pkts[i], i)
-                self.flow.calcPktLenStats()
-                i += 2
-
+            self.splitLooper()
 
         """
         i=0
@@ -100,14 +60,43 @@ class TransPktLens(Transform):
                 split pkt
         """
 
-        #self.flow.calcPktLenStats()
-        #self.flow.get
-        #print(self.flow.flowStats)
-        #print(self.flow.biPkts)
+    def mergeLooper(self):
+        i = totalLoops = 0
+        # MERGE PACKETS
+        while self.flow.flowStats.avgLen < self.config["pktLens"]["avg"]:
+            if i + 1 == self.flow.flowStats.flowLen:
+                if totalLoops == MAX_PKT_LOOPS:
+                    print("Reached max pkt loops, can't merge more pkts.  avg still < target avg")
+                    print("i: {}".format(i))
+                    break
+                i = 0
+                totalLoops += 1
+                continue
+            if self.flow.pkts[i].frame_len + self.flow.pkts[i + 1].frame_len >= MAX_FRAME_SIZE:
+                i += 1
+            else:
+                if self.mergePkt(self.flow.pkts[i], self.flow.pkts[i + 1]):
+                    self.flow.calcPktLenStats()
+                else:
+                    i += 1
+
+    def splitLooper(self):
+        i = totalLoops = 0
+        # SPLIT PACKETS
+        while self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
+            if i == self.flow.flowStats.flowLen:
+                if totalLoops == MAX_PKT_LOOPS:
+                    print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
+                    print("i: {}".format(i))
+                    break
+                i = 0
+                totalLoops += 1
+                continue
+            self.splitPkt(self.flow.pkts[i], i)
+            self.flow.calcPktLenStats()
+            i += 2
 
     def mergePkt(self, pkt, npkt):
-        #print("Merging Pkts") # probably shouldn't/can't merge pkts without a payload???
-
         if pkt.http_pload and npkt.http_pload:# and (pkt.tcp_flags == npkt.tcp_flags): # make sure both pkts have payload and same flags
             print("prePKT: {}".format(pkt))
             print("preNPKT: {}".format(npkt))
@@ -125,12 +114,6 @@ class TransPktLens(Transform):
             print("CAN'T MERGE PACKETS")
             return False
 
-    #     # Probably create new pkt from 1
-    #     self.deletePkt()
-    #
-    # def deletePkt(self):
-    #     print("Deleting Pkt")
-
     def splitPkt(self, pkt, index):
         dupPkt = copy.deepcopy(pkt)
         oldPktLen = pkt.frame_len
@@ -143,8 +126,8 @@ class TransPktLens(Transform):
             print("split ack")
 
         # update IP ID
-        dupPkt.ip_id += 1  # increment ipID (this will need to be adjusted at end of flow processing)
-        self.flow.pkts.insert(index, dupPkt)
+        dupPkt.ip_id += 1  # TODO: increment ipID (this will need to be adjusted at end of flow processing)
+        self.flow.pkts.insert(index + 1, dupPkt)
         #self.flow.addPkt(dupPkt)
         # self.flow.incSplitLenStats(oldPktLen, pkt.frame_len, dupPkt.frame_len)
 

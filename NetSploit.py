@@ -34,5 +34,16 @@ class NetSploit:
         #TODO: Transform Flow!  Call: TransIATimes.py
         #TODO: Fix Timestamps!  Call: FixTimestamps.py
 
+        self.mergeModifiedPkts()
+
+    def mergeModifiedPkts(self):
+        for tuple,flow in self.flowTable.FT.items():
+            for pkt in flow.pkts:
+                # if pkt.ip_src == "172.217.2.4" and pkt.ip_dst == "10.201.73.154" and pkt.src_port == 443 and pkt.dst_port == 60043:
+                #     print(pkt)
+                self.pktMerger.mergePkt(pkt)
+
+
+
         # Delete Flow from FlowTable
         #self.flowTable.delFlow(pkt_5_tuple)

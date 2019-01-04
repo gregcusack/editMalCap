@@ -72,6 +72,10 @@ def main(iname, oname):
     TestNetSploit(merger=NS.pktMerger)
 
 
+    for pkt in NS.pktMerger.inQueue:
+        pkt.write_pcap(oname)
+
+
 
 if __name__ == "__main__":
     iname, oname = check_input()
