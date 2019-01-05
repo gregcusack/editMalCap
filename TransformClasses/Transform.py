@@ -1,5 +1,10 @@
 import copy
 from FlowTable import FlowTable
+import numpy as np
+from scipy.stats import truncnorm
+
+def get_truncnorm(mean=0, sd=1, low=0, upp=10):
+    return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
 
 MAX_PKT_LOOPS = 4
 MAX_FRAME_SIZE = 3000
@@ -32,11 +37,11 @@ class TransPktLens(Transform):
         #self.flow.pkts.sort()
         #self.flow.calcPktLenStats()
 
-        # Need some sort of iteration
-        if self.flow.flowStats.avgLen < self.config["pktLens"]["avg"]:
-            self.mergeLooper()
-        elif self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
-            self.splitLooper()
+        # TODO: uncomment!  This does the pkt length manipulation
+        # if self.flow.flowStats.avgLen < self.config["pktLens"]["avg"]:
+        #     self.mergeLooper()
+        # elif self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
+        #     self.splitLooper()
 
         """
         i=0
@@ -186,6 +191,50 @@ class TransIATimes(Transform):
         print("Creating new TransIATimes Object")
 
     def Process(self):
+        self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
         #TODO: make sure lenStats are updated before this section!
         print("Transforming IA Times on these pkts: {}".format(self.flow))
+
+        self.avgStdIATimes()
+        self.flow.calcPktIAStats()
+
+    def avgStdIATimes(self):
+        targ_avg = self.config["iaTimes"]["avg"]
+        targ_std = self.config["iaTimes"]["stddev"]
+        print(targ_std)
+        #i = 0
+        t0 = self.flow.pkts[0].ts
+        self.flow.pkts[self.flow.flowStats.flowLen - 1].ts = targ_avg * (self.flow.flowStats.flowLen - 1) + t0 # set last pkt ts
+        tn = self.flow.pkts[self.flow.flowStats.flowLen - 1].ts
+        print(t0, tn)
+        print(tn-t0)
+
+        X = get_truncnorm(targ_avg, targ_std, 0, tn-t0)
+        X = X.rvs(self.flow.flowStats.flowLen - 2) # -2 since already have t0 and tn in place
+        X.sort()
+        for i in range(1, self.flow.flowStats.flowLen-1):
+            self.flow.pkts[i].ts = t0 + X[i-1]
+            i += 1
+        # for pkt in self.flow.pkts:
+        #     pkt.ts = t0 + i
+        print(X)
+        print(np.std(X))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

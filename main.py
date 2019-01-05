@@ -71,9 +71,9 @@ def main(iname, oname):
     print(NS.pktMerger.inQueue)
     TestNetSploit(merger=NS.pktMerger)
 
-
-    for pkt in NS.pktMerger.inQueue:
-        pkt.write_pcap(oname)
+    # TODO: uncomment.  this writes to pcap
+    # for pkt in NS.pktMerger.inQueue:
+    #     pkt.write_pcap(oname)
 
 
 
