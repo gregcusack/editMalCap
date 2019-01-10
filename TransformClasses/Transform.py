@@ -38,10 +38,10 @@ class TransPktLens(Transform):
         #self.flow.calcPktLenStats()
 
         # TODO: uncomment!  This does the pkt length manipulation
-        # if self.flow.flowStats.avgLen < self.config["pktLens"]["avg"]:
-        #     self.mergeLooper()
-        # elif self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
-        #     self.splitLooper()
+        if self.flow.flowStats.avgLen < self.config["pktLens"]["avg"]:
+            self.mergeLooper()
+        elif self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
+            self.splitLooper()
 
         """
         i=0
@@ -182,9 +182,6 @@ class TransPktLens(Transform):
         # self.splitPkt(self.flow.pkts[17])
         # print("Transforming Pkt Lengths on these pkts: {}".format(self.flow))
 
-    # def removePkts(self):
-    #     for pkt in self.flow.pkts
-
 class TransIATimes(Transform):
     def __init__(self, flowObj, config):
         Transform.__init__(self, flowObj, config)
@@ -196,30 +193,31 @@ class TransIATimes(Transform):
         #TODO: make sure lenStats are updated before this section!
         print("Transforming IA Times on these pkts: {}".format(self.flow))
 
+        # TODO: Uncomment.  This does IA time adjustment!
         self.avgStdIATimes()
+        self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
+        print(self.flow.flowStats)
 
     def avgStdIATimes(self):
         targ_avg = self.config["iaTimes"]["avg"]
         targ_std = self.config["iaTimes"]["stddev"]
-        print(targ_std)
-        #i = 0
-        t0 = self.flow.pkts[0].ts
-        self.flow.pkts[self.flow.flowStats.flowLen - 1].ts = targ_avg * (self.flow.flowStats.flowLen - 1) + t0 # set last pkt ts
-        tn = self.flow.pkts[self.flow.flowStats.flowLen - 1].ts
-        print(t0, tn)
-        print(tn-t0)
 
-        X = get_truncnorm(targ_avg, targ_std, 0, tn-t0)
-        X = X.rvs(self.flow.flowStats.flowLen - 2) # -2 since already have t0 and tn in place
-        X.sort()
-        for i in range(1, self.flow.flowStats.flowLen-1):
-            self.flow.pkts[i].ts = t0 + X[i-1]
+        t0 = self.flow.pkts[0].ts
+        #self.flow.pkts[self.flow.flowStats.flowLen - 1].ts = targ_avg * (self.flow.flowStats.flowLen - 1) + t0 # set last pkt ts
+        # tn = self.flow.pkts[self.flow.flowStats.flowLen - 1].ts
+
+        X = get_truncnorm(targ_avg, targ_std, 0, self.flow.flowStats.maxIA)  #tn-t0)
+        X = X.rvs(self.flow.flowStats.flowLen - 1)  # -1 since already have t0 in place
+        #X.sort()
+
+        # Best effort reconstruction
+        prev = self.flow.pkts[0].ts
+        for i in range(1, self.flow.flowStats.flowLen):
+            self.flow.pkts[i].ts = prev + X[i-1]
+            # print(self.flow.pkts[i].ts)
+            prev = self.flow.pkts[i].ts
             i += 1
-        # for pkt in self.flow.pkts:
-        #     pkt.ts = t0 + i
-        print(X)
-        print(np.std(X))
 
 
 

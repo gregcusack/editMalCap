@@ -44,11 +44,13 @@ class FlowStats():
                     self.minIA, self.maxIA, self.avgIA, self.stdIA)
 
     def updateLenStats(self, pktList):
+        self.resetLenStats()
         self.flowLen = len(pktList)
         self.getMinMaxAvgLen(pktList)
         self.getStdLen(pktList)
 
     def updateIAStats(self, pktList):
+        self.resetIAStats()
         self.getMinMaxAvgIA(pktList)
         self.getStdIA(pktList)
 
@@ -69,6 +71,15 @@ class FlowStats():
         if self.stdLen < 0:
             print("ERROR: Std Dev. len < 0.  std val is: {}".format(self.stdLen))
             exit(-1)
+
+    def resetIAStats(self):
+        self.minIA = self.maxIA = self.avgIA = self.stdIA = self.totalIA = 0
+
+    def resetLenStats(self):
+        self.minLen = self.maxLen = self.avgLen = self.stdLen = 0
+        self.flowLen = 0
+        self.flowLenBytes = 0
+
 
     # This is not as easy as I thought.  If we split a packet, we get an extra but we also reduce size
     # of the packet that was split.
@@ -114,6 +125,7 @@ class FlowStats():
             diff = pkt.ts - prev.ts
             if diff > self.maxIA:
                 self.maxIA = diff
+                # print("maxIA: {}".format(self.maxIA))
             elif diff < self.minIA:
                 self.minIA = diff
             total += diff

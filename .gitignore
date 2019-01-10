@@ -6,3 +6,5 @@ __pycache__/
 .idea
 config.json
 config-backup.json
+*.ipynb
+.ipynb_checkpoints/

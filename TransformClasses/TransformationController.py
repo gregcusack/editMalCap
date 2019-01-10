@@ -10,8 +10,8 @@ class TransformationController:
     def runTransformations(self):
         for trans in self.transObjList:
             trans.Process()
-        print(self.flow)
-        print(self.flow.flowStats)
+        #print(self.flow)
+        #print(self.flow.flowStats)
 
     def buildTransformations(self):
         if "pktLens" in self.flowConfig:

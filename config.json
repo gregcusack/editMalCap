@@ -12,10 +12,10 @@
         "max": 1500
       },
       "iaTimes": {
-        "avg": 0.020,
+        "avg": 0.010,
         "min": 1,
         "max": 200,
-        "stddev": 0.065
+        "stddev": 0.0158
       },
       "numPkts": 40
     }
