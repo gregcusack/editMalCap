@@ -103,20 +103,20 @@ class TransPktLens(Transform):
 
     def mergePkt(self, pkt, npkt):
         if pkt.http_pload and npkt.http_pload:# and (pkt.tcp_flags == npkt.tcp_flags): # make sure both pkts have payload and same flags
-            print("prePKT: {}".format(pkt))
-            print("preNPKT: {}".format(npkt))
+            # print("prePKT: {}".format(pkt))
+            # print("preNPKT: {}".format(npkt))
 
             pkt.http_pload += npkt.http_pload
             pkt.ip_len = pkt.ip_len + len(npkt.http_pload)
 
-            print("postPKT: {}".format(pkt))
-            print("postNPKT: {}".format(npkt))
+            # print("postPKT: {}".format(pkt))
+            # print("postNPKT: {}".format(npkt))
 
             self.flow.pkts.remove(npkt)
             return True
             #self.pktsToRemove.append(npkt)
         else:
-            print("CAN'T MERGE PACKETS")
+            #print("CAN'T MERGE PACKETS")
             return False
 
     def splitPkt(self, pkt, index):
@@ -125,10 +125,10 @@ class TransPktLens(Transform):
 
         if pkt.http_pload:
             self.splitPayload(pkt, dupPkt)
-            print("split payload")
+            #print("split payload")
         else:
             self.fixACKnum(pkt, dupPkt)
-            print("split ack")
+            #print("split ack")
 
         # update IP ID
         dupPkt.ip_id += 1  # TODO: increment ipID (this will need to be adjusted at end of flow processing)
