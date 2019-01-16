@@ -16,7 +16,6 @@ class NetSploit:
             #print("Send packet for transformation")
             self.flowTable.procPkt(pkt, addToFT)
         else:
-            #print("No Transformation needed.  Sending to Pkt Merger")
             self.pktMerger.mergePkt(pkt)
 
     def ProcessFlows(self):
