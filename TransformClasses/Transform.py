@@ -2,6 +2,7 @@ import copy
 from FlowTable import FlowTable
 import numpy as np
 from scipy.stats import truncnorm
+from itertools import islice
 
 def get_truncnorm(mean=0, sd=1, low=0, upp=10):
     return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
@@ -198,6 +199,7 @@ class TransIATimes(Transform):
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
         print(self.flow.flowStats)
+        self.updateBiTS()
 
     def avgStdIATimes(self):
         targ_avg = self.config["iaTimes"]["avg"]
@@ -218,6 +220,43 @@ class TransIATimes(Transform):
             # print(self.flow.pkts[i].ts)
             prev = self.flow.pkts[i].ts
             i += 1
+
+    def updateBiTS(self):
+        length = len(self.flow.pkts) if len(self.flow.pkts) > len(self.flow.biPkts) else len(self.flow.biPkts)
+        print(length)
+
+        i = j = k = 0
+        if "B" in self.flow.diffs[0]:
+            prev_ts = self.flow.biPkts[0].ts
+            j += 1
+        elif "F" in self.flow.diffs[0]:
+            prev_ts = self.flow.pkts[0].ts
+            i += 1
+        else:
+            i += 1
+            j += 1
+        k += 1
+
+        print(i, j, self.flow.diffs[0])
+        for n in self.flow.diffs:
+            print("i: {}, j: {}, k: {}".format(i,j,k))
+            if "F" in self.flow.diffs[k]:
+                while self.flow.pkts[i+1].ts == self.flow.pkts[i].ts:     # indicates split packets
+                    i += 1
+                    print("split")
+                i += 1
+                prev_ts = self.flow.pkts[i].ts
+            elif "B" in self.flow.diffs[k]:
+                self.flow.biPkts[j].ts = prev_ts + self.flow.diffs[k][1]
+                j += 1
+            k += 1
+
+
+
+            #print(k)
+
+
+
 
 
 

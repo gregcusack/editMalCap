@@ -4,7 +4,8 @@ from TestClasses.TestTransPkt import TestTransPkt
 from NetSploit import NetSploit
 from Config import Config
 from TestClasses.TestNetSploit import TestNetSploit
-
+from pathlib import Path
+from os import remove
 
 def check_input():
     if len(sys.argv) != 3:
@@ -72,8 +73,11 @@ def main(iname, oname):
     TestNetSploit(merger=NS.pktMerger)
 
     # TODO: uncomment.  this writes to pcap
-    # for pkt in NS.pktMerger.inQueue:
-    #     pkt.write_pcap(oname)
+    out_pcap = Path(oname)
+    if out_pcap.is_file():
+        os.remove(oname)
+    for pkt in NS.pktMerger.inQueue:
+        pkt.write_pcap(oname)
 
 
 

@@ -9,6 +9,7 @@ class Flow:
         self.biFlowKey = (flow_tuple[0], flow_tuple[3], flow_tuple[4], flow_tuple[1], flow_tuple[2])
         self.biPkts = None
         self.procFlag = None
+        self.diffs = []
         #print(self.flowKey)
         #print(self.biFlowKey)
 
@@ -26,6 +27,47 @@ class Flow:
 
     def calcPktIAStats(self):
         self.flowStats.updateIAStats(self.pkts)
+
+    def getDiffs(self):
+        print("getting DIFFS!")
+        i = j = k = 0
+        if self.pkts[0] < self.biPkts[0]:
+            prev_ts = self.pkts[0].ts
+            self.diffs.append(('F', 0))
+            i += 1
+        elif self.pkts[0] > self.biPkts[0]:
+            prev_ts = self.biPkts[0].ts
+            self.diffs.append(('B', 0))
+            j += 1
+        else:
+            prev_ts = self.biPkts[0].ts
+            self.diffs.append(('S', 0))
+            i += 1
+            j += 1
+        print(i, j, prev_ts)
+
+        if self.flowStats.flowLen > len(self.biPkts):
+            length = self.flowStats.flowLen
+        else:
+            length = len(self.biPkts)
+        print(length)
+
+        for n in range(length):
+            if self.pkts[i] < self.biPkts[j]:
+                self.diffs.append(("F", self.pkts[i].ts - prev_ts))
+                prev_ts = self.pkts[i].ts
+                i += 1
+            elif self.pkts[i] > self.biPkts[j]:
+                self.diffs.append(("B", self.biPkts[j].ts - prev_ts))
+                prev_ts = self.biPkts[j].ts
+                j += 1
+            else:
+                self.diffs.append(("S", self.biPkts[j].ts - prev_ts))
+                prev_ts = self.biPkts[j].ts
+                i += 1
+                j += 1
+            k += 1
+        print(self.diffs)
 
     def __repr__(self):
         return "<Flow: {}: #pkts: {}>".format(self.flowKey, self.flowStats.flowLen)
@@ -79,42 +121,6 @@ class FlowStats():
         self.minLen = self.maxLen = self.avgLen = self.stdLen = 0
         self.flowLen = 0
         self.flowLenBytes = 0
-
-
-    # This is not as easy as I thought.  If we split a packet, we get an extra but we also reduce size
-    # of the packet that was split.
-    # TODO: fix this so we can do incremental stats when we split and merge pkts
-
-    # def updateSplitIncLenStats(self, oPkt1Len, nPkt1Len, nPkt2Len, pktList):
-    #     minPkt = min(nPkt1Len, nPkt2Len)
-    #     maxPkt = max(nPkt1Len, nPkt2Len)
-    #     if minPkt < self.minLen:
-    #         self.minLen = minPkt    # update minLen
-    #     elif maxPkt > self.maxLen:
-    #         self.maxLen = maxPkt    # update maxLen
-    #     self.flowLen += 1
-    #     self.flowLenBytes = self.flowLenBytes - oPkt1Len + nPkt1Len + nPkt2Len
-    #     self.avgLen = self.flowLenBytes / self.flowLen
-    #     self.getStdLen(pktList) # not sure how to backtrack and then do incremental std
-    #
-    # def updateMergeIncLenStats(self, oPkt1Len, oPkt2Len, nPkt1, pktList):
-    #     minPkt = min(nPkt1Len, nPkt2Len)
-    #     maxPkt = max(nPkt1Len, nPkt2Len)
-    #     if minPkt < self.minLen:
-    #         self.minLen = minPkt  # update minLen
-    #     elif maxPkt > self.maxLen:
-    #         self.maxLen = maxPkt  # update maxLen
-    #
-    # def getIncLenStats(self, pktLen):
-    #     if pktLen < self.minLen:
-    #         self.minLen = pktLen    # update minLen
-    #     elif pktLen > self.maxLen:
-    #         self.maxLen = pktLen       # update maxLen
-    #     self.flowLenBytes += pktLen    # update number of bytes
-    #     self.flowLen += 1           # update number of pkts
-    #     oldAvg = self.avgLen        # need for incremental stdLen
-    #     self.avgLen += self.avgLen * (self.flowLenBytes - self.avgLen) / self.flowLen       # incremental avgLen
-    #     self.stdLen = (self.stdLen + (pktLen - oldAvg)(pktLen - self.avgLen)) / self.flowLen      # incremental stdLen
 
     def getMinMaxAvgIA(self, pktList):
         total = 0
