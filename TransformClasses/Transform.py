@@ -241,6 +241,8 @@ class TransIATimes(Transform):
         for n in self.flow.diffs:
             print("i: {}, j: {}, k: {}".format(i,j,k))
             if "F" in self.flow.diffs[k]:
+                # Likeley won't enter since we redistribute pkts based on IA times, so unlikely to get dup pkt ts
+                
                 while self.flow.pkts[i+1].ts == self.flow.pkts[i].ts:     # indicates split packets
                     i += 1
                     print("split")
