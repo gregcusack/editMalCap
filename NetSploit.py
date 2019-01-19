@@ -22,7 +22,7 @@ class NetSploit:
        for tuple,flow in self.flowTable.FT.items():
            if flow.procFlag:
                flow.biPkts = self.flowTable.FT[flow.biFlowKey].pkts      # give flow access to opposite dir flow
-               self.flowTable.FT[flow.flowKey].getDiffs()
+               #self.flowTable.FT[flow.flowKey].getDiffs()
                self.transformFlow(flow)
 
     def transformFlow(self, flow):

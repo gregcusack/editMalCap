@@ -30,6 +30,7 @@ class Flow:
 
     def getDiffs(self):
         print("getting DIFFS!")
+        self.diffs = []
         i = j = k = 0
         if self.pkts[0] < self.biPkts[0]:
             prev_ts = self.pkts[0].ts
@@ -44,13 +45,10 @@ class Flow:
             self.diffs.append(('S', 0))
             i += 1
             j += 1
-        print(i, j, prev_ts)
+        #print(i, j, prev_ts)
 
-        if self.flowStats.flowLen > len(self.biPkts):
-            length = self.flowStats.flowLen
-        else:
-            length = len(self.biPkts)
-        print(length)
+        length = self.getLongerFlow()
+        #print(length)
 
         for n in range(length):
             if self.pkts[i] < self.biPkts[j]:
@@ -67,7 +65,11 @@ class Flow:
                 i += 1
                 j += 1
             k += 1
-        print(self.diffs)
+            print(self.diffs[-1][0], end=" ")
+        #print(self.diffs)
+
+    def getLongerFlow(self):
+        return len(self.pkts) if len(self.pkts) > len(self.biPkts) else len(self.biPkts)
 
     def __repr__(self):
         return "<Flow: {}: #pkts: {}>".format(self.flowKey, self.flowStats.flowLen)

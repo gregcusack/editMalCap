@@ -195,11 +195,17 @@ class TransIATimes(Transform):
         print("Transforming IA Times on these pkts: {}".format(self.flow))
 
         # TODO: Uncomment.  This does IA time adjustment!
+        self.flow.getDiffs()
+        print(self.flow.diffs)
         self.avgStdIATimes()
+        self.updateBiTS()
+        self.flow.getDiffs()
+        print(self.flow.diffs)
+
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
         print(self.flow.flowStats)
-        self.updateBiTS()
+        #self.updateBiTS()
 
     def avgStdIATimes(self):
         targ_avg = self.config["iaTimes"]["avg"]
@@ -222,36 +228,102 @@ class TransIATimes(Transform):
             i += 1
 
     def updateBiTS(self):
-        length = len(self.flow.pkts) if len(self.flow.pkts) > len(self.flow.biPkts) else len(self.flow.biPkts)
-        print(length)
-
         i = j = k = 0
-        if "B" in self.flow.diffs[0]:
-            prev_ts = self.flow.biPkts[0].ts
-            j += 1
-        elif "F" in self.flow.diffs[0]:
+        prev_ts = None
+        prev_dir = self.flow.diffs[0][0]                # TODO: make diff list a list of namedtuples!
+        if prev_dir == "F":
             prev_ts = self.flow.pkts[0].ts
             i += 1
-        else:
-            i += 1
+        elif prev_dir == "B":
+            prev_ts = self.flow.biPkts[0].ts
             j += 1
+        elif prev_dir == "S":
+            print("ERROR? FLOW STARTS AT SAME TIME?!?!?! in updateBiTS()")
+            print("Exiting...")
+            exit(-1)
+            # i += 1
+            # j += 1
+        else:
+            print("ERROR! updateBiTS() error!")
+            exit(-1)
         k += 1
 
-        print(i, j, self.flow.diffs[0])
-        for n in self.flow.diffs:
-            print("i: {}, j: {}, k: {}".format(i,j,k))
-            if "F" in self.flow.diffs[k]:
-                # Likeley won't enter since we redistribute pkts based on IA times, so unlikely to get dup pkt ts
-                
-                while self.flow.pkts[i+1].ts == self.flow.pkts[i].ts:     # indicates split packets
-                    i += 1
-                    print("split")
-                i += 1
+        while k != (len(self.flow.diffs) - 1):
+        #for dir in range(1,len(self.flow.diffs)):
+            if self.flow.diffs[k][0] == "B":
+                count = 0
+                bis = []
+                while self.flow.diffs[k][0] == "B":
+                    count += 1
+                    bis.append(j)
+                    j += 1
+                    k += 1
+                step = (self.flow.pkts[i].ts - self.flow.pkts[i-1].ts) / count
+                #print(count)
+                m = 0
+                for n in bis:
+                    #print("n: {}".format(n))
+                    self.flow.biPkts[n].ts = self.flow.pkts[i-1].ts + step * m + step / 2
+                    m += 1
+            elif self.flow.diffs[k][0] == "F":
                 prev_ts = self.flow.pkts[i].ts
-            elif "B" in self.flow.diffs[k]:
-                self.flow.biPkts[j].ts = prev_ts + self.flow.diffs[k][1]
+                i += 1
+                k += 1
+            else:
+                prev_ts = self.flow.pkts[i].ts
+                print("F AND B AT SAME TIME!")
+                i += 1
                 j += 1
-            k += 1
+                k += 1
+
+        # for dir in range(1, len(self.flow.diffs)):
+        #     if self.flow.diffs[k][0] == "B":  # and prev != "B":
+        #         self.flow.biPkts[j].ts = prev_ts + self.flow.diffs[k][1]
+        #         prev_ts = self.flow.biPkts[j].ts
+        #         j += 1
+        #     elif self.flow.diffs[k][0] == "F":
+        #         prev_ts = self.flow.pkts[i].ts
+        #         i += 1
+        #     else:
+        #         prev_ts = self.flow.pkts[i].ts
+        #         print("F AND B AT SAME TIME!")
+        #         i += 1
+        #         j += 1
+        #         k += 1
+        #     k += 1
+
+
+
+        # length = self.flow.getLongerFlow()
+        # print(length)
+        #
+        # i = j = k = 0
+        # if "B" in self.flow.diffs[0]:
+        #     prev_ts = self.flow.biPkts[0].ts
+        #     j += 1
+        # elif "F" in self.flow.diffs[0]:
+        #     prev_ts = self.flow.pkts[0].ts
+        #     i += 1
+        # else:
+        #     i += 1
+        #     j += 1
+        # k += 1
+        #
+        # print(i, j, self.flow.diffs[0])
+        # for n in self.flow.diffs:
+        #     print("i: {}, j: {}, k: {}".format(i,j,k))
+        #     if "F" in self.flow.diffs[k]:
+        #         # Likeley won't enter since we redistribute pkts based on IA times, so unlikely to get dup pkt ts
+        #
+        #         while self.flow.pkts[i+1].ts == self.flow.pkts[i].ts:     # indicates split packets
+        #             i += 1
+        #             print("split")
+        #         i += 1
+        #         prev_ts = self.flow.pkts[i].ts
+        #     elif "B" in self.flow.diffs[k]:
+        #         self.flow.biPkts[j].ts = prev_ts + self.flow.diffs[k][1]
+        #         j += 1
+        #     k += 1
 
 
 
