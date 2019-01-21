@@ -28,43 +28,15 @@ class TransPktLens(Transform):
     def Process(self):
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
-        print(self.config)
-        print(self.flow.flowStats)
+        #print(self.config)
+        #print(self.flow.flowStats)
         #self.testPktSplit()
-
-        #self.mergePkt(self.flow.pkts[9], self.flow.pkts[10])
-        #print(self.flow.pkts[10])
-        #self.splitPkt(self.flow.pkts[10])
-        #self.flow.pkts.sort()
-        #self.flow.calcPktLenStats()
 
         # TODO: uncomment!  This does the pkt length manipulation
         if self.flow.flowStats.avgLen < self.config["pktLens"]["avg"]:
             self.mergeLooper()
         elif self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
             self.splitLooper()
-
-        """
-        i=0
-        while pkt len avg < target_avg
-            merge pkt[i] and pkt[i+1]
-            i++
-            calcPktLenStats
-        
-        i=0
-        while pkt len avg > target_avg
-            split pkt[i]
-            i += 2
-            
-        Split with a percentage of pkt to split?
-        while std < target_std:
-            find pkt.len closest to std:
-                split pkt
-                
-        while std > target_std and pkt len avg > target avg:
-            find pkt.len max:
-                split pkt
-        """
 
     def mergeLooper(self):
         i = totalLoops = 0
@@ -196,15 +168,13 @@ class TransIATimes(Transform):
 
         # TODO: Uncomment.  This does IA time adjustment!
         self.flow.getDiffs()
-        print(self.flow.diffs)
         self.avgStdIATimes()
         self.updateBiTS()
         self.flow.getDiffs()                    # once it works I think you can delete this
-        print(self.flow.diffs)
 
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
-        print(self.flow.flowStats)
+        #print(self.flow.flowStats)
         #self.updateBiTS()
 
     def avgStdIATimes(self):
@@ -275,61 +245,6 @@ class TransIATimes(Transform):
                 i += 1
                 j += 1
                 k += 1
-
-        # for dir in range(1, len(self.flow.diffs)):
-        #     if self.flow.diffs[k][0] == "B":  # and prev != "B":
-        #         self.flow.biPkts[j].ts = prev_ts + self.flow.diffs[k][1]
-        #         prev_ts = self.flow.biPkts[j].ts
-        #         j += 1
-        #     elif self.flow.diffs[k][0] == "F":
-        #         prev_ts = self.flow.pkts[i].ts
-        #         i += 1
-        #     else:
-        #         prev_ts = self.flow.pkts[i].ts
-        #         print("F AND B AT SAME TIME!")
-        #         i += 1
-        #         j += 1
-        #         k += 1
-        #     k += 1
-
-
-
-        # length = self.flow.getLongerFlow()
-        # print(length)
-        #
-        # i = j = k = 0
-        # if "B" in self.flow.diffs[0]:
-        #     prev_ts = self.flow.biPkts[0].ts
-        #     j += 1
-        # elif "F" in self.flow.diffs[0]:
-        #     prev_ts = self.flow.pkts[0].ts
-        #     i += 1
-        # else:
-        #     i += 1
-        #     j += 1
-        # k += 1
-        #
-        # print(i, j, self.flow.diffs[0])
-        # for n in self.flow.diffs:
-        #     print("i: {}, j: {}, k: {}".format(i,j,k))
-        #     if "F" in self.flow.diffs[k]:
-        #         # Likeley won't enter since we redistribute pkts based on IA times, so unlikely to get dup pkt ts
-        #
-        #         while self.flow.pkts[i+1].ts == self.flow.pkts[i].ts:     # indicates split packets
-        #             i += 1
-        #             print("split")
-        #         i += 1
-        #         prev_ts = self.flow.pkts[i].ts
-        #     elif "B" in self.flow.diffs[k]:
-        #         self.flow.biPkts[j].ts = prev_ts + self.flow.diffs[k][1]
-        #         j += 1
-        #     k += 1
-
-
-
-            #print(k)
-
-
 
 
 

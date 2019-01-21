@@ -1,4 +1,7 @@
 from statistics import stdev
+from collections import namedtuple
+
+DirTuple = namedtuple('DirTuple', ['dir', 'ts'])
 
 # Flows contain a list of pkts sharing a mutual 5 tuple (proto, srcIP, srcPort, dstIP, dstPort)
 class Flow:
@@ -51,7 +54,7 @@ class Flow:
         f_len, b_len, total_bi_len = self.getLenFlowStats()
         #print(length)
         counter = 0
-        for n in range(1,total_bi_len):
+        for n in range(1, total_bi_len):
             if i != f_len and j != b_len:
                 if self.pkts[i] < self.biPkts[j]:
                     prev_ts = self.updateDiffs(self.diffs, "F", self.pkts, i, prev_ts)
@@ -75,6 +78,7 @@ class Flow:
         #print(self.diffs)
 
     def updateDiffs(self, aList: list, dir: str, dList: list, index: int, prev_ts):
+        #aList.append(DirTuple(dir, dList[index].ts - prev_ts))
         aList.append((dir, dList[index].ts - prev_ts))
         return dList[index].ts
 
