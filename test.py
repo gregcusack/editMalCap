@@ -1,10 +1,15 @@
 from statistics import stdev, mean
 import numpy as np
 from scipy.stats import truncnorm
+from collections import namedtuple
+
 
 x = [0,2,4,5,10,13,20]
 for i in range(len(x)):
 	#i += 1
+	if i == len(x):
+		print(":breakiung")
+		break
 	print(i)
 
 

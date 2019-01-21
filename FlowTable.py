@@ -48,25 +48,41 @@ class Flow:
         #print(i, j, prev_ts)
 
         length = self.getLongerFlow()
+        f_len, b_len, total_bi_len = self.getLenFlowStats()
         #print(length)
+        counter = 0
+        for n in range(1,total_bi_len):
+            if i != f_len and j != b_len:
+                if self.pkts[i] < self.biPkts[j]:
+                    prev_ts = self.updateDiffs(self.diffs, "F", self.pkts, i, prev_ts)
+                    i += 1
+                elif self.pkts[i] > self.biPkts[j]:
+                    prev_ts = self.updateDiffs(self.diffs, "B", self.biPkts, j, prev_ts)
+                    j += 1
+                else:
+                    prev_ts = self.updateDiffs(self.diffs, "S", self.biPkts, j, prev_ts)
+                    i += 1
+                    j += 1
+                k += 1
+            elif i == f_len and j != b_len:
+                prev_ts = self.updateDiffs(self.diffs, "B", self.biPkts, j, prev_ts)
+                j += 1
+            elif i != f_len and j == b_len:
+                prev_ts = self.updateDiffs(self.diffs, "F", self.pkts, i, prev_ts)
+                i += 1
 
-        for n in range(length):
-            if self.pkts[i] < self.biPkts[j]:
-                self.diffs.append(("F", self.pkts[i].ts - prev_ts))
-                prev_ts = self.pkts[i].ts
-                i += 1
-            elif self.pkts[i] > self.biPkts[j]:
-                self.diffs.append(("B", self.biPkts[j].ts - prev_ts))
-                prev_ts = self.biPkts[j].ts
-                j += 1
-            else:
-                self.diffs.append(("S", self.biPkts[j].ts - prev_ts))
-                prev_ts = self.biPkts[j].ts
-                i += 1
-                j += 1
-            k += 1
             print(self.diffs[-1][0], end=" ")
         #print(self.diffs)
+
+    def updateDiffs(self, aList: list, dir: str, dList: list, index: int, prev_ts):
+        aList.append((dir, dList[index].ts - prev_ts))
+        return dList[index].ts
+
+    def getLenFlowStats(self):
+        f_len = len(self.pkts)
+        b_len = len(self.biPkts)
+        total_bi_len = f_len + b_len
+        return f_len, b_len, total_bi_len
 
     def getLongerFlow(self):
         return len(self.pkts) if len(self.pkts) > len(self.biPkts) else len(self.biPkts)

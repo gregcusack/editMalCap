@@ -199,7 +199,7 @@ class TransIATimes(Transform):
         print(self.flow.diffs)
         self.avgStdIATimes()
         self.updateBiTS()
-        self.flow.getDiffs()
+        self.flow.getDiffs()                    # once it works I think you can delete this
         print(self.flow.diffs)
 
         self.flow.calcPktLenStats()
