@@ -16,6 +16,8 @@ class Config:
         self.pkt_thresh = jData["sysConfig"]["pkt_thresh"]
         self.time_since_last_pkt = jData["sysConfig"]["timeout"]
         self.merge_batch_size = jData["sysConfig"]["merge_batch_size"]
+        #self.split_flows = jData["flowFeatures"]["numFlows"]
+        #print(jData["flowFeatures"])
 
         # convert JSON to python dictionary
         for k,v in jData["flowFeatures"].items():

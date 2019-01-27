@@ -1,4 +1,4 @@
-from TransformClasses.Transform import TransPktLens, TransIATimes
+from TransformClasses.Transform import TransPktLens, TransIATimes, TransSplitPkts
 
 
 class TransformationController:
@@ -19,6 +19,8 @@ class TransformationController:
             self.transObjList.append(TransPktLens(self.flow, self.flowConfig))
         if "iaTimes" in self.flowConfig:
             self.transObjList.append(TransIATimes(self.flow, self.flowConfig))
+        if "numFlows" in self.flowConfig and self.flowConfig["numFlows"] != 1:
+            self.transObjList.append(TransSplitPkts(self.flow, self.flowConfig))
         if "test" in self.flowConfig:
             self.transObjList.append("testObj")
 

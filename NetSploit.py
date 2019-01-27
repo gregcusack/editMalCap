@@ -28,6 +28,7 @@ class NetSploit:
     def transformFlow(self, flow):
 
         tf = TC(self.config.flows[flow.flowKey], flow) #(config.5_tuple, Flow)
+        print(self.config.flows[flow.flowKey])
         tf.buildTransformations()
         tf.runTransformations()
         #TODO: Transform Flow!  Call: TransPktLens.py

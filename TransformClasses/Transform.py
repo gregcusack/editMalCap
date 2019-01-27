@@ -3,6 +3,8 @@ from FlowTable import FlowTable
 import numpy as np
 from scipy.stats import truncnorm
 from itertools import islice
+from math import floor
+from random import randint
 
 def get_truncnorm(mean=0, sd=1, low=0, upp=10):
     return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
@@ -246,6 +248,76 @@ class TransIATimes(Transform):
                 j += 1
                 k += 1
 
+class TransSplitPkts(Transform):
+    def __init__(self, flowObj, config):
+        Transform.__init__(self, flowObj, config)
+        print("Creating new TransSplitPkts Object")
+
+    def Process(self):
+        print("Process TransSplitPkts")
+        self.splitFlow()
+
+    def splitFlow(self):
+        numFlows = self.config["numFlows"]
+        pktsPerSplitFlow =  floor(self.flow.flowStats.flowLen / numFlows) #TODO: the floor() may cause rounding issues and result in lost pkts...
+        splitFlows = {}
+        newFlowKeys = []
+        self.genNewFlowKeys(numFlows, newFlowKeys)
+        print("New Flow Keys: {}".format(newFlowKeys))
+        #
+        # base = curSFlow = pktCounter = 0
+        # for pkt in self.flow.pkts:
+        #     if curSFlow == 0:
+        #         pktCounter += 1
+        #         continue
+
+
+
+    def genNewFlowKeys(self, numFlows, newFlowKeys):
+        newIPs = []
+        newPorts = []
+        proto = self.flow.flowKey[0]
+        IPsrc = self.flow.flowKey[1]
+        portSrc = self.flow.flowKey[2]
+        IPdst = self.flow.flowKey[3]
+        portDst = self.flow.flowKey[4]
+
+        IPsrc_split = IPsrc.split(".", 3)
+        IPsrcSubnet0 = IPsrc_split[0]
+        IPsrcSubnet8 = IPsrc_split[1]
+        IPsrcSubnet16 = IPsrc_split[2]
+        IPsrcSubnet24 = IPsrc_split[3]
+
+        for i in range(numFlows - 1):
+            flag = True
+            while flag:
+                IP24_prime = randint(0, 255)
+                if IP24_prime != int(IPsrcSubnet24) and IP24_prime not in newIPs:
+                    flag = False
+                    newIPs.append(IP24_prime)
+                    #print(IP24_prime)
+                IPsrc_prime = IPsrcSubnet0 + "." + IPsrcSubnet8 + "." + IPsrcSubnet16 + "." + str(IP24_prime)
+                #print(IPsrc_prime)
+            flag = True
+            while flag:
+                portSrc_prime = randint(0, 65535)
+                if portSrc_prime != int(portSrc) and portSrc_prime not in newPorts:
+                    flag = False
+                    newPorts.append(portSrc_prime)
+                    #print(portSrc_prime)
+            flowKey_prime = (proto, IPsrc_prime, portSrc_prime, IPdst, portDst)
+            #print(self.flow.flowKey)
+            #print(flowKey_prime)
+            newFlowKeys.append(flowKey_prime)
+        return newFlowKeys
+
+
+
+    def genTCPHandshake(self):
+        print("generating TCP Handshake")
+
+    def genFinConnection(self):
+        print("generating FIN -> Fin/ACK close connection")
 
 
 

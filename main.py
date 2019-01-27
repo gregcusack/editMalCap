@@ -20,7 +20,7 @@ def check_input():
 def main(iname, oname):
     pkts = rdpcap(iname)
 
-    config = Config("config.json")      # TODO: this is not actually a file yet
+    config = Config("config.json")
     NS = NetSploit(config)
 
 
