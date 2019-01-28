@@ -275,12 +275,12 @@ class TransSplitPkts(Transform):
         print(self.flow.biPkts)
         self.updateBiPktFlowKeys(flowKeys, timestamps)
         print(self.flow.biPkts)
-        #
-        # base = curSFlow = pktCounter = 0
-        # for pkt in self.flow.pkts:
-        #     if curSFlow == 0:
-        #         pktCounter += 1
-        #         continue
+
+
+        # TODO:
+        # 1) insert 3 way HS
+        # 2) insert fin-fin/ack
+        # 3) Delete original flow from table, load splitflows into flow table
 
 
 
