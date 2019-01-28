@@ -3,7 +3,7 @@ from FlowTable import FlowTable
 import numpy as np
 from scipy.stats import truncnorm
 from itertools import islice
-from math import floor
+from math import ceil
 from random import randint
 
 def get_truncnorm(mean=0, sd=1, low=0, upp=10):
@@ -259,11 +259,22 @@ class TransSplitPkts(Transform):
 
     def splitFlow(self):
         numFlows = self.config["numFlows"]
-        pktsPerSplitFlow =  floor(self.flow.flowStats.flowLen / numFlows) #TODO: the floor() may cause rounding issues and result in lost pkts...
+        pktsPerSplitFlow = ceil(self.flow.flowStats.flowLen / numFlows) #TODO: the floor() may cause rounding issues and result in lost pkts...
         splitFlows = {}
-        newFlowKeys = []
-        self.genNewFlowKeys(numFlows, newFlowKeys)
-        print("New Flow Keys: {}".format(newFlowKeys))
+        flowKeys = []
+        timestamps = []
+        flowKeys.append(self.flow.flowKey)
+        self.genNewFlowKeys(numFlows, flowKeys)
+        print("New Flow Keys: {}".format(flowKeys))
+
+        print(self.flow.pkts)
+        self.updatePktFlowKeys(flowKeys, pktsPerSplitFlow, timestamps)
+        print(self.flow.pkts)
+        print(timestamps)
+
+        print(self.flow.biPkts)
+        self.updateBiPktFlowKeys(flowKeys, timestamps)
+        print(self.flow.biPkts)
         #
         # base = curSFlow = pktCounter = 0
         # for pkt in self.flow.pkts:
@@ -273,7 +284,7 @@ class TransSplitPkts(Transform):
 
 
 
-    def genNewFlowKeys(self, numFlows, newFlowKeys):
+    def genNewFlowKeys(self, numFlows, flowKeys):
         newIPs = []
         newPorts = []
         proto = self.flow.flowKey[0]
@@ -308,9 +319,43 @@ class TransSplitPkts(Transform):
             flowKey_prime = (proto, IPsrc_prime, portSrc_prime, IPdst, portDst)
             #print(self.flow.flowKey)
             #print(flowKey_prime)
-            newFlowKeys.append(flowKey_prime)
-        return newFlowKeys
+            flowKeys.append(flowKey_prime)
+        return flowKeys
 
+    def updatePktFlowKeys(self, flowKeys, pktsPerSplitFlow, timestamps):
+        ts0 = self.flow.pkts[0].ts
+        current = pktCounter = 0
+        for pkt in self.flow.pkts:
+            # print(pkt.ts)
+            pkt.flow_tuple = flowKeys[current]
+            pktCounter += 1
+            if pktCounter == pktsPerSplitFlow or pkt == self.flow.pkts[len(self.flow.pkts)-1]:
+                ts1 = pkt.ts
+                current += 1
+                pktCounter = 0
+                timestamps.append((ts0, ts1))
+                ts0 = ts1
+                print("#############################")
+        return timestamps
+
+    def updateBiPktFlowKeys(self, flowKeys, timestamps):
+        splitFlowCounter = pktCounter = base = 0
+        for ts in timestamps:
+            for i in range(len(self.flow.biPkts) - 1):
+                if base + pktCounter == len(self.flow.biPkts):
+                    break
+                if self.flow.biPkts[base + pktCounter].ts > ts[0] and self.flow.biPkts[base + pktCounter].ts <= ts[1]:
+                    self.flow.biPkts[base + pktCounter].flow_tuple = (self.flow.biPkts[base + pktCounter].flow_tuple[0], self.flow.biPkts[base + pktCounter].flow_tuple[1], self.flow.biPkts[base + pktCounter].flow_tuple[2], flowKeys[splitFlowCounter][1], flowKeys[splitFlowCounter][2])
+                elif self.flow.biPkts[base + pktCounter].ts < ts[0]:
+                    pktCounter += 1
+                    continue
+                else:
+                    # case where biPkts.ts > timestamps[1]
+                    base = base + pktCounter
+                    pktCounter = 0
+                    splitFlowCounter += 1
+                    break
+                pktCounter += 1
 
 
     def genTCPHandshake(self):
