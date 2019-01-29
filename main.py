@@ -38,6 +38,7 @@ def main(iname, oname):
     if out_pcap.is_file():
         os.remove(oname)
     for pkt in NS.pktMerger.inQueue:
+        #print(pkt)
         pkt.write_pcap(oname)
 
 

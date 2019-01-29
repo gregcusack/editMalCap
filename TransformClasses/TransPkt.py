@@ -201,8 +201,17 @@ class TransPkt:
     def update_5_tuple(self):
         self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[TCP].sport, self.pkt[IP].dst, self.pkt[TCP].dport)
 
+    def pktSet5Tuple(self, flowKey):
+        self.ip_proto = flowKey[0]
+        self.ip_src = flowKey[1]
+        self.src_port = flowKey[2]
+        self.ip_dst = flowKey[3]
+        self.dst_port = flowKey[4]
+        self.update_5_tuple()
+
     # Write Packet to File (Append)
     def write_pcap(self, file):
+        #print(self.pkt[IP].src)
         wrpcap(file, self.pkt, append=True)
 
     # Functions for Sorting

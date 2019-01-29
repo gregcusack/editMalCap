@@ -5,6 +5,7 @@ from scipy.stats import truncnorm
 from itertools import islice
 from math import ceil
 from random import randint
+from scapy.all import *
 
 def get_truncnorm(mean=0, sd=1, low=0, upp=10):
     return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
@@ -327,7 +328,9 @@ class TransSplitPkts(Transform):
         current = pktCounter = 0
         for pkt in self.flow.pkts:
             # print(pkt.ts)
-            pkt.flow_tuple = flowKeys[current]
+
+            #pkt.flow_tuple = flowKeys[current]
+            pkt.pktSet5Tuple(flowKeys[current])
             pktCounter += 1
             if pktCounter == pktsPerSplitFlow or pkt == self.flow.pkts[len(self.flow.pkts)-1]:
                 ts1 = pkt.ts
@@ -345,7 +348,7 @@ class TransSplitPkts(Transform):
                 if base + pktCounter == len(self.flow.biPkts):
                     break
                 if self.flow.biPkts[base + pktCounter].ts > ts[0] and self.flow.biPkts[base + pktCounter].ts <= ts[1]:
-                    self.flow.biPkts[base + pktCounter].flow_tuple = (self.flow.biPkts[base + pktCounter].flow_tuple[0], self.flow.biPkts[base + pktCounter].flow_tuple[1], self.flow.biPkts[base + pktCounter].flow_tuple[2], flowKeys[splitFlowCounter][1], flowKeys[splitFlowCounter][2])
+                    self.flow.biPkts[base + pktCounter].pktSet5Tuple((self.flow.biPkts[base + pktCounter].flow_tuple[0], self.flow.biPkts[base + pktCounter].flow_tuple[1], self.flow.biPkts[base + pktCounter].flow_tuple[2], flowKeys[splitFlowCounter][1], flowKeys[splitFlowCounter][2]))
                 elif self.flow.biPkts[base + pktCounter].ts < ts[0]:
                     pktCounter += 1
                     continue

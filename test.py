@@ -4,76 +4,40 @@ from scipy.stats import truncnorm
 from collections import namedtuple
 
 
-x = [0,2,4,5,10,13,20]
-for i in range(len(x)):
-	#i += 1
-	if i == len(x):
-		print(":breakiung")
-		break
-	print(i)
-
-
-# def get_truncnorm(mean=0, sd=1, low=0, upp=10):
-#     return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
-
-# GOAL_IA = 15
-
-# mu = .008624
-# sigma = .04287
 # x = [0,2,4,5,10,13,20]
-# s = np.random.normal(mu, sigma, 149)
+# for i in range(len(x)):
+# 	#i += 1
+# 	if i == len(x):
+# 		print(":breakiung")
+# 		break
+# 	print(i)
 
-# X = get_truncnorm(mu, sigma, 0, x[len(x)-1]- x[0])
-# X = X.rvs(80)
-# print(X)
+d = {}
+d['a.1'] = ["a.1","a.1","a.1","a.1","a.2","a.2","a.2","a.2","a.2","a.3","a.3","a.3","a.3","a.3"]
+d['b.1'] = ["b.1","b.1","b.1","b.1","b.1","b.1","b.1","b.1","b.1"]
 
-# print(X[0])
+print(d)
+
+# tmp = {}
+# for k,v in d.items():
+# 	for i in v:
+# 		if i not in tmp:
+# 			tmp[i] = []
+# 		tmp[i].append(i)
+
+# print(tmp)
+
+v = d["a.1"]
+print(v)
+
+del d["a.1"]
+
+for pkt in v:
+	if pkt not in d:
+		d[pkt] = []
+	d[pkt].append(pkt)
+	print(pkt)
+
+print(d)
 
 
-# def meanIA(l):
-# 	total = l[len(l)-1] - l[0]
-# 	return total / (len(l) - 1)
-
-# def diffArr(inA, outA):
-# 	prev = inA[0]
-# 	i = 1
-# 	for i in range(len(inA)):
-# 		outA.append(inA[i] - prev)
-# 		prev = inA[i]
-# 		i += 1
-# 	outA.pop(0)
-
-# x = [0,2,4,5,10,13,20]
-# xDiff = []
-# yDiff = []
-# zDiff = []
-# diffArr(x, xDiff)
-
-# print(x)
-# print(xDiff)
-# print(meanIA(x))
-# print(stdev(xDiff))
-# print("-----")
-
-# prevts = x[0]
-# y = []
-# y.append(x[0])
-# for i in x:
-# 	i = prevts + GOAL_IA
-# 	prevts = i
-# 	y.append(i)
-
-# diffArr(y, yDiff)
-
-# print(y)
-# print(yDiff)
-# print(meanIA(y))
-# print(stdev(yDiff))
-# print("-----")
-
-# z = [0, 26, 30, 45, 60, 75, 90, 105]
-# diffArr(z, zDiff)
-# print(z)
-# print(zDiff)
-# print(meanIA(z))
-# print(stdev(zDiff))
