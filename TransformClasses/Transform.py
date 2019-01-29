@@ -264,12 +264,13 @@ class TransSplitPkts(Transform):
         splitFlows = {}
         flowKeys = []
         timestamps = []
+        startPkts = []          # this holds indices of first pkt in each new splitFlow
         flowKeys.append(self.flow.flowKey)
         self.genNewFlowKeys(numFlows, flowKeys)
         print("New Flow Keys: {}".format(flowKeys))
 
         print(self.flow.pkts)
-        self.updatePktFlowKeys(flowKeys, pktsPerSplitFlow, timestamps)
+        self.updatePktFlowKeys(flowKeys, pktsPerSplitFlow, timestamps, startPkts)
         print(self.flow.pkts)
         print(timestamps)
 
@@ -277,6 +278,8 @@ class TransSplitPkts(Transform):
         self.updateBiPktFlowKeys(flowKeys, timestamps)
         print(self.flow.biPkts)
 
+        for i in range(1,numFlows):
+            self.createSYNPkt("S", flowKeys, startPkts[i])
 
         # TODO:
         # 1) insert 3 way HS
@@ -323,9 +326,10 @@ class TransSplitPkts(Transform):
             flowKeys.append(flowKey_prime)
         return flowKeys
 
-    def updatePktFlowKeys(self, flowKeys, pktsPerSplitFlow, timestamps):
+    def updatePktFlowKeys(self, flowKeys, pktsPerSplitFlow, timestamps, startPkts):
         ts0 = self.flow.pkts[0].ts
         current = pktCounter = 0
+        indexCounter = 0
         for pkt in self.flow.pkts:
             # print(pkt.ts)
 
@@ -338,8 +342,9 @@ class TransSplitPkts(Transform):
                 pktCounter = 0
                 timestamps.append((ts0, ts1))
                 ts0 = ts1
+                startPkts.append(indexCounter)
                 print("#############################")
-        return timestamps
+            indexCounter += 1
 
     def updateBiPktFlowKeys(self, flowKeys, timestamps):
         splitFlowCounter = pktCounter = base = 0
@@ -366,6 +371,35 @@ class TransSplitPkts(Transform):
 
     def genFinConnection(self):
         print("generating FIN -> Fin/ACK close connection")
+
+    def createSYNPkt(self, flags, flow_key, firstPkt):
+        print("createSYNPkt")
+        newPkt = copy.deepcopy(self.flow.pkts[firstPkt])
+        length = None
+        if newPkt.http_pload:
+            length = len(newPkt.load)
+            newPkt.seq_num = firstPkt.seq_num - length
+            newPkt.remove_payload()
+        else: # S, ACK, SA
+            print("NO PAYLOAD for createSYNPkt()")
+
+        #print(newPkt.printScapy())
+
+        newPkt.set_flags(flags)
+        #print("pkt ack: {}".format(newPkt.ack_num))
+        #newPkt.ack_num = 0
+        newPkt.len = len(newPkt)
+
+        # ELSE: do nothing.  seq num should be same
+
+
+
+
+
+
+        # seqNum =
+        # ip = IP(src = flow_key[1], dst = flow_key[3])
+        # return TCP(sport = flow_key[2], dport = flow_key[4], flags = type, )
 
 
 

@@ -2,6 +2,7 @@ from statistics import stdev, mean
 import numpy as np
 from scipy.stats import truncnorm
 from collections import namedtuple
+from scapy.all import *
 
 
 # x = [0,2,4,5,10,13,20]

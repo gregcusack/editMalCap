@@ -209,10 +209,19 @@ class TransPkt:
         self.dst_port = flowKey[4]
         self.update_5_tuple()
 
+    def remove_payload(self):
+        self.pkt[TCP].remove_payload()
+
+    def set_flags(self, flags):
+        self.pkt[TCP] = flags
+
     # Write Packet to File (Append)
     def write_pcap(self, file):
         #print(self.pkt[IP].src)
         wrpcap(file, self.pkt, append=True)
+
+    def printScapy(self):
+        return self.pkt.show()
 
     # Functions for Sorting
     def __lt__(self, other):
