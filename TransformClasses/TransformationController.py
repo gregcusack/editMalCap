@@ -11,15 +11,17 @@ class TransformationController:
     def runTransformations(self):
         for trans in self.transObjList:
             trans.Process()
+        self.flow.calcPktLenStats()
+        self.flow.calcPktIAStats()
         #print(self.flow)
         print("\n###################")
         print(self.flow.flowStats)
 
     def buildTransformations(self):
-        if "pktLens" in self.flowConfig:
-            self.transObjList.append(TransPktLens(self.flow, self.flowConfig))
-        if "iaTimes" in self.flowConfig:
-            self.transObjList.append(TransIATimes(self.flow, self.flowConfig))
+        # if "pktLens" in self.flowConfig:
+        #     self.transObjList.append(TransPktLens(self.flow, self.flowConfig))
+        # if "iaTimes" in self.flowConfig:
+        #     self.transObjList.append(TransIATimes(self.flow, self.flowConfig))
         if "numFlows" in self.flowConfig and self.flowConfig["numFlows"] != 1:
             self.transObjList.append(TransSplitPkts(self.flow, self.flowConfig))
             self.splitFlowFlag = True

@@ -197,6 +197,9 @@ class TransPkt:
     def unset_DF(self):
         self.pkt[IP].flags &= ~(1 << TCP_FLAGS.DF.value - 1)
 
+    def unset_flags(self):
+        self.pkt[TCP].flags &= 0
+
     # Other Functions
     def update_5_tuple(self):
         self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[TCP].sport, self.pkt[IP].dst, self.pkt[TCP].dport)
@@ -213,15 +216,42 @@ class TransPkt:
         self.pkt[TCP].remove_payload()
 
     def set_flags(self, flags):
-        self.pkt[TCP] = flags
+        self.unset_flags()
+        if "F" in flags:
+            self.set_FIN()
+        if "S" in flags:
+            self.set_SYN()
+        if "R" in flags:
+            self.set_RST()
+        if "P" in flags:
+            self.set_PSH()
+        if "A" in flags:
+            self.set_ACK()
+        if "U" in flags:
+            self.set_URG()
+        if "E" in flags:
+            self.set_ECE()
+        if "C" in flags:
+            self.set_CWR()
+        if "DF" in flags:
+            self.set_DF()
 
     # Write Packet to File (Append)
     def write_pcap(self, file):
         #print(self.pkt[IP].src)
         wrpcap(file, self.pkt, append=True)
 
-    def printScapy(self):
+    def printShow(self):
         return self.pkt.show()
+
+    def printSummary(self):
+        return self.pkt.summary()
+
+    def len(self):
+        return len(self.pkt)
+
+    def addSYNOptions(self):
+        self.pkt[TCP].options.extend([('MSS', 1460), ('WScale', 5), ('NOP', None), ('SAckOK', 'b'), ('EOL', None)])
 
     # Functions for Sorting
     def __lt__(self, other):

@@ -4,8 +4,10 @@ import numpy as np
 from scipy.stats import truncnorm
 from itertools import islice
 from math import ceil
-from random import randint
+from random import randint, uniform
 from scapy.all import *
+
+ETH_HDR_LEN = 14
 
 def get_truncnorm(mean=0, sd=1, low=0, upp=10):
     return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
@@ -175,8 +177,8 @@ class TransIATimes(Transform):
         self.updateBiTS()
         self.flow.getDiffs()                    # once it works I think you can delete this
 
-        self.flow.calcPktLenStats()
-        self.flow.calcPktIAStats()
+        # self.flow.calcPktLenStats()
+        # self.flow.calcPktIAStats()
         #print(self.flow.flowStats)
         #self.updateBiTS()
 
@@ -256,12 +258,14 @@ class TransSplitPkts(Transform):
 
     def Process(self):
         print("Process TransSplitPkts")
+        self.flow.calcPktLenStats()
+        self.flow.calcPktIAStats()
         self.splitFlow()
 
     def splitFlow(self):
         numFlows = self.config["numFlows"]
         pktsPerSplitFlow = ceil(self.flow.flowStats.flowLen / numFlows) #TODO: the floor() may cause rounding issues and result in lost pkts...
-        splitFlows = {}
+        print("pkts per splitflow: {}".format(pktsPerSplitFlow))
         flowKeys = []
         timestamps = []
         startPkts = []          # this holds indices of first pkt in each new splitFlow
@@ -278,8 +282,13 @@ class TransSplitPkts(Transform):
         self.updateBiPktFlowKeys(flowKeys, timestamps)
         print(self.flow.biPkts)
 
-        for i in range(1,numFlows):
-            self.createSYNPkt("S", flowKeys, startPkts[i])
+        print("start pkts: {}".format(startPkts))
+        print(flowKeys)
+
+        for i in range(numFlows-1):
+            newPkt = self.createSYNPkt(startPkts[i])
+            self.flow.pkts.insert(startPkts[i], newPkt)
+
 
         # TODO:
         # 1) insert 3 way HS
@@ -330,20 +339,23 @@ class TransSplitPkts(Transform):
         ts0 = self.flow.pkts[0].ts
         current = pktCounter = 0
         indexCounter = 0
+        print("total pkts in flow: {}".format(len(self.flow.pkts)))
         for pkt in self.flow.pkts:
             # print(pkt.ts)
 
             #pkt.flow_tuple = flowKeys[current]
             pkt.pktSet5Tuple(flowKeys[current])
             pktCounter += 1
+            #print(pktCounter)
             if pktCounter == pktsPerSplitFlow or pkt == self.flow.pkts[len(self.flow.pkts)-1]:
                 ts1 = pkt.ts
-                current += 1
                 pktCounter = 0
                 timestamps.append((ts0, ts1))
                 ts0 = ts1
-                startPkts.append(indexCounter)
-                print("#############################")
+                current += 1
+                #print("#############################")
+                if pkt != self.flow.pkts[len(self.flow.pkts) - 1]:
+                    startPkts.append(indexCounter + 1)
             indexCounter += 1
 
     def updateBiPktFlowKeys(self, flowKeys, timestamps):
@@ -372,34 +384,40 @@ class TransSplitPkts(Transform):
     def genFinConnection(self):
         print("generating FIN -> Fin/ACK close connection")
 
-    def createSYNPkt(self, flags, flow_key, firstPkt):
+    def createSYNPkt(self, firstPkt):
         print("createSYNPkt")
-        newPkt = copy.deepcopy(self.flow.pkts[firstPkt])
+        firstPkt = self.flow.pkts[firstPkt]
+        newPkt = copy.deepcopy(firstPkt)
         length = None
         if newPkt.http_pload:
-            length = len(newPkt.load)
+            length = len(newPkt.http_pload)
             newPkt.seq_num = firstPkt.seq_num - length
             newPkt.remove_payload()
         else: # S, ACK, SA
             print("NO PAYLOAD for createSYNPkt()")
 
-        #print(newPkt.printScapy())
+        print(newPkt.printSummary())
+        newPkt.set_flags("S")
+        newPkt.ack_num = 0
+        newPkt.addSYNOptions()
+        print(newPkt.printSummary())
+        newPkt.frame_len = newPkt.len()
+        #print(newPkt.len())
 
-        newPkt.set_flags(flags)
-        #print("pkt ack: {}".format(newPkt.ack_num))
-        #newPkt.ack_num = 0
-        newPkt.len = len(newPkt)
+        f_ts = firstPkt.ts
+        mid = f_ts - 0.01
+        min = mid - 0.005
+        max = mid + 0.005
 
-        # ELSE: do nothing.  seq num should be same
+        newPkt.ts = random.uniform(min, max)
+        print(newPkt.printShow())
+        print(firstPkt)
+        return newPkt
 
 
 
 
 
-
-        # seqNum =
-        # ip = IP(src = flow_key[1], dst = flow_key[3])
-        # return TCP(sport = flow_key[2], dport = flow_key[4], flags = type, )
 
 
 
