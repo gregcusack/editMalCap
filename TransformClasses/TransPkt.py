@@ -253,6 +253,14 @@ class TransPkt:
     def addSYNOptions(self):
         self.pkt[TCP].options.extend([('MSS', 1460), ('WScale', 5), ('NOP', None), ('SAckOK', 'b'), ('EOL', None)])
 
+    def addSYNACKOptions(self):
+        self.pkt[TCP].options.remove(('NOP', None))
+        self.pkt[TCP].options.remove(('EOL', None))
+        try:
+            self.pkt[TCP].options.remove(('NOP', None))
+        except ValueError:
+            pass
+
     # Functions for Sorting
     def __lt__(self, other):
         return self.ts < other.ts

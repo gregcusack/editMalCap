@@ -285,9 +285,15 @@ class TransSplitPkts(Transform):
         print("start pkts: {}".format(startPkts))
         print(flowKeys)
 
-        for i in range(numFlows-1):
-            newPkt = self.createSYNPkt(startPkts[i])
-            self.flow.pkts.insert(startPkts[i], newPkt)
+        if self.flow.flowKey[0] == 6: # TODO: will also need to check if the attack requires this (slowloris does not, patator does)
+            print("TCP")
+            for i in range(numFlows-1):
+                newSyn = self.createSYNPkt(startPkts[i])
+                self.flow.pkts.insert(startPkts[i], newSyn)
+                newSynAck = self.createSYNACKPkt(startPkts[i], newSyn)
+
+
+
 
 
         # TODO:
@@ -396,12 +402,13 @@ class TransSplitPkts(Transform):
         else: # S, ACK, SA
             print("NO PAYLOAD for createSYNPkt()")
 
-        print(newPkt.printSummary())
+        #print(newPkt.printSummary())
         newPkt.set_flags("S")
         newPkt.ack_num = 0
         newPkt.addSYNOptions()
-        print(newPkt.printSummary())
+        #print(newPkt.printSummary())
         newPkt.frame_len = newPkt.len()
+        newPkt.ip_len = newPkt.frame_len
         #print(newPkt.len())
 
         f_ts = firstPkt.ts
@@ -410,10 +417,31 @@ class TransSplitPkts(Transform):
         max = mid + 0.005
 
         newPkt.ts = random.uniform(min, max)
-        print(newPkt.printShow())
-        print(firstPkt)
+        #print(newPkt.printShow())
+        #print(firstPkt)
         return newPkt
 
+    def createSYNACKPkt(self, firstPkt, synPkt):
+        print("create syn ack")
+        firstPkt = self.flow.pkts[firstPkt]
+        #print(firstPkt.printShow())
+        saPkt = copy.deepcopy(synPkt)
+        saPkt.seq_num = firstPkt.ack_num - 1            # TODO: this is wrong.  I'm getting -1
+        saPkt.ack_num = synPkt.seq_num + 1
+        saPkt.set_flags("SA")
+
+        saPkt.addSYNACKOptions()
+
+        print(saPkt.printShow())
+
+        saPkt.frame_len -= 4
+        saPkt.ip_len = saPkt.frame_len
+        print(saPkt.printShow())
+        #saPkt.frame_len = saPkt.len()
+        # saPkt.ip_len = saPkt.frame_len
+        #
+        #
+        # print(saPkt.ip_len)
 
 
 
