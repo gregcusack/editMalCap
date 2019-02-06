@@ -288,13 +288,28 @@ class TransSplitPkts(Transform):
         if self.flow.flowKey[0] == 6: # TODO: will also need to check if the attack requires this (slowloris does not, patator does)
             print("TCP")
             for i in range(numFlows-1):
-                newSyn = self.createSYNPkt(startPkts[i])
-                self.flow.pkts.insert(startPkts[i], newSyn)
-                newSynAck = self.createSYNACKPkt(startPkts[i], newSyn)
+                # Check cases where we split in the middle of a tcp 3way HS
+                sFlag = saFlag = aFlag = True
+                firstPkt = self.flow.pkts[startPkts[i]]
+                if firstPkt.tcp_flags == "S":   # don't create 3wHS since already exists
+                    sFlag = saFlag = aFlag = False
+                elif firstPkt.tcp_flags == "SA": # We just need to create a SYN flag to match the SA
+                    saFlag = aFlag = False
+                elif startPkts[i]-1 != 0 and firstPkt.tcp_flags == "A" and self.flow.pkts[startPkts[i] - 1].tcp_flags == "SA":   # ack is from end of 2wHS
+                    aFlag = False # don't need to create ACK
 
-
-
-
+                newSyn = newSynAck = None
+                print("index to insert: {}".format(startPkts[i]))
+                if sFlag:
+                    newSyn = self.createSYNPkt(firstPkt)
+                    self.flow.pkts.insert(startPkts[i], newSyn) # TODO: these are being inserted in the wrong spot
+                # if saFlag:
+                #     if newSyn == None:
+                #         print("ERROR.  SA created without an S!  Bad!")
+                #     newSynAck = self.createSYNACKPkt(firstPkt, newSyn)
+                #     self.flow.pkts.insert(startPkts[i] - 1, newSynAck)
+                # if aFlag:
+                #     print("Creating ACK for 3wHS")
 
         # TODO:
         # 1) insert 3 way HS
@@ -392,7 +407,6 @@ class TransSplitPkts(Transform):
 
     def createSYNPkt(self, firstPkt):
         print("createSYNPkt")
-        firstPkt = self.flow.pkts[firstPkt]
         newPkt = copy.deepcopy(firstPkt)
         length = None
         if newPkt.http_pload:
@@ -423,20 +437,36 @@ class TransSplitPkts(Transform):
 
     def createSYNACKPkt(self, firstPkt, synPkt):
         print("create syn ack")
-        firstPkt = self.flow.pkts[firstPkt]
-        #print(firstPkt.printShow())
+        print("FIRST_PKT ACK_NUM: {}".format(firstPkt.ack_num))
+
+        print(firstPkt.printShow())
         saPkt = copy.deepcopy(synPkt)
-        saPkt.seq_num = firstPkt.ack_num - 1            # TODO: this is wrong.  I'm getting -1
+        if firstPkt.ack_num != 0:
+            saPkt.seq_num = firstPkt.ack_num - 1            # TODO: this is wrong.  I'm getting -1
+        else:
+            saPkt.seq_num = 0
         saPkt.ack_num = synPkt.seq_num + 1
         saPkt.set_flags("SA")
 
         saPkt.addSYNACKOptions()
 
-        print(saPkt.printShow())
+        #print(saPkt.printShow())
 
         saPkt.frame_len -= 4
         saPkt.ip_len = saPkt.frame_len
+
+        sTS = synPkt.ts
+        fTS = firstPkt.ts
+        ts = (fTS - sTS) / 2
+        mid = sTS + ts
+        quarter = (mid - ts) / 2
+        min = sTS + quarter
+        max = mid + quarter
+        saPkt.ts = random.uniform(min, max)
         print(saPkt.printShow())
+
+        return saPkt
+
         #saPkt.frame_len = saPkt.len()
         # saPkt.ip_len = saPkt.frame_len
         #

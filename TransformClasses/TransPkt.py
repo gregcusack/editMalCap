@@ -177,6 +177,9 @@ class TransPkt:
     def set_DF(self):
         self.pkt[IP].flags |= TCP_FLAGS.DF.value
 
+    # def isSet_SYN(self):
+    #     self.pkt[TCP].flags &
+
     # Remove TCP Flags
     def unset_FIN(self):
         self.pkt[TCP].flags &= ~(1 << TCP_FLAGS.FIN.value - 1)
