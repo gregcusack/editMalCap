@@ -251,72 +251,26 @@ class TransIATimes(Transform):
                 j += 1
                 k += 1
 
-class TransSplitPkts(Transform):
+class TransDistUDP(Transform):
     def __init__(self, flowObj, config):
         Transform.__init__(self, flowObj, config)
-        print("Creating new TransSplitPkts Object")
+        # print("Creating new TransSplitPkts Object")
 
     def Process(self):
-        print("Process TransSplitPkts")
+        print("Process TransDistUDP")
         self.flow.calcPktLenStats()
-        self.flow.calcPktIAStats()
-        self.splitFlow()
+        self.split_flow()
 
-    def splitFlow(self):
+    def split_flow(self):
         numFlows = self.config["numFlows"]
-        pktsPerSplitFlow = ceil(self.flow.flowStats.flowLen / numFlows) #TODO: the floor() may cause rounding issues and result in lost pkts...
-        print("pkts per splitflow: {}".format(pktsPerSplitFlow))
+        # print(self.flow.flowStats.flowLen)
+        pktsPerSplitFlow = ceil(self.flow.flowStats.flowLen / numFlows)
         flowKeys = []
-        timestamps = []
-        startPkts = []          # this holds indices of first pkt in each new splitFlow
         flowKeys.append(self.flow.flowKey)
+        # print(flowKeys)
         self.genNewFlowKeys(numFlows, flowKeys)
-        print("New Flow Keys: {}".format(flowKeys))
-
-        print(self.flow.pkts)
-        self.updatePktFlowKeys(flowKeys, pktsPerSplitFlow, timestamps, startPkts)
-        print(self.flow.pkts)
-        print(timestamps)
-
-        print(self.flow.biPkts)
-        self.updateBiPktFlowKeys(flowKeys, timestamps)
-        print(self.flow.biPkts)
-
-        print("start pkts: {}".format(startPkts))
-        print(flowKeys)
-
-        if self.flow.flowKey[0] == 6: # TODO: will also need to check if the attack requires this (slowloris does not, patator does)
-            print("TCP")
-            for i in range(numFlows-1):
-                # Check cases where we split in the middle of a tcp 3way HS
-                sFlag = saFlag = aFlag = True
-                firstPkt = self.flow.pkts[startPkts[i]]
-                if firstPkt.tcp_flags == "S":   # don't create 3wHS since already exists
-                    sFlag = saFlag = aFlag = False
-                elif firstPkt.tcp_flags == "SA": # We just need to create a SYN flag to match the SA
-                    saFlag = aFlag = False
-                elif startPkts[i]-1 != 0 and firstPkt.tcp_flags == "A" and self.flow.pkts[startPkts[i] - 1].tcp_flags == "SA":   # ack is from end of 2wHS
-                    aFlag = False # don't need to create ACK
-
-                newSyn = newSynAck = None
-                print("index to insert: {}".format(startPkts[i]))
-                if sFlag:
-                    newSyn = self.createSYNPkt(firstPkt)
-                    self.flow.pkts.insert(startPkts[i], newSyn) # TODO: these are being inserted in the wrong spot
-                # if saFlag:
-                #     if newSyn == None:
-                #         print("ERROR.  SA created without an S!  Bad!")
-                #     newSynAck = self.createSYNACKPkt(firstPkt, newSyn)
-                #     self.flow.pkts.insert(startPkts[i] - 1, newSynAck)
-                # if aFlag:
-                #     print("Creating ACK for 3wHS")
-
-        # TODO:
-        # 1) insert 3 way HS
-        # 2) insert fin-fin/ack
-        # 3) Delete original flow from table, load splitflows into flow table
-
-
+        # print(flowKeys)
+        self.updatePktFlowKeys(flowKeys, pktsPerSplitFlow)
 
     def genNewFlowKeys(self, numFlows, flowKeys):
         newIPs = []
@@ -325,7 +279,6 @@ class TransSplitPkts(Transform):
         IPsrc = self.flow.flowKey[1]
         portSrc = self.flow.flowKey[2]
         IPdst = self.flow.flowKey[3]
-        portDst = self.flow.flowKey[4]
 
         IPsrc_split = IPsrc.split(".", 3)
         IPsrcSubnet0 = IPsrc_split[0]
@@ -350,130 +303,249 @@ class TransSplitPkts(Transform):
                     flag = False
                     newPorts.append(portSrc_prime)
                     #print(portSrc_prime)
-            flowKey_prime = (proto, IPsrc_prime, portSrc_prime, IPdst, portDst)
+            flowKey_prime = (proto, IPsrc_prime, portSrc_prime, IPdst)
             #print(self.flow.flowKey)
             #print(flowKey_prime)
             flowKeys.append(flowKey_prime)
         return flowKeys
 
-    def updatePktFlowKeys(self, flowKeys, pktsPerSplitFlow, timestamps, startPkts):
-        ts0 = self.flow.pkts[0].ts
+    def updatePktFlowKeys(self, flowKeys, pktsPerSplitFlow):
         current = pktCounter = 0
         indexCounter = 0
         print("total pkts in flow: {}".format(len(self.flow.pkts)))
         for pkt in self.flow.pkts:
-            # print(pkt.ts)
-
-            #pkt.flow_tuple = flowKeys[current]
-            pkt.pktSet5Tuple(flowKeys[current])
+            pkt.pktSetUDPTuple(flowKeys[current])
             pktCounter += 1
-            #print(pktCounter)
             if pktCounter == pktsPerSplitFlow or pkt == self.flow.pkts[len(self.flow.pkts)-1]:
-                ts1 = pkt.ts
                 pktCounter = 0
-                timestamps.append((ts0, ts1))
-                ts0 = ts1
                 current += 1
-                #print("#############################")
-                if pkt != self.flow.pkts[len(self.flow.pkts) - 1]:
-                    startPkts.append(indexCounter + 1)
             indexCounter += 1
 
-    def updateBiPktFlowKeys(self, flowKeys, timestamps):
-        splitFlowCounter = pktCounter = base = 0
-        for ts in timestamps:
-            for i in range(len(self.flow.biPkts) - 1):
-                if base + pktCounter == len(self.flow.biPkts):
-                    break
-                if self.flow.biPkts[base + pktCounter].ts > ts[0] and self.flow.biPkts[base + pktCounter].ts <= ts[1]:
-                    self.flow.biPkts[base + pktCounter].pktSet5Tuple((self.flow.biPkts[base + pktCounter].flow_tuple[0], self.flow.biPkts[base + pktCounter].flow_tuple[1], self.flow.biPkts[base + pktCounter].flow_tuple[2], flowKeys[splitFlowCounter][1], flowKeys[splitFlowCounter][2]))
-                elif self.flow.biPkts[base + pktCounter].ts < ts[0]:
-                    pktCounter += 1
-                    continue
-                else:
-                    # case where biPkts.ts > timestamps[1]
-                    base = base + pktCounter
-                    pktCounter = 0
-                    splitFlowCounter += 1
-                    break
-                pktCounter += 1
 
 
-    def genTCPHandshake(self):
-        print("generating TCP Handshake")
-
-    def genFinConnection(self):
-        print("generating FIN -> Fin/ACK close connection")
-
-    def createSYNPkt(self, firstPkt):
-        print("createSYNPkt")
-        newPkt = copy.deepcopy(firstPkt)
-        length = None
-        if newPkt.http_pload:
-            length = len(newPkt.http_pload)
-            newPkt.seq_num = firstPkt.seq_num - length
-            newPkt.remove_payload()
-        else: # S, ACK, SA
-            print("NO PAYLOAD for createSYNPkt()")
-
-        #print(newPkt.printSummary())
-        newPkt.set_flags("S")
-        newPkt.ack_num = 0
-        newPkt.addSYNOptions()
-        #print(newPkt.printSummary())
-        newPkt.frame_len = newPkt.len()
-        newPkt.ip_len = newPkt.frame_len
-        #print(newPkt.len())
-
-        f_ts = firstPkt.ts
-        mid = f_ts - 0.01
-        min = mid - 0.005
-        max = mid + 0.005
-
-        newPkt.ts = random.uniform(min, max)
-        #print(newPkt.printShow())
-        #print(firstPkt)
-        return newPkt
-
-    def createSYNACKPkt(self, firstPkt, synPkt):
-        print("create syn ack")
-        print("FIRST_PKT ACK_NUM: {}".format(firstPkt.ack_num))
-
-        print(firstPkt.printShow())
-        saPkt = copy.deepcopy(synPkt)
-        if firstPkt.ack_num != 0:
-            saPkt.seq_num = firstPkt.ack_num - 1            # TODO: this is wrong.  I'm getting -1
-        else:
-            saPkt.seq_num = 0
-        saPkt.ack_num = synPkt.seq_num + 1
-        saPkt.set_flags("SA")
-
-        saPkt.addSYNACKOptions()
-
-        #print(saPkt.printShow())
-
-        saPkt.frame_len -= 4
-        saPkt.ip_len = saPkt.frame_len
-
-        sTS = synPkt.ts
-        fTS = firstPkt.ts
-        ts = (fTS - sTS) / 2
-        mid = sTS + ts
-        quarter = (mid - ts) / 2
-        min = sTS + quarter
-        max = mid + quarter
-        saPkt.ts = random.uniform(min, max)
-        print(saPkt.printShow())
-
-        return saPkt
-
-        #saPkt.frame_len = saPkt.len()
-        # saPkt.ip_len = saPkt.frame_len
-        #
-        #
-        # print(saPkt.ip_len)
-
-
+# class TransSplitPkts(Transform):
+#     def __init__(self, flowObj, config):
+#         Transform.__init__(self, flowObj, config)
+#         print("Creating new TransSplitPkts Object")
+#
+#     def Process(self):
+#         print("Process TransSplitPkts")
+#         self.flow.calcPktLenStats()
+#         self.flow.calcPktIAStats()
+#         self.splitFlow()
+#
+#     def splitFlow(self):
+#         numFlows = self.config["numFlows"]
+#         pktsPerSplitFlow = ceil(self.flow.flowStats.flowLen / numFlows) #TODO: the floor() may cause rounding issues and result in lost pkts...
+#         print("pkts per splitflow: {}".format(pktsPerSplitFlow))
+#         flowKeys = []
+#         timestamps = []
+#         startPkts = []          # this holds indices of first pkt in each new splitFlow
+#         flowKeys.append(self.flow.flowKey)
+#         self.genNewFlowKeys(numFlows, flowKeys)
+#         print("New Flow Keys: {}".format(flowKeys))
+#
+#         print(self.flow.pkts)
+#         self.updatePktFlowKeys(flowKeys, pktsPerSplitFlow, timestamps, startPkts)
+#         print(self.flow.pkts)
+#         print(timestamps)
+#
+#         print(self.flow.biPkts)
+#         self.updateBiPktFlowKeys(flowKeys, timestamps)
+#         print(self.flow.biPkts)
+#
+#         print("start pkts: {}".format(startPkts))
+#         print(flowKeys)
+#
+#         if self.flow.flowKey[0] == 6: # TODO: will also need to check if the attack requires this (slowloris does not, patator does)
+#             print("TCP")
+#             for i in range(numFlows-1):
+#                 # Check cases where we split in the middle of a tcp 3way HS
+#                 sFlag = saFlag = aFlag = True
+#                 firstPkt = self.flow.pkts[startPkts[i]]
+#                 if firstPkt.tcp_flags == "S":   # don't create 3wHS since already exists
+#                     sFlag = saFlag = aFlag = False
+#                 elif firstPkt.tcp_flags == "SA": # We just need to create a SYN flag to match the SA
+#                     saFlag = aFlag = False
+#                 elif startPkts[i]-1 != 0 and firstPkt.tcp_flags == "A" and self.flow.pkts[startPkts[i] - 1].tcp_flags == "SA":   # ack is from end of 2wHS
+#                     aFlag = False # don't need to create ACK
+#
+#                 newSyn = newSynAck = None
+#                 print("index to insert: {}".format(startPkts[i]))
+#                 if sFlag:
+#                     newSyn = self.createSYNPkt(firstPkt)
+#                     self.flow.pkts.insert(startPkts[i], newSyn) # TODO: these are being inserted in the wrong spot
+#                 # if saFlag:
+#                 #     if newSyn == None:
+#                 #         print("ERROR.  SA created without an S!  Bad!")
+#                 #     newSynAck = self.createSYNACKPkt(firstPkt, newSyn)
+#                 #     self.flow.pkts.insert(startPkts[i] - 1, newSynAck)
+#                 # if aFlag:
+#                 #     print("Creating ACK for 3wHS")
+#
+#         # TODO:
+#         # 1) insert 3 way HS
+#         # 2) insert fin-fin/ack
+#         # 3) Delete original flow from table, load splitflows into flow table
+#
+#
+#
+#     def genNewFlowKeys(self, numFlows, flowKeys):
+#         newIPs = []
+#         newPorts = []
+#         proto = self.flow.flowKey[0]
+#         IPsrc = self.flow.flowKey[1]
+#         portSrc = self.flow.flowKey[2]
+#         IPdst = self.flow.flowKey[3]
+#         portDst = self.flow.flowKey[4]
+#
+#         IPsrc_split = IPsrc.split(".", 3)
+#         IPsrcSubnet0 = IPsrc_split[0]
+#         IPsrcSubnet8 = IPsrc_split[1]
+#         IPsrcSubnet16 = IPsrc_split[2]
+#         IPsrcSubnet24 = IPsrc_split[3]
+#
+#         for i in range(numFlows - 1):
+#             flag = True
+#             while flag:
+#                 IP24_prime = randint(0, 255)
+#                 if IP24_prime != int(IPsrcSubnet24) and IP24_prime not in newIPs:
+#                     flag = False
+#                     newIPs.append(IP24_prime)
+#                     #print(IP24_prime)
+#                 IPsrc_prime = IPsrcSubnet0 + "." + IPsrcSubnet8 + "." + IPsrcSubnet16 + "." + str(IP24_prime)
+#                 #print(IPsrc_prime)
+#             flag = True
+#             while flag:
+#                 portSrc_prime = randint(0, 65535)
+#                 if portSrc_prime != int(portSrc) and portSrc_prime not in newPorts:
+#                     flag = False
+#                     newPorts.append(portSrc_prime)
+#                     #print(portSrc_prime)
+#             flowKey_prime = (proto, IPsrc_prime, portSrc_prime, IPdst, portDst)
+#             #print(self.flow.flowKey)
+#             #print(flowKey_prime)
+#             flowKeys.append(flowKey_prime)
+#         return flowKeys
+#
+#     def updatePktFlowKeys(self, flowKeys, pktsPerSplitFlow, timestamps, startPkts):
+#         ts0 = self.flow.pkts[0].ts
+#         current = pktCounter = 0
+#         indexCounter = 0
+#         print("total pkts in flow: {}".format(len(self.flow.pkts)))
+#         for pkt in self.flow.pkts:
+#             # print(pkt.ts)
+#
+#             #pkt.flow_tuple = flowKeys[current]
+#             pkt.pktSet5Tuple(flowKeys[current])
+#             pktCounter += 1
+#             #print(pktCounter)
+#             if pktCounter == pktsPerSplitFlow or pkt == self.flow.pkts[len(self.flow.pkts)-1]:
+#                 ts1 = pkt.ts
+#                 pktCounter = 0
+#                 timestamps.append((ts0, ts1))
+#                 ts0 = ts1
+#                 current += 1
+#                 #print("#############################")
+#                 if pkt != self.flow.pkts[len(self.flow.pkts) - 1]:
+#                     startPkts.append(indexCounter + 1)
+#             indexCounter += 1
+#
+#     def updateBiPktFlowKeys(self, flowKeys, timestamps):
+#         splitFlowCounter = pktCounter = base = 0
+#         for ts in timestamps:
+#             for i in range(len(self.flow.biPkts) - 1):
+#                 if base + pktCounter == len(self.flow.biPkts):
+#                     break
+#                 if self.flow.biPkts[base + pktCounter].ts > ts[0] and self.flow.biPkts[base + pktCounter].ts <= ts[1]:
+#                     self.flow.biPkts[base + pktCounter].pktSet5Tuple((self.flow.biPkts[base + pktCounter].flow_tuple[0], self.flow.biPkts[base + pktCounter].flow_tuple[1], self.flow.biPkts[base + pktCounter].flow_tuple[2], flowKeys[splitFlowCounter][1], flowKeys[splitFlowCounter][2]))
+#                 elif self.flow.biPkts[base + pktCounter].ts < ts[0]:
+#                     pktCounter += 1
+#                     continue
+#                 else:
+#                     # case where biPkts.ts > timestamps[1]
+#                     base = base + pktCounter
+#                     pktCounter = 0
+#                     splitFlowCounter += 1
+#                     break
+#                 pktCounter += 1
+#
+#
+#     def genTCPHandshake(self):
+#         print("generating TCP Handshake")
+#
+#     def genFinConnection(self):
+#         print("generating FIN -> Fin/ACK close connection")
+#
+#     def createSYNPkt(self, firstPkt):
+#         print("createSYNPkt")
+#         newPkt = copy.deepcopy(firstPkt)
+#         length = None
+#         if newPkt.http_pload:
+#             length = len(newPkt.http_pload)
+#             newPkt.seq_num = firstPkt.seq_num - length
+#             newPkt.remove_payload()
+#         else: # S, ACK, SA
+#             print("NO PAYLOAD for createSYNPkt()")
+#
+#         #print(newPkt.printSummary())
+#         newPkt.set_flags("S")
+#         newPkt.ack_num = 0
+#         newPkt.addSYNOptions()
+#         #print(newPkt.printSummary())
+#         newPkt.frame_len = newPkt.len()
+#         newPkt.ip_len = newPkt.frame_len
+#         #print(newPkt.len())
+#
+#         f_ts = firstPkt.ts
+#         mid = f_ts - 0.01
+#         min = mid - 0.005
+#         max = mid + 0.005
+#
+#         newPkt.ts = random.uniform(min, max)
+#         #print(newPkt.printShow())
+#         #print(firstPkt)
+#         return newPkt
+#
+#     def createSYNACKPkt(self, firstPkt, synPkt):
+#         print("create syn ack")
+#         print("FIRST_PKT ACK_NUM: {}".format(firstPkt.ack_num))
+#
+#         print(firstPkt.printShow())
+#         saPkt = copy.deepcopy(synPkt)
+#         if firstPkt.ack_num != 0:
+#             saPkt.seq_num = firstPkt.ack_num - 1            # TODO: this is wrong.  I'm getting -1
+#         else:
+#             saPkt.seq_num = 0
+#         saPkt.ack_num = synPkt.seq_num + 1
+#         saPkt.set_flags("SA")
+#
+#         saPkt.addSYNACKOptions()
+#
+#         #print(saPkt.printShow())
+#
+#         saPkt.frame_len -= 4
+#         saPkt.ip_len = saPkt.frame_len
+#
+#         sTS = synPkt.ts
+#         fTS = firstPkt.ts
+#         ts = (fTS - sTS) / 2
+#         mid = sTS + ts
+#         quarter = (mid - ts) / 2
+#         min = sTS + quarter
+#         max = mid + quarter
+#         saPkt.ts = random.uniform(min, max)
+#         print(saPkt.printShow())
+#
+#         return saPkt
+#
+#         #saPkt.frame_len = saPkt.len()
+#         # saPkt.ip_len = saPkt.frame_len
+#         #
+#         #
+#         # print(saPkt.ip_len)
+#
+#
 
 
 

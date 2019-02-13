@@ -9,7 +9,9 @@ class Flow:
         self.pkts = []
         self.flowStats = FlowStats()
         self.flowKey = flow_tuple
-        self.biFlowKey = (flow_tuple[0], flow_tuple[3], flow_tuple[4], flow_tuple[1], flow_tuple[2])
+        self.biFlowKey = None
+        if flow_tuple[0] == 6:
+            self.biFlowKey = (flow_tuple[0], flow_tuple[3], flow_tuple[4], flow_tuple[1], flow_tuple[2])
         self.biPkts = None
         self.procFlag = None
         self.diffs = []
@@ -193,12 +195,16 @@ class FlowFilter:
         self.tuple_set = set(list) # convert dict of flows to set (aka left with just the dict keys)
 
     def needsTrans(self, pkt_5_tuple):
-        biTuple = (pkt_5_tuple[0], pkt_5_tuple[3], pkt_5_tuple[4], pkt_5_tuple[1], pkt_5_tuple[2])
+        #print(self.tuple_set)
+        #print(pkt_5_tuple)
+        biTuple = None
+        if pkt_5_tuple[0] == 6: # TCP.  need bituple
+            biTuple = (pkt_5_tuple[0], pkt_5_tuple[3], pkt_5_tuple[4], pkt_5_tuple[1], pkt_5_tuple[2])
         #pkt needs to be a TransPkt type
         if pkt_5_tuple in self.tuple_set:
             return "Trans"
             # add and transform flag = true
-        elif biTuple in self.tuple_set:
+        elif biTuple and biTuple in self.tuple_set:  # need this to ensure biflow is in flow table if flow needs transformation
             return "NoTrans"
         else:
             return False

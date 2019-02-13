@@ -1,4 +1,4 @@
-from TransformClasses.Transform import TransPktLens, TransIATimes, TransSplitPkts
+from TransformClasses.Transform import TransPktLens, TransIATimes, TransDistUDP
 
 
 class TransformationController:
@@ -18,13 +18,16 @@ class TransformationController:
         print(self.flow.flowStats)
 
     def buildTransformations(self):
-        # if "pktLens" in self.flowConfig:
-        #     self.transObjList.append(TransPktLens(self.flow, self.flowConfig))
-        # if "iaTimes" in self.flowConfig:
-        #     self.transObjList.append(TransIATimes(self.flow, self.flowConfig))
-        if "numFlows" in self.flowConfig and self.flowConfig["numFlows"] != 1:
-            self.transObjList.append(TransSplitPkts(self.flow, self.flowConfig))
-            self.splitFlowFlag = True
+        if self.flow.flowKey[0] == 6:
+            if "pktLens" in self.flowConfig:
+                self.transObjList.append(TransPktLens(self.flow, self.flowConfig))
+            if "iaTimes" in self.flowConfig:
+                self.transObjList.append(TransIATimes(self.flow, self.flowConfig))
+        elif self.flow.flowKey[0] == 17:
+            print("check to transform udp flow by splitting")
+            if "numFlows" in self.flowConfig and self.flowConfig["numFlows"] != 1:
+                self.transObjList.append(TransDistUDP(self.flow, self.flowConfig))
+            #     self.splitFlowFlag = True
         if "test" in self.flowConfig:
             self.transObjList.append("testObj")
 

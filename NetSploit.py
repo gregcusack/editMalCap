@@ -11,9 +11,10 @@ class NetSploit:
         self.config = config
 
     def loadFlowTable(self, pkt):
+        #print(pkt.flow_tuple)
         addToFT = self.filter.needsTrans(pkt.flow_tuple)
         if addToFT:
-            #print("Send packet for transformation")
+            # print("Send packet for transformation")
             self.flowTable.procPkt(pkt, addToFT)
         else:
             self.pktMerger.mergePkt(pkt)
@@ -21,7 +22,8 @@ class NetSploit:
     def ProcessFlows(self):
        for tuple,flow in self.flowTable.FT.items():
            if flow.procFlag:
-               flow.biPkts = self.flowTable.FT[flow.biFlowKey].pkts      # give flow access to opposite dir flow
+               if flow.flowKey[0] == 6:
+                   flow.biPkts = self.flowTable.FT[flow.biFlowKey].pkts      # give flow access to opposite dir flow
                #self.flowTable.FT[flow.flowKey].getDiffs()
                self.transformFlow(flow)
 

@@ -22,10 +22,14 @@ class Config:
         # convert JSON to python dictionary
         for k,v in jData["flowFeatures"].items():
             key = [x.strip() for x in k.split(',')]
+            # print(key)
             key[0] = int(key[0])
             key[2] = int(key[2])
             key[4] = int(key[4])
+            if key[0] == 17 and len(key) == 5: # need check in case dstPort was left off in config file already
+                key.pop(4) # get rid of dstPort
             key = tuple(key)
+            # print(key)
             self.flows[key] = v
 
         #print(self.flows[(6, '155.98.38.79', 80, '142.44.154.169', 38130)]["pktLens"])

@@ -5,6 +5,6 @@ __pycache__/
 .DS_Store
 .idea
 config.json
-config-backup.json
+*backup.json
 *.ipynb
 .ipynb_checkpoints/

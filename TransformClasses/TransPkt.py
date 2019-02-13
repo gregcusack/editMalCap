@@ -65,7 +65,12 @@ class TransPkt:
     # Getter: TCP Features
     @property
     def src_port(self):
-        return self.pkt[TCP].sport
+        if self.pkt[IP].proto == 6:
+            return self.pkt[TCP].sport
+        elif self.pkt[IP].proto == 17:
+            return self.pkt[UDP].sport
+        else:
+            print("ERROR: unknown pkt type")
     @property
     def dst_port(self):
         return self.pkt[TCP].dport
@@ -136,7 +141,13 @@ class TransPkt:
     # Setter: TCP Features
     @src_port.setter
     def src_port(self, sport):
-        self.pkt[TCP].sport = sport
+        if self.pkt[IP].proto == 6:
+            self.pkt[TCP].sport = sport
+        elif self.pkt[IP].proto == 17:
+            self.pkt[UDP].sport = sport
+        else:
+            print("ERROR: unknown pkt type")
+        # self.pkt[TCP].sport = sport
         self.update_5_tuple()
     @dst_port.setter
     def dst_port(self, dport):
@@ -205,14 +216,18 @@ class TransPkt:
 
     # Other Functions
     def update_5_tuple(self):
-        self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[TCP].sport, self.pkt[IP].dst, self.pkt[TCP].dport)
+        if self.pkt.proto == 6: #TCP
+            self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[TCP].sport, self.pkt[IP].dst, self.pkt[TCP].dport)
+        elif self.pkt.proto == 17: #UDP
+            self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[UDP].sport, self.pkt[IP].dst)
+        else:
+            print("Unknown pkt proto...ignoring")
 
-    def pktSet5Tuple(self, flowKey):
+    def pktSetUDPTuple(self, flowKey):
         self.ip_proto = flowKey[0]
         self.ip_src = flowKey[1]
         self.src_port = flowKey[2]
         self.ip_dst = flowKey[3]
-        self.dst_port = flowKey[4]
         self.update_5_tuple()
 
     def remove_payload(self):
