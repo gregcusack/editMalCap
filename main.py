@@ -23,10 +23,20 @@ def main(iname, oname):
     config = Config("config.json")
     NS = NetSploit(config)
 
-
+    counter = 0
+    droppedPkts = 0
     for pkt in pkts:
+
+        # print(pkt[IP].src)
         tpkt = TransPkt(pkt)
-        NS.loadFlowTable(tpkt)
+        if not tpkt.dropPkt:
+            counter += 1
+            NS.loadFlowTable(tpkt)
+            # print(tpkt.ip_src)
+        else:
+            counter += 1
+            droppedPkts += 1
+        print(counter, droppedPkts)#, tpkt.ip_src, tpkt.ip_proto)
 
     NS.ProcessFlows()
 

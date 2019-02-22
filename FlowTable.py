@@ -122,15 +122,25 @@ class FlowStats():
 
     def getMinMaxAvgLen(self, pktList):
         total = 0
-        self.minLen = self.maxLen = pktList[0].frame_len
+        self.minLen = self.maxLen = pktList[0].pload_len
         for pkt in pktList:
-            if pkt.frame_len > self.maxLen:
-                self.maxLen = pkt.frame_len
-            elif pkt.frame_len < self.minLen:
-                self.minLen = pkt.frame_len
-            total += pkt.frame_len
+            if pkt.pload_len > self.maxLen:
+                self.maxLen = pkt.pload_len
+            elif pkt.pload_len < self.minLen:
+                self.minLen = pkt.pload_len
+            total += pkt.pload_len
         self.avgLen = total / self.flowLen
         self.flowLenBytes = total
+        # total = 0
+        # self.minLen = self.maxLen = pktList[0].frame_len
+        # for pkt in pktList:
+        #     if pkt.frame_len > self.maxLen:
+        #         self.maxLen = pkt.frame_len
+        #     elif pkt.frame_len < self.minLen:
+        #         self.minLen = pkt.frame_len
+        #     total += pkt.frame_len
+        # self.avgLen = total / self.flowLen
+        # self.flowLenBytes = total
 
     def getStdLen(self, pktList):
         self.stdLen = stdev(pkt.frame_len for pkt in pktList)

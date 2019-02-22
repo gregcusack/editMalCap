@@ -14,11 +14,15 @@ class TCP_FLAGS(Enum):
 
 class TransPkt:
     def __init__(self, pkt):
-        if not isinstance(pkt, scapy.layers.l2.Ether):
-            print("ERROR: Attempting to initialize transPkt class with non-scapy packet")
-            exit()
+        if not isinstance(pkt, scapy.layers.l2.Ether) or TCP not in pkt:
+            # print(pkt)
+            self.dropPkt = 1
+            return
+            # print("ERROR: Attempting to initialize transPkt class with non-scapy packet")
+            # exit()
         self.pkt = pkt  # probaby don't want to do this
         self.update_5_tuple()
+        self.dropPkt = 0
 
     # Getter: General Pkt Features
     @property
@@ -95,6 +99,11 @@ class TransPkt:
             return self.pkt[Raw].load
         return None
 
+    @property
+    def pload_len(self):
+        if "Raw" in self.pkt:
+            return len(self.pkt[Raw])
+        return 0
 
     # Setter: General Packet Features
     @ts.setter

@@ -33,6 +33,9 @@ class TransPktLens(Transform):
     def Process(self):
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
+        print("Transforming pkt lengths on these pkts: {}".format(self.flow))
+        print("pre len trans: {}".format(self.flow.flowStats))
+
         #print(self.config)
         #print(self.flow.flowStats)
         #self.testPktSplit()
@@ -42,6 +45,8 @@ class TransPktLens(Transform):
             self.mergeLooper()
         elif self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
             self.splitLooper()
+
+        print("post len trans: {}".format(self.flow.flowStats))
 
     def mergeLooper(self):
         i = totalLoops = 0
@@ -233,6 +238,9 @@ class TransIATimes(Transform):
                     bis.append(j)
                     j += 1
                     k += 1
+                print(count)
+                # if count == 0:
+                #     count == 1
                 step = (self.flow.pkts[i].ts - self.flow.pkts[i-1].ts) / count
                 #print(count)
                 m = 0
