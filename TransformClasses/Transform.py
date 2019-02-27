@@ -183,7 +183,9 @@ class TransIATimes(Transform):
         # check if there are pkts going in opposite direction
         if self.biFlowFlag:
             self.flow.getDiffs()
+            print("\nDone getting diffs")
             self.avgStdIATimes()
+            print("Done updating iatimes")
             self.updateBiTS()
             self.flow.getDiffs()                    # once it works I think you can delete this
         else:
@@ -220,7 +222,7 @@ class TransIATimes(Transform):
             prev = self.flow.pkts[i].ts
             i += 1
 
-        # print("pkt 0 time: {}".format(self.flow.pkts[1].ts))
+        print("pkts 0,1: {}, {}".format(self.flow.pkts[0].ts, self.flow.pkts[1].ts))
 
     def updateBiTS(self):
         i = j = k = 0
@@ -243,12 +245,21 @@ class TransIATimes(Transform):
             exit(-1)
         k += 1
 
+        print("i: {}, j: {}, k: {}".format(i,j,k))
+
         while k != (len(self.flow.diffs) - 1):
         #for dir in range(1,len(self.flow.diffs)):
+            print("sup")
+            print(self.flow.diffs)
+            print(self.flow.diffs[k][0])
+            print("ts diff: {}".format(self.flow.pkts[1].ts - self.flow.pkts[0].ts))
             if self.flow.diffs[k][0] == "B":
                 count = 0
                 bis = []
-                while self.flow.diffs[k][0] == "B":
+                while k < len(self.flow.diffs) and self.flow.diffs[k][0] == "B":
+                    print("k: {}".format(k))
+                    # print(self.flow.)
+                    print("b looping")
                     count += 1
                     bis.append(j)
                     j += 1
@@ -256,7 +267,12 @@ class TransIATimes(Transform):
                 print(count)
                 # if count == 0:
                 #     count == 1
+                print(bis)
+                print("i: {}".format(i))
+                print("pkts: {}".format(self.flow.pkts))
+                # TODO: if B is last pkt, then no step needed.  take all b packets and add 
                 step = (self.flow.pkts[i].ts - self.flow.pkts[i-1].ts) / count
+                print("step: {}".format(step))
                 #print(count)
                 m = 0
                 for n in bis:
@@ -265,7 +281,6 @@ class TransIATimes(Transform):
                     m += 1
             elif self.flow.diffs[k][0] == "F":
                 prev_ts = self.flow.pkts[i].ts
-                i += 1
                 k += 1
             else:
                 prev_ts = self.flow.pkts[i].ts
