@@ -26,8 +26,8 @@ class Config:
             key[0] = int(key[0])
             key[2] = int(key[2])
             key[4] = int(key[4])
-            if key[0] == 17 and len(key) == 5: # need check in case dstPort was left off in config file already
-                key.pop(4) # get rid of dstPort
+            # if key[0] == 17 and len(key) == 5: # need check in case dstPort was left off in config file already
+            #     key.pop(4) # get rid of dstPort
             key = tuple(key)
             # print(key)
             self.flows[key] = v

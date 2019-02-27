@@ -33,17 +33,17 @@ def main(iname, oname):
             counter += 1
             NS.loadFlowTable(tpkt)
             # print(tpkt.ip_src)
-        else:
+        else: # TODO: need to write non-tcp/udp packets to pcap, can't just drop them...
             counter += 1
             droppedPkts += 1
-        print(counter, droppedPkts)#, tpkt.ip_src, tpkt.ip_proto)
+        # print(counter, droppedPkts)#, tpkt.ip_src, tpkt.ip_proto)
 
     NS.ProcessFlows()
 
     print(NS.pktMerger.inQueue)
     #TestNetSploit(merger=NS.pktMerger)
 
-    # TODO: uncomment.  this writes to pcap
+    # Write to PCAP
     out_pcap = Path(oname)
     if out_pcap.is_file():
         os.remove(oname)

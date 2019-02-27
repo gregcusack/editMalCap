@@ -12,6 +12,11 @@ class Flow:
         self.biFlowKey = None
         if flow_tuple[0] == 6:
             self.biFlowKey = (flow_tuple[0], flow_tuple[3], flow_tuple[4], flow_tuple[1], flow_tuple[2])
+        elif flow_tuple[0] == 17:
+            self.biFlowKey = (flow_tuple[0], flow_tuple[3], flow_tuple[4], flow_tuple[1], flow_tuple[2]) # biflow: no dstPort being set as srcPort!
+        else:
+            print("Bad flow protocol...exiting")
+            exit(-1)
         self.biPkts = None
         self.procFlag = None
         self.diffs = []
@@ -176,7 +181,10 @@ class FlowStats():
         self.avgIA = total / (self.flowLen - 1)
 
     def getStdIA(self, pktList):
-        self.stdIA = stdev([j.ts - i.ts for i,j in zip(pktList[:-1], pktList[1:])])
+        if self.flowLen <= 2:
+            self.stdIA = 0
+        else:
+            self.stdIA = stdev([j.ts - i.ts for i,j in zip(pktList[:-1], pktList[1:])])
 
 
 class FlowTable:
@@ -189,29 +197,44 @@ class FlowTable:
         self.addFlow(pkt, transFlow)
 
     def addFlow(self, pkt, transFlow):
-        if pkt.flow_tuple not in self.FT:
-            self.FT[pkt.flow_tuple] = Flow(pkt.flow_tuple)
+        if pkt.flow_tuple[0] == 6:
+            flow_tuple = pkt.flow_tuple
+        elif pkt.flow_tuple[0] == 17:
+            flow_tuple = pkt.flow_tuple[:-1]
+        else:
+            print("unknown proto...exiting")
+            exit(-1)
+
+        if flow_tuple not in self.FT:
+            self.FT[flow_tuple] = Flow(pkt.flow_tuple)
             if transFlow == "Trans":
-                self.FT[pkt.flow_tuple].procFlag = True
+                self.FT[flow_tuple].procFlag = True
             elif transFlow == "NoTrans":
-                self.FT[pkt.flow_tuple].procFlag = False
+                self.FT[flow_tuple].procFlag = False
             else:
                 print("ERROR: Invalid string")
                 exit(-1)
-        self.FT[pkt.flow_tuple].addPkt(pkt)
+
+        self.FT[flow_tuple].addPkt(pkt)
 
 class FlowFilter:
     def __init__(self, list): #TODO: this list needs to be the global config_file
         self.tuple_set = set(list) # convert dict of flows to set (aka left with just the dict keys)
 
-    def needsTrans(self, pkt_5_tuple):
+    def needsTrans(self, pkt_tuple):
         #print(self.tuple_set)
         #print(pkt_5_tuple)
         biTuple = None
-        if pkt_5_tuple[0] == 6: # TCP.  need bituple
-            biTuple = (pkt_5_tuple[0], pkt_5_tuple[3], pkt_5_tuple[4], pkt_5_tuple[1], pkt_5_tuple[2])
+        if pkt_tuple[0] == 6: # TCP.  need bituple
+            biTuple = (pkt_tuple[0], pkt_tuple[3], pkt_tuple[4], pkt_tuple[1], pkt_tuple[2])
+        elif pkt_tuple[0] == 17:
+            biTuple = (pkt_tuple[0], pkt_tuple[3], pkt_tuple[1], pkt_tuple[2])
+            # print(pkt_tuple)
+            # print(biTuple)
+            # print("----")
         #pkt needs to be a TransPkt type
-        if pkt_5_tuple in self.tuple_set:
+        if pkt_tuple in self.tuple_set:
+            print(pkt_tuple)
             return "Trans"
             # add and transform flag = true
         elif biTuple and biTuple in self.tuple_set:  # need this to ensure biflow is in flow table if flow needs transformation

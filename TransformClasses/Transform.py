@@ -28,13 +28,16 @@ class Transform:
 class TransPktLens(Transform):
     def __init__(self, flowObj, config):
         Transform.__init__(self, flowObj, config)
-        print("Creating new TransPktLens Object")
+        # print("Creating new TransPktLens Object")
 
     def Process(self):
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
-        print("Transforming pkt lengths on these pkts: {}".format(self.flow))
-        print("pre len trans: {}".format(self.flow.flowStats))
+        if self.flow.flowStats.flowLenBytes == 0:
+            print("all ptks have payload == 0.  returning...")
+            return
+        # print("Transforming pkt lengths on these pkts: {}".format(self.flow))
+        # print("pre len trans: {}".format(self.flow.flowStats))
 
         #print(self.config)
         #print(self.flow.flowStats)
@@ -166,8 +169,9 @@ class TransPktLens(Transform):
         # print("Transforming Pkt Lengths on these pkts: {}".format(self.flow))
 
 class TransIATimes(Transform):
-    def __init__(self, flowObj, config):
+    def __init__(self, flowObj, config, biFlowFlag):
         Transform.__init__(self, flowObj, config)
+        self.biFlowFlag = biFlowFlag
         print("Creating new TransIATimes Object")
 
     def Process(self):
@@ -176,34 +180,40 @@ class TransIATimes(Transform):
         #TODO: make sure lenStats are updated before this section!
         print("Transforming IA Times on these pkts: {}".format(self.flow))
 
-        # TODO: Uncomment.  This does IA time adjustment!
-        self.flow.getDiffs()
-        self.avgStdIATimes()
-        self.updateBiTS()
-        self.flow.getDiffs()                    # once it works I think you can delete this
+        # check if there are pkts going in opposite direction
+        if self.biFlowFlag:
+            self.flow.getDiffs()
+            self.avgStdIATimes()
+            self.updateBiTS()
+            self.flow.getDiffs()                    # once it works I think you can delete this
+        else:
+            self.avgStdIATimes()
 
         # self.flow.calcPktLenStats()
-        # self.flow.calcPktIAStats()
+        self.flow.calcPktIAStats()
         #print(self.flow.flowStats)
         #self.updateBiTS()
 
     def avgStdIATimes(self):
         targ_avg = self.config["iaTimes"]["avg"]
         targ_std = self.config["iaTimes"]["stddev"]
+        if "max" in self.config["iaTimes"]:
+            targ_max = self.config["iaTimes"]["max"]
+        else:
+            targ_max = self.flow.flowStats.maxIA
 
-        t0 = self.flow.pkts[0].ts
-        #self.flow.pkts[self.flow.flowStats.flowLen - 1].ts = targ_avg * (self.flow.flowStats.flowLen - 1) + t0 # set last pkt ts
-        # tn = self.flow.pkts[self.flow.flowStats.flowLen - 1].ts
+        if "min" in self.config["iaTimes"]:
+            targ_min = self.config["iaTimes"]["min"]
+        else:
+            targ_min = 0
 
-        X = get_truncnorm(targ_avg, targ_std, 0, self.flow.flowStats.maxIA)  #tn-t0)
+        X = get_truncnorm(targ_avg, targ_std, targ_min, targ_max)  #lower bound "min" in config, upper bound "max" if exists, else maxIA
         X = X.rvs(self.flow.flowStats.flowLen - 1)  # -1 since already have t0 in place
-        #X.sort()
 
         # Best effort reconstruction
         prev = self.flow.pkts[0].ts
         for i in range(1, self.flow.flowStats.flowLen):
             self.flow.pkts[i].ts = prev + X[i-1]
-            # print(self.flow.pkts[i].ts)
             prev = self.flow.pkts[i].ts
             i += 1
 

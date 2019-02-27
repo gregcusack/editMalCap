@@ -14,8 +14,7 @@ class TCP_FLAGS(Enum):
 
 class TransPkt:
     def __init__(self, pkt):
-        if not isinstance(pkt, scapy.layers.l2.Ether) or TCP not in pkt:
-            # print(pkt)
+        if not isinstance(pkt, scapy.layers.l2.Ether):
             self.dropPkt = 1
             return
             # print("ERROR: Attempting to initialize transPkt class with non-scapy packet")
@@ -228,7 +227,7 @@ class TransPkt:
         if self.pkt.proto == 6: #TCP
             self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[TCP].sport, self.pkt[IP].dst, self.pkt[TCP].dport)
         elif self.pkt.proto == 17: #UDP
-            self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[UDP].sport, self.pkt[IP].dst)
+            self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[UDP].sport, self.pkt[IP].dst, self.pkt[UDP].dport)
         else:
             print("Unknown pkt proto...ignoring")
 

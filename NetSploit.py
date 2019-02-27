@@ -11,7 +11,7 @@ class NetSploit:
         self.config = config
 
     def loadFlowTable(self, pkt):
-        #print(pkt.flow_tuple)
+        # print(pkt.flow_tuple)
         addToFT = self.filter.needsTrans(pkt.flow_tuple)
         if addToFT:
             # print("Send packet for transformation")
@@ -21,30 +21,27 @@ class NetSploit:
 
     def ProcessFlows(self):
        for tuple,flow in self.flowTable.FT.items():
+           biflow = False # need to check if biflow exists
            if flow.procFlag:
-               if flow.flowKey[0] == 6:
+               if flow.biFlowKey in self.flowTable.FT:
                    flow.biPkts = self.flowTable.FT[flow.biFlowKey].pkts      # give flow access to opposite dir flow
+                   biflow = True
+               else:
+                   print("NO BIFLOW!")
                #self.flowTable.FT[flow.flowKey].getDiffs()
-               self.transformFlow(flow)
+               self.transformFlow(flow, biflow)
 
-    def transformFlow(self, flow):
+    def transformFlow(self, flow, biflow):
 
-        tf = TC(self.config.flows[flow.flowKey], flow) #(config.5_tuple, Flow)
+        tf = TC(self.config.flows[flow.flowKey], flow, biflow) #(config.5_tuple, Flow)
         print(self.config.flows[flow.flowKey])
         tf.buildTransformations()
         tf.runTransformations()
-        # TODO: decide if this needs to be implemented...
-        # if tf.splitFlowFlag:
-        #     self.redistributeFlowTable(flow)
-        #TODO: Transform Flow!  Call: TransPktLens.py
-        #TODO: Transform Flow!  Call: TransIATimes.py
-        #TODO: Fix Timestamps!  Call: FixTimestamps.py
-
         self.mergeModifiedPkts()
 
     def mergeModifiedPkts(self):
         for tuple,flow in self.flowTable.FT.items():
-            print(flow)
+            # print(flow)
             for pkt in flow.pkts:
                 #print(pkt)
                 # if pkt.ip_src == "172.217.2.4" and pkt.ip_dst == "10.201.73.154" and pkt.src_port == 443 and pkt.dst_port == 60043:
