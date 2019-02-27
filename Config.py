@@ -29,7 +29,13 @@ class Config:
             # if key[0] == 17 and len(key) == 5: # need check in case dstPort was left off in config file already
             #     key.pop(4) # get rid of dstPort
             key = tuple(key)
-            # print(key)
-            self.flows[key] = v
+            if key[0] == 6:
+                self.flows[key] = v
+            elif key[0] == 17:
+                self.flows[key[:-1]] = v
+            else:
+                print("Error: unexpected proto #...exiting...")
+                exit(-1)
+                # print(key)
 
         #print(self.flows[(6, '155.98.38.79', 80, '142.44.154.169', 38130)]["pktLens"])

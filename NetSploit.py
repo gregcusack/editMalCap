@@ -23,18 +23,27 @@ class NetSploit:
        for tuple,flow in self.flowTable.FT.items():
            biflow = False # need to check if biflow exists
            if flow.procFlag:
-               if flow.biFlowKey in self.flowTable.FT:
-                   flow.biPkts = self.flowTable.FT[flow.biFlowKey].pkts      # give flow access to opposite dir flow
+               if flow.flowKey[0] == 6:
+                   biflowkey = flow.biFlowKey
+               else:
+                   biflowkey = flow.biFlowKey[:-1]      # UDP
+
+               if biflowkey in self.flowTable.FT:
+                   flow.biPkts = self.flowTable.FT[biflowkey].pkts      # give flow access to opposite dir flow
                    biflow = True
                else:
                    print("NO BIFLOW!")
                #self.flowTable.FT[flow.flowKey].getDiffs()
+               # print("FLOW: {}".format(flow))
                self.transformFlow(flow, biflow)
 
     def transformFlow(self, flow, biflow):
-
-        tf = TC(self.config.flows[flow.flowKey], flow, biflow) #(config.5_tuple, Flow)
-        print(self.config.flows[flow.flowKey])
+        if flow.flowKey[0] == 6:
+            config = self.config.flows[flow.flowKey]
+        else:
+            config = self.config.flows[flow.flowKey[:-1]]
+        tf = TC(config, flow, biflow) #(config.5_tuple, Flow)
+        print(config)
         tf.buildTransformations()
         tf.runTransformations()
         self.mergeModifiedPkts()

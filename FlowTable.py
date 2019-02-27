@@ -162,6 +162,14 @@ class FlowStats():
         self.flowLenBytes = 0
 
     def getMinMaxAvgIA(self, pktList):
+        if self.flowLen == 1:
+            self.minIA = self.maxIA = self.avgIA = self.stdIA = 0
+            return
+        if self.flowLen == 2:
+            self.minIA = self.maxIA = self.avgIA = pktList[1].ts - pktList[0].ts
+            self.stdIA = 0
+            return
+
         total = 0
         iterable = iter(pktList)
         prev = next(iterable)
@@ -191,7 +199,7 @@ class FlowTable:
     def __init__(self):               # list is our config list
         # have tables as all caps (and acronyms)
         self.FT = {}
-        self.filter = filter
+        # self.filter = filter
 
     def procPkt(self, pkt, transFlow):
         self.addFlow(pkt, transFlow)
@@ -205,11 +213,14 @@ class FlowTable:
             print("unknown proto...exiting")
             exit(-1)
 
+        # print("FLOW TUPLE: {}".format(flow_tuple))
+
         if flow_tuple not in self.FT:
             self.FT[flow_tuple] = Flow(pkt.flow_tuple)
             if transFlow == "Trans":
                 self.FT[flow_tuple].procFlag = True
             elif transFlow == "NoTrans":
+                # print('no trans')
                 self.FT[flow_tuple].procFlag = False
             else:
                 print("ERROR: Invalid string")
@@ -228,16 +239,18 @@ class FlowFilter:
         if pkt_tuple[0] == 6: # TCP.  need bituple
             biTuple = (pkt_tuple[0], pkt_tuple[3], pkt_tuple[4], pkt_tuple[1], pkt_tuple[2])
         elif pkt_tuple[0] == 17:
-            biTuple = (pkt_tuple[0], pkt_tuple[3], pkt_tuple[1], pkt_tuple[2])
+            biTuple = (pkt_tuple[0], pkt_tuple[3], pkt_tuple[4], pkt_tuple[1])
+            pkt_tuple = pkt_tuple[:-1]
             # print(pkt_tuple)
             # print(biTuple)
             # print("----")
         #pkt needs to be a TransPkt type
         if pkt_tuple in self.tuple_set:
-            print(pkt_tuple)
+            # print(pkt_tuple)
             return "Trans"
             # add and transform flag = true
         elif biTuple and biTuple in self.tuple_set:  # need this to ensure biflow is in flow table if flow needs transformation
+            # print("bituple!")
             return "NoTrans"
         else:
             return False

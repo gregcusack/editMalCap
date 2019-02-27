@@ -175,8 +175,8 @@ class TransIATimes(Transform):
         print("Creating new TransIATimes Object")
 
     def Process(self):
-        self.flow.calcPktLenStats()
-        self.flow.calcPktIAStats()
+        # self.flow.calcPktLenStats()
+        # self.flow.calcPktIAStats()
         #TODO: make sure lenStats are updated before this section!
         print("Transforming IA Times on these pkts: {}".format(self.flow))
 
@@ -202,10 +202,12 @@ class TransIATimes(Transform):
         else:
             targ_max = self.flow.flowStats.maxIA
 
-        if "min" in self.config["iaTimes"]:
-            targ_min = self.config["iaTimes"]["min"]
-        else:
-            targ_min = 0
+        # if "min" in self.config["iaTimes"]:
+        #     targ_min = self.config["iaTimes"]["min"]
+        # else:
+        #     targ_min = 0
+
+        targ_min = 0
 
         X = get_truncnorm(targ_avg, targ_std, targ_min, targ_max)  #lower bound "min" in config, upper bound "max" if exists, else maxIA
         X = X.rvs(self.flow.flowStats.flowLen - 1)  # -1 since already have t0 in place
@@ -213,9 +215,12 @@ class TransIATimes(Transform):
         # Best effort reconstruction
         prev = self.flow.pkts[0].ts
         for i in range(1, self.flow.flowStats.flowLen):
+            # print(X[i-1])
             self.flow.pkts[i].ts = prev + X[i-1]
             prev = self.flow.pkts[i].ts
             i += 1
+
+        # print("pkt 0 time: {}".format(self.flow.pkts[1].ts))
 
     def updateBiTS(self):
         i = j = k = 0
