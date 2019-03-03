@@ -247,8 +247,11 @@ class TransIATimes(Transform):
 
         print("i: {}, j: {}, k: {}".format(i,j,k))
 
-        while k != (len(self.flow.diffs) - 1):
+        lastFDiffIndex = None
+
+        while k < len(self.flow.diffs):
         #for dir in range(1,len(self.flow.diffs)):
+            print("k: {}".format(k))
             print("sup")
             print(self.flow.diffs)
             print(self.flow.diffs[k][0])
@@ -270,18 +273,38 @@ class TransIATimes(Transform):
                 print(bis)
                 print("i: {}".format(i))
                 print("pkts: {}".format(self.flow.pkts))
-                # TODO: if B is last pkt, then no step needed.  take all b packets and add 
-                step = (self.flow.pkts[i].ts - self.flow.pkts[i-1].ts) / count
-                print("step: {}".format(step))
-                #print(count)
-                m = 0
-                for n in bis:
-                    #print("n: {}".format(n))
-                    self.flow.biPkts[n].ts = self.flow.pkts[i-1].ts + step * m + step / 2
-                    m += 1
+                # TODO: if B is last pkt, then no step needed.  take all b packets and add
+                if k != len(self.flow.diffs):   # at least one more F in biflow
+                    step = (self.flow.pkts[i].ts - self.flow.pkts[i-1].ts) / count
+                    print("step: {}".format(step))
+                    #print(count)
+                    m = 0
+                    for n in bis:
+                        #print("n: {}".format(n))
+                        self.flow.biPkts[n].ts = self.flow.pkts[i-1].ts + step * m + step / 2
+                        m += 1
+                else: # signifies B is last pkt
+                    if self.flow.pkts[i - 1].ts > self.flow.biPkts[bis[0]].ts:      # F pkt moved ahead of B after IAT trans
+                        # TODO: move all bipkts whose index is in bis[] on other side of last F
+                        # B0.ts = last_F.ts + (B0 - last_F.ts)
+                        # B0.ts - last_F.ts is stored in diffs at
+                        print("need to move B pkts on other side of the last F")
+                        p_ts = self.flow.pkts[i - 1].ts
+                        for n in bis:
+                            print("lastfDiffIndex: {}".format(lastFDiffIndex))
+                            self.flow.biPkts[n].ts = p_ts + self.flow.diffs[lastFDiffIndex][1]
+                            p_ts = self.flow.biPkts[n].ts
+                            lastFDiffIndex += 1
+                    else:
+                        print("F didn't move to other side of B, so think we're good???")
+                print("len bis[]: {}".format(len(bis)))
+
             elif self.flow.diffs[k][0] == "F":
                 prev_ts = self.flow.pkts[i].ts
+                i += 1
                 k += 1
+                if i >= len(self.flow.pkts):
+                    lastFDiffIndex = k
             else:
                 prev_ts = self.flow.pkts[i].ts
                 print("F AND B AT SAME TIME!")
