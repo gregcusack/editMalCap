@@ -39,7 +39,7 @@ class Flow:
         self.flowStats.updateIAStats(self.pkts)
 
     def getDiffs(self):
-        print("getting DIFFS!")
+        # print("getting DIFFS!")
         self.diffs = []
         i = j = k = 0
         if self.pkts[0] < self.biPkts[0]:
@@ -61,7 +61,7 @@ class Flow:
         f_len, b_len, total_bi_len = self.getLenFlowStats()
         #print(length)
         counter = 0
-        print("f_len: {}, b_len: {}, total_bi_len: {}".format(f_len, b_len, total_bi_len))
+        # print("f_len: {}, b_len: {}, total_bi_len: {}".format(f_len, b_len, total_bi_len))
         print(self.diffs[0][0], end=' ')
         for n in range(1, total_bi_len):
             if i != f_len and j != b_len:
@@ -84,6 +84,7 @@ class Flow:
                 i += 1
 
             print(self.diffs[-1][0], end=" ")
+        print("")
         #print(self.diffs)
 
     def updateDiffs(self, aList: list, dir: str, dList: list, index: int, prev_ts):

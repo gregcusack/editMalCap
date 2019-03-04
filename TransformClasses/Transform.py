@@ -53,23 +53,33 @@ class TransPktLens(Transform):
 
     def mergeLooper(self):
         i = totalLoops = 0
+        MaxPktLen = self.config["pktLens"]["max"]
         # MERGE PACKETS
         while self.flow.flowStats.avgLen < self.config["pktLens"]["avg"]:
             if i + 1 == self.flow.flowStats.flowLen:
                 if totalLoops == MAX_PKT_LOOPS:
                     print("Reached max pkt loops, can't merge more pkts.  avg still < target avg")
-                    print("i: {}".format(i))
+                    # print("i: {}".format(i))
                     break
                 i = 0
                 totalLoops += 1
                 continue
-            if self.flow.pkts[i].frame_len + self.flow.pkts[i + 1].frame_len >= MAX_FRAME_SIZE:
-                i += 1
-            else:
-                if self.mergePkt(self.flow.pkts[i], self.flow.pkts[i + 1]):
+            if self.flow.pkts[i].pload_len and self.flow.pkts[i + 1].pload_len:
+                if self.flow.pkts[i].pload_len + self.flow.pkts[i + 1].pload_len >= MaxPktLen:
+                    i += 1
+                elif self.mergePkt(self.flow.pkts[i], self.flow.pkts[i + 1]):
                     self.flow.calcPktLenStats()
                 else:
                     i += 1
+            else:
+                i += 1
+            # if self.flow.pkts[i].frame_len + self.flow.pkts[i + 1].frame_len >= MaxPktLen:
+            #     i += 1
+            # else:
+            #     if self.mergePkt(self.flow.pkts[i], self.flow.pkts[i + 1]):
+            #         self.flow.calcPktLenStats()
+            #     else:
+            #         i += 1
 
     def splitLooper(self):
         i = totalLoops = 0
@@ -78,7 +88,7 @@ class TransPktLens(Transform):
             if i == self.flow.flowStats.flowLen:
                 if totalLoops == MAX_PKT_LOOPS:
                     print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
-                    print("i: {}".format(i))
+                    # print("i: {}".format(i))
                     break
                 i = 0
                 totalLoops += 1
@@ -183,9 +193,9 @@ class TransIATimes(Transform):
         # check if there are pkts going in opposite direction
         if self.biFlowFlag:
             self.flow.getDiffs()
-            print("\nDone getting diffs")
+            # print("\nDone getting diffs")
             self.avgStdIATimes()
-            print("Done updating iatimes")
+            # print("Done updating iatimes")
             self.updateBiTS()
             self.flow.getDiffs()                    # once it works I think you can delete this
         else:
@@ -222,7 +232,7 @@ class TransIATimes(Transform):
             prev = self.flow.pkts[i].ts
             i += 1
 
-        print("pkts 0,1: {}, {}".format(self.flow.pkts[0].ts, self.flow.pkts[1].ts))
+        # print("pkts 0,1: {}, {}".format(self.flow.pkts[0].ts, self.flow.pkts[1].ts))
 
     def updateBiTS(self):
         i = j = k = 0
@@ -245,38 +255,38 @@ class TransIATimes(Transform):
             exit(-1)
         k += 1
 
-        print("i: {}, j: {}, k: {}".format(i,j,k))
+        # print("i: {}, j: {}, k: {}".format(i,j,k))
 
         lastFDiffIndex = None
 
         while k < len(self.flow.diffs):
         #for dir in range(1,len(self.flow.diffs)):
-            print("k: {}".format(k))
-            print("sup")
-            print(self.flow.diffs)
-            print(self.flow.diffs[k][0])
-            print("ts diff: {}".format(self.flow.pkts[1].ts - self.flow.pkts[0].ts))
+            # print("k: {}".format(k))
+            # print("sup")
+            # print(self.flow.diffs)
+            # print(self.flow.diffs[k][0])
+            # print("ts diff: {}".format(self.flow.pkts[1].ts - self.flow.pkts[0].ts))
             if self.flow.diffs[k][0] == "B":
                 count = 0
                 bis = []
                 while k < len(self.flow.diffs) and self.flow.diffs[k][0] == "B":
-                    print("k: {}".format(k))
+                    # print("k: {}".format(k))
                     # print(self.flow.)
-                    print("b looping")
+                    # print("b looping")
                     count += 1
                     bis.append(j)
                     j += 1
                     k += 1
-                print(count)
+                # print(count)
                 # if count == 0:
                 #     count == 1
-                print(bis)
-                print("i: {}".format(i))
-                print("pkts: {}".format(self.flow.pkts))
+                # print(bis)
+                # print("i: {}".format(i))
+                # print("pkts: {}".format(self.flow.pkts))
                 # TODO: if B is last pkt, then no step needed.  take all b packets and add
                 if k != len(self.flow.diffs):   # at least one more F in biflow
                     step = (self.flow.pkts[i].ts - self.flow.pkts[i-1].ts) / count
-                    print("step: {}".format(step))
+                    # print("step: {}".format(step))
                     #print(count)
                     m = 0
                     for n in bis:
@@ -288,16 +298,16 @@ class TransIATimes(Transform):
                         # TODO: move all bipkts whose index is in bis[] on other side of last F
                         # B0.ts = last_F.ts + (B0 - last_F.ts)
                         # B0.ts - last_F.ts is stored in diffs at
-                        print("need to move B pkts on other side of the last F")
+                        # print("need to move B pkts on other side of the last F")
                         p_ts = self.flow.pkts[i - 1].ts
                         for n in bis:
-                            print("lastfDiffIndex: {}".format(lastFDiffIndex))
+                            # print("lastfDiffIndex: {}".format(lastFDiffIndex))
                             self.flow.biPkts[n].ts = p_ts + self.flow.diffs[lastFDiffIndex][1]
                             p_ts = self.flow.biPkts[n].ts
                             lastFDiffIndex += 1
                     else:
                         print("F didn't move to other side of B, so think we're good???")
-                print("len bis[]: {}".format(len(bis)))
+                # print("len bis[]: {}".format(len(bis)))
 
             elif self.flow.diffs[k][0] == "F":
                 prev_ts = self.flow.pkts[i].ts
@@ -373,7 +383,7 @@ class TransDistUDP(Transform):
     def updatePktFlowKeys(self, flowKeys, pktsPerSplitFlow):
         current = pktCounter = 0
         indexCounter = 0
-        print("total pkts in flow: {}".format(len(self.flow.pkts)))
+        # print("total pkts in flow: {}".format(len(self.flow.pkts)))
         for pkt in self.flow.pkts:
             pkt.pktSetUDPTuple(flowKeys[current])
             pktCounter += 1
