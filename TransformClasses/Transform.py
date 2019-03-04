@@ -110,9 +110,9 @@ class TransPktLens(Transform):
 
             self.flow.pkts.remove(npkt)
             return True
-            #self.pktsToRemove.append(npkt)
+            # self.pktsToRemove.append(npkt)
         else:
-            #print("CAN'T MERGE PACKETS")
+            # print("CAN'T MERGE PACKETS")
             return False
 
     def splitPkt(self, pkt, index):
@@ -151,7 +151,9 @@ class TransPktLens(Transform):
             if not biPkt.http_pload:
                 print("ERROR: ACKing an ACK.  uh oh!  biPkt should have a payload!")
                 exit(-1)
-            pkt.ack_num -= len(biPkt.http_pload) // 2
+            pkt.ackSplitCount += 1
+            dupPkt.ackSplitCount += 1
+            pkt.ack_num -= len(biPkt.http_pload) // pkt.ackSplitCount + 1 # add plus one to avoid duplicate ack 
 
     # Find the closest biPkt to dupPkt that has payload w/o storing a bunch of pkts
     # TODO (low): optimize to do O(log n) search since biPkt list is sorted

@@ -22,6 +22,7 @@ class TransPkt:
         self.pkt = pkt  # probaby don't want to do this
         self.update_5_tuple()
         self.dropPkt = 0
+        self.ackSplitCount = 0
 
     # Getter: General Pkt Features
     @property
