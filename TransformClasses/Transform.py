@@ -141,7 +141,7 @@ class TransPktLens(Transform):
         pkt.http_pload = pkt.http_pload[:len_payload // 2]
 
         pkt.ip_len = ip_hdr_len + len(pkt.http_pload)
-        dupPkt.ip_len = ip_hdr_len + len(pkt.http_pload)
+        dupPkt.ip_len = ip_hdr_len + len(dupPkt.http_pload)
 
         dupPkt.seq_num += len(pkt.http_pload)
 
