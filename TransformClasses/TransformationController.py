@@ -23,7 +23,7 @@ class TransformationController:
 
 
     def buildTransformations(self):
-        if self.flow.flowKey[0] == 6:
+        if self.flow.flowKey[0] == 6 and len(self.flow.pkts) > 1:
             if "pktLens" in self.flowConfig:
                 self.transObjList.append(TransPktLens(self.flow, self.flowConfig))
             if "iaTimes" in self.flowConfig:
