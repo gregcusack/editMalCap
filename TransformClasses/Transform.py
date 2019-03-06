@@ -84,7 +84,25 @@ class TransPktLens(Transform):
     def splitLooper(self):
         i = totalLoops = 0
         # SPLIT PACKETS
-        while self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
+        while self.flow.flowStats.avgLen > self.config["pktLens"]["avg"] and self.flow.flowStats.maxLen > self.config["pktLens"]["max"]:
+            if i == self.flow.flowStats.flowLen:
+                if totalLoops == MAX_PKT_LOOPS:
+                    print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
+                    # print("i: {}".format(i))
+                    break
+                i = 0
+                totalLoops += 1
+                continue
+            if self.flow.pkts[i].pload_len > 0 and self.flow.pkts[i].pload_len > self.config["pktLens"]["max"]:
+                self.splitPkt(self.flow.pkts[i], i)
+                self.flow.calcPktLenStats()
+                i += 2
+            else:
+                i += 1
+
+        i = totalLoops = 0
+        while self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]: # case where max pktLen < config max pktLen but avg pktLen is still too large
+            print('sup')
             if i == self.flow.flowStats.flowLen:
                 if totalLoops == MAX_PKT_LOOPS:
                     print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
@@ -96,6 +114,39 @@ class TransPktLens(Transform):
             self.splitPkt(self.flow.pkts[i], i)
             self.flow.calcPktLenStats()
             i += 2
+
+
+
+
+        # while self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
+        #     if i == self.flow.flowStats.flowLen:
+        #         if totalLoops == MAX_PKT_LOOPS:
+        #             print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
+        #             # print("i: {}".format(i))
+        #             break
+        #         i = 0
+        #         totalLoops += 1
+        #         continue
+        #     while self.flow.flowStats.maxLen > self.config["pktLens"]["max"]:
+        #         if i == self.flow.flowStats.flowLen:
+        #             if totalLoops == MAX_PKT_LOOPS:
+        #                 print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
+        #                 # print("i: {}".format(i))
+        #                 break
+        #             i = 0
+        #             totalLoops += 1
+        #             continue
+        #         if self.flow.pkts[i].http_pload and self.flow.pkts[i].http_pload > self.config["pktLens"]["max"]:
+        #             self.splitPkt(self.flow.pkts[i], i)
+        #             self.flow.calcPktLenStats()
+        #             i += 2
+        #         else:
+        #             i += 1
+        #
+        #
+        #     self.splitPkt(self.flow.pkts[i], i)
+        #     self.flow.calcPktLenStats()
+        #     i += 2
 
     def mergePkt(self, pkt, npkt):
         if pkt.http_pload and npkt.http_pload:# and (pkt.tcp_flags == npkt.tcp_flags): # make sure both pkts have payload and same flags

@@ -54,7 +54,7 @@
       "pktLens": {
         "avg": 400,
         "min": 64,
-        "max": 1100
+        "max": 700
       },
       "iaTimes": {
         "avg": 0.04,
