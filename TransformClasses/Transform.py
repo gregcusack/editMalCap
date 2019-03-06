@@ -6,6 +6,7 @@ from itertools import islice
 from math import ceil
 from random import randint, uniform
 from scapy.all import *
+import warnings
 
 ETH_HDR_LEN = 14
 
@@ -73,77 +74,81 @@ class TransPktLens(Transform):
                     i += 1
             else:
                 i += 1
-            # if self.flow.pkts[i].frame_len + self.flow.pkts[i + 1].frame_len >= MaxPktLen:
-            #     i += 1
-            # else:
-            #     if self.mergePkt(self.flow.pkts[i], self.flow.pkts[i + 1]):
-            #         self.flow.calcPktLenStats()
-            #     else:
-            #         i += 1
+
 
     def splitLooper(self):
+        avgPktLen = self.config["pktLens"]["avg"]
+        try:
+            maxPktLen = self.config["pktLens"]["max"]
+        except KeyError:
+            maxPktLen = 1418
+        try:
+            minPktLen = self.config["pktLens"]["min"]
+        except KeyError:
+            minPktLen = 0
+
         i = totalLoops = 0
-        # SPLIT PACKETS
-        while self.flow.flowStats.avgLen > self.config["pktLens"]["avg"] and self.flow.flowStats.maxLen > self.config["pktLens"]["max"]:
+        # SPLIT PACKETS, start with packets > maxPktLen set by user
+        while self.flow.flowStats.avgLen > avgPktLen and self.flow.flowStats.maxLen > maxPktLen:
             if i == self.flow.flowStats.flowLen:
                 if totalLoops == MAX_PKT_LOOPS:
-                    print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
-                    # print("i: {}".format(i))
+                    # print("Reached max pkt loops, can't split more pkts.  max pkt len too small")
                     break
                 i = 0
                 totalLoops += 1
                 continue
-            if self.flow.pkts[i].pload_len > 0 and self.flow.pkts[i].pload_len > self.config["pktLens"]["max"]:
+            if self.flow.pkts[i].pload_len > 0 and self.flow.pkts[i].pload_len > maxPktLen:
+                if self.flow.pkts[i].pload_len // 2 < minPktLen:        # don't split packet if goes below min pkt len
+                    i += 1
+                    continue
                 self.splitPkt(self.flow.pkts[i], i)
                 self.flow.calcPktLenStats()
                 i += 2
             else:
                 i += 1
 
+        # if still haven't reached avg len.  Begin splitting all other packets with payload
+        pktsLessThanMinPktLen = 0
+        minPktFlag = False
+        if minPktLen > 0:
+            minPktFlag = True
         i = totalLoops = 0
-        while self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]: # case where max pktLen < config max pktLen but avg pktLen is still too large
-            print('sup')
+        while self.flow.flowStats.avgLen > avgPktLen: # case where max pktLen < config max pktLen but avg pktLen is still too large
+            if minPktLen and self.flow.flowStats.flowLen <= pktsLessThanMinPktLen:
+                warnings.warn("Min Packet Length set by user too small!")
+                warnings.warn("Can't converge on avg. packet length.  Ignorning min pkt length requirement")
+                minPktFlag = False
             if i == self.flow.flowStats.flowLen:
                 if totalLoops == MAX_PKT_LOOPS:
-                    print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
-                    # print("i: {}".format(i))
+                    warnings.warn("Reached max pkt loops, can't split more pkts.  avg still > target avg.  NOT CONVERGED")
                     break
                 i = 0
                 totalLoops += 1
+                pktsLessThanMinPktLen = 0
                 continue
-            self.splitPkt(self.flow.pkts[i], i)
-            self.flow.calcPktLenStats()
-            i += 2
+            if minPktFlag and self.flow.pkts[i].pload_len // 2 < minPktLen:  # don't split packet if goes below min pkt len
+                i += 1
+                pktsLessThanMinPktLen += 1
+                continue
+            if self.flow.pkts[i].pload_len > 0:
+                self.splitPkt(self.flow.pkts[i], i)
+                self.flow.calcPktLenStats()
+                i += 2
+            else:
+                i += 1
 
-
-
-
-        # while self.flow.flowStats.avgLen > self.config["pktLens"]["avg"]:
+        # NOT GOING TO SPLIT ACKS. uncomment if want to split acks
+        # # after trying to split payloads, we're now going to allow the splitting acks (last resort)
+        # i = totalLoops = 0
+        # while self.flow.flowStats.avgLen > avgPktLen:  # case where max pktLen < config max pktLen but avg pktLen is still too large
         #     if i == self.flow.flowStats.flowLen:
         #         if totalLoops == MAX_PKT_LOOPS:
-        #             print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
+        #             print("Reached max pkt loops, can't split more pkts.  avg still > target avg.  NOT CONVERGED")
         #             # print("i: {}".format(i))
         #             break
         #         i = 0
         #         totalLoops += 1
         #         continue
-        #     while self.flow.flowStats.maxLen > self.config["pktLens"]["max"]:
-        #         if i == self.flow.flowStats.flowLen:
-        #             if totalLoops == MAX_PKT_LOOPS:
-        #                 print("Reached max pkt loops, can't split more pkts.  avg still > target avg")
-        #                 # print("i: {}".format(i))
-        #                 break
-        #             i = 0
-        #             totalLoops += 1
-        #             continue
-        #         if self.flow.pkts[i].http_pload and self.flow.pkts[i].http_pload > self.config["pktLens"]["max"]:
-        #             self.splitPkt(self.flow.pkts[i], i)
-        #             self.flow.calcPktLenStats()
-        #             i += 2
-        #         else:
-        #             i += 1
-        #
-        #
         #     self.splitPkt(self.flow.pkts[i], i)
         #     self.flow.calcPktLenStats()
         #     i += 2
