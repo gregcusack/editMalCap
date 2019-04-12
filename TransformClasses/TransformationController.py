@@ -18,7 +18,7 @@ class TransformationController:
             print(self.flow.flowStats)
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
-        #print(self.flow)
+        print("flow after trans: {}".format(self.flow))
         print("\n###################")
 
 

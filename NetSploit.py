@@ -17,10 +17,11 @@ class NetSploit:
             # print("Send packet for transformation")
             self.flowTable.procPkt(pkt, addToFT)
         else:
+            print("pkt no trans just merge: {}".format(pkt))
             self.pktMerger.mergePkt(pkt)
 
     def ProcessFlows(self):
-        # print(self.flowTable.FT)
+        # print("flow table: {}".format(self.flowTable.FT))
         for tuple,flow in self.flowTable.FT.items():
            print(tuple, flow)
            biflow = False # need to check if biflow exists
@@ -55,15 +56,15 @@ class NetSploit:
         print(config)
         tf.buildTransformations()
         tf.runTransformations()
-        self.mergeModifiedPkts()
+        # self.mergeModifiedPkts()
 
     def mergeModifiedPkts(self):
         for tuple,flow in self.flowTable.FT.items():
-            # print(flow)
+            # print("flow to store: {}".format(flow))
             for pkt in flow.pkts:
                 #print(pkt)
-                # if pkt.ip_src == "172.217.2.4" and pkt.ip_dst == "10.201.73.154" and pkt.src_port == 443 and pkt.dst_port == 60043:
-                #     print(pkt)
+                # if pkt.flow_tuple == (6, '192.168.10.14', 49474, '104.97.95.20', 443):
+                #     print("to merge: {}".format(pkt))
                 self.pktMerger.mergePkt(pkt)
 
     def redistributeFlowTable(self, flow):
@@ -77,7 +78,8 @@ class NetSploit:
             self.flowTable.FT[pkt.flow_tuple] = pkt
         print(self.flowTable.FT)
 
-
+    def printFlowTable(self):
+        print("flowtable: {}".format(self.flowTable.FT))
 
         # Delete Flow from FlowTable
         #self.flowTable.delFlow(pkt_5_tuple)

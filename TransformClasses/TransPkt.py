@@ -177,6 +177,9 @@ class TransPkt:
     def http_pload(self, pload):
         self.pkt[Raw].load = pload
 
+    def get_flags(self):
+        return self.pkt[TCP].flags
+
     # Set TCP Flags
     def set_FIN(self):
         self.pkt[TCP].flags |= TCP_FLAGS.FIN.value

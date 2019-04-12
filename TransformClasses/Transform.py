@@ -66,6 +66,7 @@ class TransPktLens(Transform):
                 i = 0
                 totalLoops += 1
                 continue
+            # print("flags: {}".format(self.flow.pkts[i].get_flags()))
             if self.flow.pkts[i].pload_len and self.flow.pkts[i + 1].pload_len:
                 if self.flow.pkts[i].pload_len + self.flow.pkts[i + 1].pload_len >= MaxPktLen:
                     i += 1

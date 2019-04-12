@@ -39,8 +39,10 @@ def main(iname, oname):
         # print(counter, droppedPkts)#, tpkt.ip_src, tpkt.ip_proto)
 
     NS.ProcessFlows()
-
+    NS.mergeModifiedPkts()
+    NS.printFlowTable()
     print(NS.pktMerger.inQueue)
+    print(len(NS.pktMerger.inQueue))
     #TestNetSploit(merger=NS.pktMerger)
 
     # Write to PCAP
@@ -48,7 +50,8 @@ def main(iname, oname):
     if out_pcap.is_file():
         os.remove(oname)
     for pkt in NS.pktMerger.inQueue:
-        #print(pkt)
+        # if pkt.flow_tuple == (6, '192.168.10.14', 49474, '104.97.95.20', 443):
+        #     print(pkt)
         pkt.write_pcap(oname)
 
 
