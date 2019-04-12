@@ -40,9 +40,9 @@ def main(iname, oname):
 
     NS.ProcessFlows()
     NS.mergeModifiedPkts()
-    NS.printFlowTable()
-    print(NS.pktMerger.inQueue)
-    print(len(NS.pktMerger.inQueue))
+    # NS.printFlowTable()
+    # print(NS.pktMerger.inQueue)
+    # print(len(NS.pktMerger.inQueue))
     #TestNetSploit(merger=NS.pktMerger)
 
     # Write to PCAP

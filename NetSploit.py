@@ -17,13 +17,13 @@ class NetSploit:
             # print("Send packet for transformation")
             self.flowTable.procPkt(pkt, addToFT)
         else:
-            print("pkt no trans just merge: {}".format(pkt))
+            # print("pkt no trans just merge: {}".format(pkt))
             self.pktMerger.mergePkt(pkt)
 
     def ProcessFlows(self):
         # print("flow table: {}".format(self.flowTable.FT))
         for tuple,flow in self.flowTable.FT.items():
-           print(tuple, flow)
+           print("processing: {} -- {}".format(tuple, flow))
            biflow = False # need to check if biflow exists
            if flow.procFlag:
                if flow.flowKey[0] == 6:
@@ -31,20 +31,14 @@ class NetSploit:
                else:
                    biflowkey = flow.biFlowKey[:-1]      # UDP
 
-               if biflowkey in self.flowTable.timeout_count:
-                   biFK = (biflowkey, self.flowTable.timeout_count[biflowkey])
+               if (biflowkey, tuple[1]) in self.flowTable.FT:
+                   biFK = (biflowkey, tuple[1])
                    flow.biPkts = self.flowTable.FT[biFK].pkts  # give flow access to opposite dir flow
+                   print("flow bP: {}".format(flow.biPkts))
                    biflow = True
                else:
                    print("NO BIFLOW!")
 
-               # if biflowkey in self.flowTable.FT:
-               #     flow.biPkts = self.flowTable.FT[biflowkey].pkts      # give flow access to opposite dir flow
-               #     biflow = True
-               # else:
-               #     print("NO BIFLOW!")
-               #self.flowTable.FT[flow.flowKey].getDiffs()
-               # print("FLOW: {}".format(flow))
                self.transformFlow(flow, biflow)
 
     def transformFlow(self, flow, biflow):

@@ -220,21 +220,25 @@ class FlowTable:
             exit(-1)
 
         # print("FLOW TUPLE: {}".format(flow_tuple))
+        # timeout_count manages flows with same 5-tuples but have timed out
         if flow_tuple in self.timeout_count:
             FK = (flow_tuple, self.timeout_count[flow_tuple])
         else:
             self.timeout_count[flow_tuple] = 0
             FK = (flow_tuple, self.timeout_count[flow_tuple])
 
+        # print(FK)
         if FK not in self.FT:
             self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts) # add pkt with start time
-            self.setProcFlag(FK, transFlow)
+            # self.setProcFlag(FK, transFlow)
         elif pkt.ts - self.FT[FK].flowStartTime > FLOWTIMEOUT:  # watch for flow timeout
             self.timeout_count[flow_tuple] += 1
             FK = (flow_tuple, self.timeout_count[flow_tuple])
             self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts)
-            self.setProcFlag(FK, transFlow)
+            # self.setProcFlag(FK, transFlow)
             print("Flow timeout! --> {}".format(FK))
+
+        self.setProcFlag(FK, transFlow)
 
         # if FK == ((6, '172.217.2.4', 443, '10.201.73.154', 60043), 0) or FK == ((6, '172.217.2.4', 443, '10.201.73.154', 60043), 1):
         #     print(pkt.ts, FK)
@@ -245,7 +249,8 @@ class FlowTable:
         if transFlow == "Trans":
             self.FT[FK].procFlag = True
         elif transFlow == "NoTrans":
-            # print('no trans')
+            print('no trans')
+            # print(FK)
             self.FT[FK].procFlag = False
         else:
             print("ERROR: Invalid string")
