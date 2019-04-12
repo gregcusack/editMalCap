@@ -2,14 +2,16 @@ from statistics import stdev
 from collections import namedtuple
 
 DirTuple = namedtuple('DirTuple', ['dir', 'ts'])
+FLOWTIMEOUT = 2 # 2 seconds
 
 # Flows contain a list of pkts sharing a mutual 5 tuple (proto, srcIP, srcPort, dstIP, dstPort)
 class Flow:
-    def __init__(self, flow_tuple):
+    def __init__(self, flow_tuple, _flow_start_time):
         self.pkts = []
         self.flowStats = FlowStats()
         self.flowKey = flow_tuple
         self.biFlowKey = None
+        self.flowStartTime = _flow_start_time
         if flow_tuple[0] == 6:
             self.biFlowKey = (flow_tuple[0], flow_tuple[3], flow_tuple[4], flow_tuple[1], flow_tuple[2])
         elif flow_tuple[0] == 17:
@@ -202,6 +204,7 @@ class FlowTable:
     def __init__(self):               # list is our config list
         # have tables as all caps (and acronyms)
         self.FT = {}
+        self.timeout_count = {}     # count # of flow timeouts
         # self.filter = filter
 
     def procPkt(self, pkt, transFlow):
@@ -217,19 +220,45 @@ class FlowTable:
             exit(-1)
 
         # print("FLOW TUPLE: {}".format(flow_tuple))
+        if flow_tuple in self.timeout_count:
+            FK = (flow_tuple, self.timeout_count[flow_tuple])
+        else:
+            self.timeout_count[flow_tuple] = 0
+            FK = (flow_tuple, self.timeout_count[flow_tuple])
 
-        if flow_tuple not in self.FT:
-            self.FT[flow_tuple] = Flow(pkt.flow_tuple)
-            if transFlow == "Trans":
-                self.FT[flow_tuple].procFlag = True
-            elif transFlow == "NoTrans":
-                # print('no trans')
-                self.FT[flow_tuple].procFlag = False
-            else:
-                print("ERROR: Invalid string")
-                exit(-1)
+        if FK not in self.FT:
+            self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts) # add pkt with start time
+            self.setProcFlag(FK, transFlow)
+        elif pkt.ts - self.FT[FK].flowStartTime > FLOWTIMEOUT:  # watch for flow timeout
+            self.timeout_count[flow_tuple] += 1
+            FK = (flow_tuple, self.timeout_count[flow_tuple])
+            self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts)
+            self.setProcFlag(FK, transFlow)
+            print("Flow timeout! --> {}".format(FK))
 
-        self.FT[flow_tuple].addPkt(pkt)
+        # if FK == ((6, '172.217.2.4', 443, '10.201.73.154', 60043), 0) or FK == ((6, '172.217.2.4', 443, '10.201.73.154', 60043), 1):
+        #     print(pkt.ts, FK)
+        self.FT[FK].addPkt(pkt)
+
+
+    def setProcFlag(self, FK, transFlow):
+        if transFlow == "Trans":
+            self.FT[FK].procFlag = True
+        elif transFlow == "NoTrans":
+            # print('no trans')
+            self.FT[FK].procFlag = False
+        else:
+            print("ERROR: Invalid string")
+            exit(-1)
+
+        # elif pkt.ts - self.FT[flow_tuple].flowStartTime > FLOWTIMEOUT:  # watch for flow timeout
+        #     self
+
+
+        # self.FT[flow_tuple].addPkt(pkt)
+
+    def evictFlow(self):
+        print("timeout reached.  evict flow")
 
 class FlowFilter:
     def __init__(self, list): #TODO: this list needs to be the global config_file

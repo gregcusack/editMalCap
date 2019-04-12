@@ -37,6 +37,7 @@ class TransPktLens(Transform):
         if self.flow.flowStats.flowLenBytes == 0:
             print("all ptks have payload == 0.  returning...")
             return
+        print("# of pkts in flow: {}".format(self.flow.flowStats.flowLen))
         # print("Transforming pkt lengths on these pkts: {}".format(self.flow))
         # print("pre len trans: {}".format(self.flow.flowStats))
 

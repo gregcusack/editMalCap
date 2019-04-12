@@ -20,7 +20,9 @@ class NetSploit:
             self.pktMerger.mergePkt(pkt)
 
     def ProcessFlows(self):
-       for tuple,flow in self.flowTable.FT.items():
+        # print(self.flowTable.FT)
+        for tuple,flow in self.flowTable.FT.items():
+           print(tuple, flow)
            biflow = False # need to check if biflow exists
            if flow.procFlag:
                if flow.flowKey[0] == 6:
@@ -28,11 +30,18 @@ class NetSploit:
                else:
                    biflowkey = flow.biFlowKey[:-1]      # UDP
 
-               if biflowkey in self.flowTable.FT:
-                   flow.biPkts = self.flowTable.FT[biflowkey].pkts      # give flow access to opposite dir flow
+               if biflowkey in self.flowTable.timeout_count:
+                   biFK = (biflowkey, self.flowTable.timeout_count[biflowkey])
+                   flow.biPkts = self.flowTable.FT[biFK].pkts  # give flow access to opposite dir flow
                    biflow = True
                else:
                    print("NO BIFLOW!")
+
+               # if biflowkey in self.flowTable.FT:
+               #     flow.biPkts = self.flowTable.FT[biflowkey].pkts      # give flow access to opposite dir flow
+               #     biflow = True
+               # else:
+               #     print("NO BIFLOW!")
                #self.flowTable.FT[flow.flowKey].getDiffs()
                # print("FLOW: {}".format(flow))
                self.transformFlow(flow, biflow)
