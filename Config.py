@@ -10,9 +10,25 @@ class Config:
         else:
             print("ERROR: No configuration file")
             exit(-1)
-        features_to_change = ["Flow Duration", "Tot Fwd Pkts", "Fwd Pkt Len Max", "Fwd Pkt Len Min", "Flow IAT Max",
-                              "Flow IAT Min", "Fwd IAT Max", "Fwd IAT Min", "Fwd PSH Flags", "URG Flag Cnt",
-                              "Pkt Len Min", "Pkt Len Max", "FIN Flag Cnt", "CWE Flag Count", "Init Fwd Win Byts"]
+        features_to_change = ["Tot Fwd Pkts",
+                              "Fwd Pkt Len Max",
+                              "Fwd Pkt Len Min",
+                              "Pkt Len Min",
+                              "Pkt Len Max",
+
+                              "Flow Duration",
+                              "Flow IAT Max",
+                              "Flow IAT Min",
+                              "Fwd IAT Max",
+                              "Fwd IAT Min",
+
+                              "Fwd PSH Flags",
+                              "URG Flag Cnt",
+                              "FIN Flag Cnt",
+                              "CWE Flag Count",
+
+                              "Init Fwd Win Byts"
+                              ]
 
     def parseConfig(self, jData):
         print("Parsing config and setting config vals...")
