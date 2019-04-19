@@ -7,7 +7,7 @@ class NetSploit:
         # try to keep this just objects
         self.filter = FlowFilter(config.flows)
         self.flowTable = FlowTable()
-        self.pktMerger = PktMerger(config.merge_batch_size)
+        self.pktMerger = PktMerger()
         self.config = config
 
     def loadFlowTable(self, pkt):

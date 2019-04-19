@@ -266,6 +266,15 @@ class TransPkt:
         if "DF" in flags:
             self.set_DF()
 
+    def check_FIN(self):
+        # print("checking fin")
+        # x = bool((self.pkt[TCP].flags & TCP_FLAGS.FIN.value))
+        # print("flags!: {}".format(self.pkt[TCP].flags))
+        # print("fin?: {}".format(x))
+        # print("fin ts: {}".format(self.pkt.time))
+        # return x
+        return self.pkt[TCP].flags & TCP_FLAGS.FIN.value
+
     # Write Packet to File (Append)
     def write_pcap(self, file):
         #print(self.pkt[IP].src)

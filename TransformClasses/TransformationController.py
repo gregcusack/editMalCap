@@ -13,6 +13,7 @@ class TransformationController:
         for trans in self.transObjList:
             self.flow.calcPktLenStats()
             self.flow.calcPktIAStats()
+            print("init flow: {}".format(self.flow))
             print("Transforming: {}".format(self.flow))
             trans.Process()
             print(self.flow.flowStats)

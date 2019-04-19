@@ -1,7 +1,6 @@
 from statistics import stdev
 from collections import namedtuple
 
-DirTuple = namedtuple('DirTuple', ['dir', 'ts'])
 FLOWTIMEOUT = 2 # 2 seconds
 
 # Flows contain a list of pkts sharing a mutual 5 tuple (proto, srcIP, srcPort, dstIP, dstPort)
@@ -153,7 +152,12 @@ class FlowStats():
         # self.flowLenBytes = total
 
     def getStdLen(self, pktList):
-        self.stdLen = stdev(pkt.frame_len for pkt in pktList)
+        if len(pktList) < 2:
+            # print("1 pkt in flow...stddev = 0")
+            self.stdLen = 0
+            return
+
+        self.stdLen = stdev(pkt.pload_len for pkt in pktList)
         if self.stdLen < 0:
             print("ERROR: Std Dev. len < 0.  std val is: {}".format(self.stdLen))
             exit(-1)
@@ -231,12 +235,22 @@ class FlowTable:
         if FK not in self.FT:
             self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts) # add pkt with start time
             # self.setProcFlag(FK, transFlow)
+            # self.FT[FK].addPkt(pkt)
         elif pkt.ts - self.FT[FK].flowStartTime > FLOWTIMEOUT:  # watch for flow timeout
             self.timeout_count[flow_tuple] += 1
+            print("len flow before timeout: {}".format(len(self.FT[FK].pkts)))
+            # print("TO pkt.ts: {}".format(pkt.ts))
             FK = (flow_tuple, self.timeout_count[flow_tuple])
+            print("Flow timeout! --> {}".format(FK))
             self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts)
             # self.setProcFlag(FK, transFlow)
-            print("Flow timeout! --> {}".format(FK))
+            # self.FT[FK].addPkt(pkt)
+        elif pkt.check_FIN():
+            # print("FIN flag!")
+            print("fin pkt (ts): {}".format(pkt.ts))
+            # self.setProcFlag(FK, transFlow)
+            # self.FT[FK].addPkt(pkt)
+            self.timeout_count[flow_tuple] += 1
 
         self.setProcFlag(FK, transFlow)
 
@@ -249,18 +263,11 @@ class FlowTable:
         if transFlow == "Trans":
             self.FT[FK].procFlag = True
         elif transFlow == "NoTrans":
-            print('no trans')
-            # print(FK)
+
             self.FT[FK].procFlag = False
         else:
             print("ERROR: Invalid string")
             exit(-1)
-
-        # elif pkt.ts - self.FT[flow_tuple].flowStartTime > FLOWTIMEOUT:  # watch for flow timeout
-        #     self
-
-
-        # self.FT[flow_tuple].addPkt(pkt)
 
     def evictFlow(self):
         print("timeout reached.  evict flow")

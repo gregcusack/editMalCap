@@ -1,0 +1,1220 @@
+{
+  "flows": {
+    "6,192.168.10.14,59054,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 66581361.0,
+          "adv": 43548876.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 14.0,
+          "adv": 80.0
+        },
+        "Flow IAT Max": {
+          "og": 10000937.0,
+          "adv": 10155875.0
+        },
+        "Fwd IAT Max": {
+          "og": 10023371.0,
+          "adv": 17630604.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 18161.0
+        }
+      }
+    },
+    "6,192.168.10.14,49601,204.8.234.202,80": {
+      "features": {
+        "Flow Duration": {
+          "og": 5314915.0,
+          "adv": 14267800.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 35.0,
+          "adv": 240.0
+        },
+        "Flow IAT Max": {
+          "og": 3277631.0,
+          "adv": 5705371.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 3277631.0,
+          "adv": 6086493.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 2261.0
+        }
+      }
+    },
+    "6,192.168.10.14,49641,204.8.234.202,80": {
+      "features": {
+        "Flow Duration": {
+          "og": 4969555.0,
+          "adv": 10810292.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 36.0,
+          "adv": 211.0
+        },
+        "Flow IAT Max": {
+          "og": 3000304.0,
+          "adv": 5975252.0
+        },
+        "Fwd IAT Max": {
+          "og": 3000304.0,
+          "adv": 5715573.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 3847.0
+        }
+      }
+    },
+    "6,192.168.10.14,49662,204.8.234.202,80": {
+      "features": {
+        "Flow Duration": {
+          "og": 5236706.0,
+          "adv": 7909119.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 34.0,
+          "adv": 155.0
+        },
+        "Flow IAT Max": {
+          "og": 3243062.0,
+          "adv": 6707346.0
+        },
+        "Flow IAT Min": {
+          "og": 6.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 3243147.0,
+          "adv": 6846974.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 3303.0
+        }
+      }
+    },
+    "6,192.168.10.14,49827,204.8.234.202,80": {
+      "features": {
+        "Flow Duration": {
+          "og": 5240279.0,
+          "adv": 6003317.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 37.0,
+          "adv": 192.0
+        },
+        "Flow IAT Max": {
+          "og": 3428011.0,
+          "adv": 6482025.0
+        },
+        "Fwd IAT Max": {
+          "og": 3428011.0,
+          "adv": 7015180.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 2964.0
+        }
+      }
+    },
+    "6,192.168.10.14,49841,204.8.234.202,80": {
+      "features": {
+        "Flow Duration": {
+          "og": 5264984.0,
+          "adv": 11408520.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 37.0,
+          "adv": 282.0
+        },
+        "Flow IAT Max": {
+          "og": 3020373.0,
+          "adv": 5631424.0
+        },
+        "Flow IAT Min": {
+          "og": 3.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 3020533.0,
+          "adv": 5654176.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 352.0
+        }
+      }
+    },
+    "6,192.168.10.14,50016,204.8.234.202,80": {
+      "features": {
+        "Flow Duration": {
+          "og": 5271301.0,
+          "adv": 21673086.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 36.0,
+          "adv": 434.0
+        },
+        "Flow IAT Max": {
+          "og": 3197234.0,
+          "adv": 7201811.0
+        },
+        "Fwd IAT Max": {
+          "og": 3197234.0,
+          "adv": 6182706.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 4978.0
+        }
+      }
+    },
+    "6,192.168.10.14,50030,204.8.234.202,80": {
+      "features": {
+        "Flow Duration": {
+          "og": 5279453.0,
+          "adv": 13989828.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 37.0,
+          "adv": 139.0
+        },
+        "Flow IAT Max": {
+          "og": 3110438.0,
+          "adv": 5952250.0
+        },
+        "Fwd IAT Max": {
+          "og": 3110438.0,
+          "adv": 5254098.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 1852.0
+        }
+      }
+    },
+    "6,192.168.10.14,50140,204.8.234.202,80": {
+      "features": {
+        "Flow Duration": {
+          "og": 5252051.0,
+          "adv": 18420596.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 32.0,
+          "adv": 218.0
+        },
+        "Flow IAT Max": {
+          "og": 3817911.0,
+          "adv": 5864690.0
+        },
+        "Fwd IAT Max": {
+          "og": 3817911.0,
+          "adv": 5905710.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 815.0
+        }
+      }
+    },
+    "6,192.168.10.14,50153,204.8.234.202,80": {
+      "features": {
+        "Flow Duration": {
+          "og": 5497272.0,
+          "adv": 18200406.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 37.0,
+          "adv": 210.0
+        },
+        "Flow IAT Max": {
+          "og": 3491278.0,
+          "adv": 5845834.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 3491282.0,
+          "adv": 6346064.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 2394.0
+        }
+      }
+    },
+    "6,192.168.10.14,50183,204.8.234.202,80": {
+      "features": {
+        "Flow Duration": {
+          "og": 6246131.0,
+          "adv": 18345642.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 38.0,
+          "adv": 427.0
+        },
+        "Flow IAT Min": {
+          "og": 4.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 3973666.0,
+          "adv": 6181360.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 4021.0
+        }
+      }
+    },
+    "6,192.168.10.15,56933,204.236.236.52,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 61580764.0,
+          "adv": 48892696.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 15.0,
+          "adv": 16.0
+        },
+        "Fwd IAT Max": {
+          "og": 10047664.0,
+          "adv": 12121216.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 37008.0
+        }
+      }
+    },
+    "6,192.168.10.15,60043,204.236.236.52,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 64038506.0,
+          "adv": 45586140.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 15.0,
+          "adv": 16.0
+        },
+        "Fwd IAT Max": {
+          "og": 10093885.0,
+          "adv": 13449790.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 45746.0
+        }
+      }
+    },
+    "6,192.168.10.15,50696,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 63796133.0,
+          "adv": 24717958.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 16.0,
+          "adv": 60.0
+        },
+        "Fwd IAT Max": {
+          "og": 10022712.0,
+          "adv": 15145788.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 39393.0
+        }
+      }
+    },
+    "6,192.168.10.15,53761,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 5566226.0,
+          "adv": 4629758.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 9.0,
+          "adv": 15.0
+        },
+        "Flow IAT Min": {
+          "og": 3.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 5378412.0,
+          "adv": 5438342.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 8861.0
+        }
+      }
+    },
+    "6,192.168.10.15,56357,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 67059973.0,
+          "adv": 36128676.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 14.0,
+          "adv": 15.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 10024658.0,
+          "adv": 13248504.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 40885.0
+        }
+      }
+    },
+    "6,192.168.10.15,56358,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 65503739.0,
+          "adv": 53843144.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 15.0,
+          "adv": 16.0
+        },
+        "Flow IAT Max": {
+          "og": 10001247.0,
+          "adv": 10115636.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 10023649.0,
+          "adv": 15422056.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 31086.0
+        }
+      }
+    },
+    "6,192.168.10.15,52125,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 2.0,
+          "adv": -35140.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 24566.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 256.0,
+          "adv": 285.0
+        }
+      }
+    },
+    "6,192.168.10.15,52134,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 18529860.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 189.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 345.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 8086218.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 9359432.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 345.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 256.0,
+          "adv": 0.0
+        }
+      }
+    },
+    "6,205.174.165.73,8080,192.168.10.15,52224": {
+      "features": {
+        "Flow Duration": {
+          "og": 2.0,
+          "adv": 57161.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 2.0
+        },
+        "Flow IAT Max": {
+          "og": 2.0,
+          "adv": 31080.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 6761.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 237.0,
+          "adv": 208.0
+        }
+      }
+    },
+    "6,205.174.165.73,8080,192.168.10.15,52326": {
+      "features": {
+        "Flow Duration": {
+          "og": 2.0,
+          "adv": 664271.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 2.0
+        },
+        "Flow IAT Max": {
+          "og": 2.0,
+          "adv": 161965.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 429580.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 237.0,
+          "adv": 594.0
+        }
+      }
+    },
+    "6,192.168.10.15,52346,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 2.0,
+          "adv": 56939.0
+        },
+        "Flow IAT Max": {
+          "og": 2.0,
+          "adv": 19754.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 30556.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 256.0,
+          "adv": 287.0
+        }
+      }
+    },
+    "6,205.174.165.73,8080,192.168.10.15,52713": {
+      "features": {
+        "Flow Duration": {
+          "og": 2.0,
+          "adv": 909101.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 2.0
+        },
+        "Flow IAT Max": {
+          "og": 2.0,
+          "adv": 281606.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 512684.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 237.0,
+          "adv": 721.0
+        }
+      }
+    },
+    "6,192.168.10.15,52854,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 19545876.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 197.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 225.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 7015220.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 468358.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 225.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 256.0,
+          "adv": 0.0
+        }
+      }
+    },
+    "6,192.168.10.15,52855,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 97665.0,
+          "adv": -1813655.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 5.0,
+          "adv": 78.0
+        },
+        "Flow IAT Max": {
+          "og": 94946.0,
+          "adv": 1799812.0
+        },
+        "Flow IAT Min": {
+          "og": 31.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 97032.0,
+          "adv": 7000988.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 0.0
+        }
+      }
+    },
+    "6,192.168.10.15,52911,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 15279566.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 33.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 359.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 17088302.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 3745096.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 359.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 256.0,
+          "adv": 5366.0
+        }
+      }
+    },
+    "6,192.168.10.5,50046,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 5734788.0,
+          "adv": 23893746.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 10.0,
+          "adv": 52.0
+        },
+        "Flow IAT Max": {
+          "og": 5488134.0,
+          "adv": 8679542.0
+        },
+        "Flow IAT Min": {
+          "og": 4.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 5488134.0,
+          "adv": 10434318.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 13012.0
+        }
+      }
+    },
+    "6,192.168.10.5,50266,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 64668954.0,
+          "adv": 59712668.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 15.0,
+          "adv": 16.0
+        },
+        "Flow IAT Min": {
+          "og": 12.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 10026525.0,
+          "adv": 14388556.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 22059.0
+        }
+      }
+    },
+    "6,192.168.10.5,50267,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 65592069.0,
+          "adv": 47932204.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 16.0,
+          "adv": 17.0
+        },
+        "Flow IAT Max": {
+          "og": 10004284.0,
+          "adv": 10371684.0
+        },
+        "Flow IAT Min": {
+          "og": 70.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 10026521.0,
+          "adv": 13117376.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 44176.0
+        }
+      }
+    },
+    "6,192.168.10.5,50359,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 70537647.0,
+          "adv": 32021640.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 17.0,
+          "adv": 18.0
+        },
+        "Flow IAT Max": {
+          "og": 10001696.0,
+          "adv": 10697260.0
+        },
+        "Fwd IAT Max": {
+          "og": 10024336.0,
+          "adv": 12085086.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 27201.0
+        }
+      }
+    },
+    "6,192.168.10.5,50360,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 75489994.0,
+          "adv": 36929812.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 18.0,
+          "adv": 19.0
+        },
+        "Flow IAT Max": {
+          "og": 10003933.0,
+          "adv": 10155167.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 10025857.0,
+          "adv": 13525330.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 33715.0
+        }
+      }
+    },
+    "6,192.168.10.5,50366,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 66467776.0,
+          "adv": 41458924.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 15.0,
+          "adv": 30.0
+        },
+        "Flow IAT Min": {
+          "og": 21.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 10028789.0,
+          "adv": 12431402.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 36912.0
+        }
+      }
+    },
+    "6,192.168.10.5,51783,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 67534581.0,
+          "adv": 53123144.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 14.0,
+          "adv": 15.0
+        },
+        "Flow IAT Max": {
+          "og": 10005722.0,
+          "adv": 10075722.0
+        },
+        "Flow IAT Min": {
+          "og": 15.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 10028089.0,
+          "adv": 14099224.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 45901.0
+        }
+      }
+    },
+    "6,192.168.10.5,52718,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 5853086.0,
+          "adv": 45432580.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 10.0,
+          "adv": 34.0
+        },
+        "Flow IAT Max": {
+          "og": 5504955.0,
+          "adv": 9244737.0
+        },
+        "Flow IAT Min": {
+          "og": 3.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 5504955.0,
+          "adv": 14488400.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 34587.0
+        }
+      }
+    },
+    "6,192.168.10.5,52909,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 65697657.0,
+          "adv": 44642324.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 14.0,
+          "adv": 15.0
+        },
+        "Flow IAT Max": {
+          "og": 9998440.0,
+          "adv": 10139944.0
+        },
+        "Flow IAT Min": {
+          "og": 31.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 10020687.0,
+          "adv": 11445141.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 38509.0
+        }
+      }
+    },
+    "6,192.168.10.5,52910,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 5355420.0,
+          "adv": 45513316.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 9.0,
+          "adv": 44.0
+        },
+        "Fwd IAT Max": {
+          "og": 5183828.0,
+          "adv": 11298605.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 34310.0
+        }
+      }
+    },
+    "6,192.168.10.5,53374,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 25658915.0,
+          "adv": 24795908.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 12.0,
+          "adv": 15.0
+        },
+        "Flow IAT Min": {
+          "og": 27.0,
+          "adv": 0.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 8134.0
+        }
+      }
+    },
+    "6,192.168.10.5,54098,205.147.105.94,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 7829613.0,
+          "adv": 33231628.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 15.0,
+          "adv": 124.0
+        },
+        "Fwd IAT Max": {
+          "og": 243248.0,
+          "adv": 10458308.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 16636.0
+        }
+      }
+    },
+    "6,204.8.234.202,80,192.168.10.8,8042": {
+      "features": {
+        "Flow Duration": {
+          "og": 3.0,
+          "adv": 28040680.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 15.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 268.0
+        },
+        "Flow IAT Max": {
+          "og": 3.0,
+          "adv": 1914534.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 3799872.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 268.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8190.0,
+          "adv": 679.0
+        }
+      }
+    },
+    "6,192.168.10.8,8059,204.8.234.202,80": {
+      "features": {
+        "Flow Duration": {
+          "og": 5285945.0,
+          "adv": 16282905.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 29.0,
+          "adv": 207.0
+        },
+        "Flow IAT Max": {
+          "og": 3533850.0,
+          "adv": 6777592.0
+        },
+        "Flow IAT Min": {
+          "og": 3.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 3533905.0,
+          "adv": 6282682.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 1296.0
+        }
+      }
+    },
+    "6,192.168.10.9,8657,204.79.197.200,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 65474268.0,
+          "adv": 43895724.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 14.0,
+          "adv": 15.0
+        },
+        "Flow IAT Max": {
+          "og": 10001233.0,
+          "adv": 12039409.0
+        },
+        "Flow IAT Min": {
+          "og": 70.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 10023488.0,
+          "adv": 14924268.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 23382.0
+        }
+      }
+    },
+    "6,192.168.10.9,1847,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 65033.0,
+          "adv": 29520416.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 4.0,
+          "adv": 19.0
+        },
+        "Flow IAT Max": {
+          "og": 62233.0,
+          "adv": 1257426.0
+        },
+        "Flow IAT Min": {
+          "og": 55.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 64158.0,
+          "adv": 8020231.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 0.0
+        }
+      }
+    },
+    "6,192.168.10.9,3394,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 81188.0,
+          "adv": -78624.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 4.0,
+          "adv": 21.0
+        },
+        "Flow IAT Max": {
+          "og": 78727.0,
+          "adv": 322755.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 8564.0
+        }
+      }
+    },
+    "6,192.168.10.9,3652,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 97631.0,
+          "adv": 9803229.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 4.0,
+          "adv": 204.0
+        },
+        "Flow IAT Min": {
+          "og": 81.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 96951.0,
+          "adv": 8874256.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 0.0
+        }
+      }
+    },
+    "6,192.168.10.9,4076,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 179618.0,
+          "adv": 15698579.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 6.0,
+          "adv": 152.0
+        },
+        "Flow IAT Max": {
+          "og": 176075.0,
+          "adv": 18975104.0
+        },
+        "Flow IAT Min": {
+          "og": 48.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 177989.0,
+          "adv": 18372694.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 0.0
+        }
+      }
+    },
+    "6,192.168.10.9,4078,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 225433.0,
+          "adv": 38570096.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 4.0,
+          "adv": 31.0
+        },
+        "Flow IAT Max": {
+          "og": 222374.0,
+          "adv": 5398824.0
+        },
+        "Flow IAT Min": {
+          "og": 65.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 224116.0,
+          "adv": 10071979.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 0.0
+        }
+      }
+    },
+    "6,192.168.10.9,4173,205.174.165.73,8080": {
+      "features": {
+        "Flow Duration": {
+          "og": 97051.0,
+          "adv": 2828958.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 4.0,
+          "adv": 35.0
+        },
+        "Flow IAT Max": {
+          "og": 94413.0,
+          "adv": 170414.0
+        },
+        "Fwd IAT Max": {
+          "og": 95913.0,
+          "adv": 871938.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 8192.0,
+          "adv": 8100.0
+        }
+      }
+    }
+  }
+}
