@@ -20,7 +20,7 @@ class Transform:
     def __init__(self, flowObj, config):
         self.flow = flowObj
         self.config = config
-        print("transform create")
+        # print("transform create")
         #self.pktsToRemove = []
 
     def Process(self):
@@ -30,19 +30,20 @@ class LengthTransform(Transform):
     def __init__(self, flowObj, config, biFlowFlag):
         Transform.__init__(self, flowObj, config)
         self.biFlowFlag = biFlowFlag
-        print("Creating new LengthTransform Object")
+        # print("Creating new LengthTransform Object")
 
     def Process(self):
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
-        print("LengthTransform Process()")
-        print("flow: {}".format(self.flow))
+        # print("LengthTransform Process()")
+        # print("flow: {}".format(self.flow))
 
         if "Tot Fwd Pkts" in self.config:
             self.fixTotFwdPkts()
 
     def fixTotFwdPkts(self):
-        print("fixing Tot Fwd Pkts")
+        pass
+        # print("fixing Tot Fwd Pkts")
     #     og_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["og"]
     #     adv_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["adv"]
     #

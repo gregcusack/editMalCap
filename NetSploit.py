@@ -23,7 +23,7 @@ class NetSploit:
     def ProcessFlows(self):
         # print("flow table: {}".format(self.flowTable.FT))
         for tuple,flow in self.flowTable.FT.items():
-           print("processing: {} -- {}".format(tuple, flow))
+           # print("processing: {} -- {}".format(tuple, flow))
            biflow = False # need to check if biflow exists
            if flow.procFlag:
                if flow.flowKey[0] == 6:
@@ -34,7 +34,7 @@ class NetSploit:
                if (biflowkey, tuple[1]) in self.flowTable.FT:
                    biFK = (biflowkey, tuple[1])
                    flow.biPkts = self.flowTable.FT[biFK].pkts  # give flow access to opposite dir flow
-                   print("flow bP: {}".format(flow.biPkts))
+                   # print("flow bP: {}".format(flow.biPkts))
                    biflow = True
                else:
                    print("NO BIFLOW!")
@@ -47,7 +47,7 @@ class NetSploit:
         else:
             config = self.config.flows[flow.flowKey[:-1]]
         tf = TC(config, flow, biflow) #(config.5_tuple, Flow)
-        print(config)
+        # print(config)
         tf.buildTransformations()
         tf.runTransformations()
         # self.mergeModifiedPkts()
@@ -62,7 +62,7 @@ class NetSploit:
                 self.pktMerger.mergePkt(pkt)
 
     def redistributeFlowTable(self, flow):
-        print("redistributing flow table")
+        # print("redistributing flow table")
         splitFlows = self.flowTable.FT[flow.flowKey].pkts
         print(splitFlows)
         del self.flowTable.FT[flow.flowKey]

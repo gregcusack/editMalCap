@@ -31,7 +31,7 @@ class Config:
                               ]
 
     def parseConfig(self, jData):
-        print("Parsing config and setting config vals...")
+        # print("Parsing config and setting config vals...")
         # self.time_since_last_pkt = jData["sysConfig"]["timeout"]
 
         # convert JSON to python dictionary

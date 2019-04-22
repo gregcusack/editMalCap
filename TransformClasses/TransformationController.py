@@ -10,23 +10,28 @@ class TransformationController:
         self.biFlowFlag = biflow
 
     def runTransformations(self):
-        print("transobjlist: {}".format(self.transObjList))
+        # print("transobjlist: {}".format(self.transObjList))
         for trans in self.transObjList:
             self.flow.calcPktLenStats()
             self.flow.calcPktIAStats()
-            print("pre process flow {}".format(self.flow))
-            if self.biFlowFlag:
-                print("pre process biflow: {}".format(len(self.flow.biPkts)))
+            # print("pre process flow {}".format(self.flow))
+            # if self.biFlowFlag:
+            #     print("pre process biflow: {}".format(len(self.flow.biPkts)))
             trans.Process()
-            print(self.flow.flowStats)
+            # print("Flow tuple: {}".format(self.flow.flowKey))
+            print("FLOW: {}".format(self.flow))
+            if self.biFlowFlag:
+                print("BIFLOW: {}, {}".format(self.flow.biFlowKey, len(self.flow.biPkts)))
+            else:
+                print("NO BIFLOW")
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
-        print("flow after trans: {}".format(self.flow))
+        # print("flow after trans: {}".format(self.flow))
         print("\n###################")
 
 
     def buildTransformations(self):
-        print("flow config: {}".format(self.flowConfig))
+        # print("flow config: {}".format(self.flowConfig))
         fc = self.flowConfig["features"]
         if self.flow.flowKey[0] == 6:
             if "Tot Fwd Pkts" in fc or "Fwd Pkt Len Max" in fc or "Fwd Pkt Len Min" in fc or "Pkt Len Min" in fc or "Pkt Len Max" in fc:

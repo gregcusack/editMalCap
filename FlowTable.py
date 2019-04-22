@@ -243,17 +243,17 @@ class FlowTable:
             if self.timeout_count[flow_tuple] != self.timeout_count[pkt.biflow_tuple]:
                 print("ERROR in flowtimeout: biflow timeout # != flow timeout #")
                 exit(-1)
-            print("len flow before timeout: {}".format(len(self.FT[FK].pkts)))
+            # print("len flow before timeout: {}".format(len(self.FT[FK].pkts)))
             # print("TO pkt.ts: {}".format(pkt.ts))
             FK = (flow_tuple, self.timeout_count[flow_tuple])
-            print("Flow timeout! --> {}".format(FK))
+            # print("Flow timeout! --> {}".format(FK))
             self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts)
             # self.setProcFlag(FK, transFlow)
             # self.FT[FK].addPkt(pkt)
 
         elif pkt.check_FIN():
             # print("FIN flag!")
-            print("fin pkt (ts): {}".format(pkt.ts))
+            # print("fin pkt (ts): {}".format(pkt.ts))
             # self.setProcFlag(FK, transFlow)
             # self.FT[FK].addPkt(pkt)
             self.timeout_count[flow_tuple] += 1
