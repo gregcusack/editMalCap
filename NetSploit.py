@@ -11,7 +11,7 @@ class NetSploit:
         self.config = config
 
     def loadFlowTable(self, pkt):
-        # print(pkt.flow_tuple)
+        # print(pkt.biflow_tuple)
         addToFT = self.filter.needsTrans(pkt.flow_tuple)
         if addToFT:
             # print("Send packet for transformation")

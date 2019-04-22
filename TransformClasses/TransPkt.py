@@ -16,6 +16,7 @@ class TransPkt:
     def __init__(self, pkt):
         if not isinstance(pkt, scapy.layers.l2.Ether):
             self.dropPkt = 1
+            print("DROP packet!")
             return
             # print("ERROR: Attempting to initialize transPkt class with non-scapy packet")
             # exit()
@@ -230,10 +231,20 @@ class TransPkt:
     def update_5_tuple(self):
         if self.pkt.proto == 6: #TCP
             self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[TCP].sport, self.pkt[IP].dst, self.pkt[TCP].dport)
+            self.update_bi_5_tuple()
         elif self.pkt.proto == 17: #UDP
             self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[UDP].sport, self.pkt[IP].dst, self.pkt[UDP].dport)
+            self.update_bi_5_tuple()
         else:
             print("Unknown pkt proto...ignoring")
+
+    def update_bi_5_tuple(self):
+        if self.pkt.proto == 6:
+            self.biflow_tuple = (self.pkt.proto, self.pkt[IP].dst, self.pkt[TCP].dport, self.pkt[IP].src, self.pkt[TCP].sport)
+        elif self.pkt.proto == 17:
+            self.biflow_tuple = (self.pkt.proto, self.pkt[IP].dst, self.pkt[UDP].dport, self.pkt[IP].src, self.pkt[UDP].sport)
+
+
 
     def pktSetUDPTuple(self, flowKey):
         self.ip_proto = flowKey[0]

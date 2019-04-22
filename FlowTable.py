@@ -1,7 +1,7 @@
 from statistics import stdev
 from collections import namedtuple
 
-FLOWTIMEOUT = 2 # 2 seconds
+FLOWTIMEOUT = 120 # 120 seconds
 
 # Flows contain a list of pkts sharing a mutual 5 tuple (proto, srcIP, srcPort, dstIP, dstPort)
 class Flow:
@@ -229,6 +229,7 @@ class FlowTable:
             FK = (flow_tuple, self.timeout_count[flow_tuple])
         else:
             self.timeout_count[flow_tuple] = 0
+            self.timeout_count[pkt.biflow_tuple] = 0        # if either direction of flow ends, new flows created for both directions
             FK = (flow_tuple, self.timeout_count[flow_tuple])
 
         # print(FK)
@@ -238,6 +239,10 @@ class FlowTable:
             # self.FT[FK].addPkt(pkt)
         elif pkt.ts - self.FT[FK].flowStartTime > FLOWTIMEOUT:  # watch for flow timeout
             self.timeout_count[flow_tuple] += 1
+            self.timeout_count[pkt.biflow_tuple] += 1    # if either direction of flow ends, new flows created for both directions
+            if self.timeout_count[flow_tuple] != self.timeout_count[pkt.biflow_tuple]:
+                print("ERROR in flowtimeout: biflow timeout # != flow timeout #")
+                exit(-1)
             print("len flow before timeout: {}".format(len(self.FT[FK].pkts)))
             # print("TO pkt.ts: {}".format(pkt.ts))
             FK = (flow_tuple, self.timeout_count[flow_tuple])
@@ -245,12 +250,17 @@ class FlowTable:
             self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts)
             # self.setProcFlag(FK, transFlow)
             # self.FT[FK].addPkt(pkt)
+
         elif pkt.check_FIN():
             # print("FIN flag!")
             print("fin pkt (ts): {}".format(pkt.ts))
             # self.setProcFlag(FK, transFlow)
             # self.FT[FK].addPkt(pkt)
             self.timeout_count[flow_tuple] += 1
+            self.timeout_count[pkt.biflow_tuple] += 1        # if either direction of flow ends, new flows created for both directions
+            if self.timeout_count[flow_tuple] != self.timeout_count[pkt.biflow_tuple]:
+                print("ERROR in fin flag: biflow timeout # != flow timeout #")
+                exit(-1)
 
         self.setProcFlag(FK, transFlow)
 
@@ -285,9 +295,7 @@ class FlowFilter:
         elif pkt_tuple[0] == 17:
             biTuple = (pkt_tuple[0], pkt_tuple[3], pkt_tuple[4], pkt_tuple[1])
             pkt_tuple = pkt_tuple[:-1]
-            # print(pkt_tuple)
-            # print(biTuple)
-            # print("----")
+
         #pkt needs to be a TransPkt type
         if pkt_tuple in self.tuple_set:
             # print(pkt_tuple)

@@ -14,6 +14,9 @@ class TransformationController:
         for trans in self.transObjList:
             self.flow.calcPktLenStats()
             self.flow.calcPktIAStats()
+            print("pre process flow {}".format(self.flow))
+            if self.biFlowFlag:
+                print("pre process biflow: {}".format(len(self.flow.biPkts)))
             trans.Process()
             print(self.flow.flowStats)
         self.flow.calcPktLenStats()
