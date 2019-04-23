@@ -103,7 +103,10 @@ class TransPkt:
     @property
     def pload_len(self):
         if "Raw" in self.pkt:
-            return len(self.pkt[Raw])
+            load = len(self.pkt[Raw])
+            if "Padding" in self.pkt:
+                load -= len(self.pkt[Padding])
+            return load
         return 0
 
     # Setter: General Packet Features

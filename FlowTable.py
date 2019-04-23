@@ -1,5 +1,4 @@
 from statistics import stdev
-from collections import namedtuple
 
 FLOWTIMEOUT = 120 # 120 seconds
 
@@ -28,7 +27,7 @@ class Flow:
         self.pkts.append(pkt)
 
     def calcPktLenStats(self):
-        self.flowStats.updateLenStats(self.pkts)
+        self.flowStats.updateLenStats(self.pkts, self.biPkts)
 
     # def incLenStats(self, pktLen):
     #     self.flowStats.getIncLenStats(pktLen)
@@ -112,17 +111,19 @@ class FlowStats():
         self.minIA = self.maxIA = self.avgIA = self.stdIA = self.totalIA = 0
         self.flowLen = 0
         self.flowLenBytes = 0
+        self.flowDuration = 0
 
     def __repr__(self):
         return "<LengthStats: min: {}, max: {}, avg: {}, std: {}, len: {}, lenBytes: {}>\n<IAStats: min: {}, max: {}, avg: {}, std:{}>"\
             .format(self.minLen, self.maxLen, self.avgLen, self.stdLen, self.flowLen, self.flowLenBytes,
                     self.minIA, self.maxIA, self.avgIA, self.stdIA)
 
-    def updateLenStats(self, pktList):
+    def updateLenStats(self, pktList, biPktList):
         self.resetLenStats()
         self.flowLen = len(pktList)
         self.getMinMaxAvgLen(pktList)
         self.getStdLen(pktList)
+        self.getFlowDuration(pktList, biPktList)
 
     def updateIAStats(self, pktList):
         self.resetIAStats()
@@ -140,16 +141,6 @@ class FlowStats():
             total += pkt.pload_len
         self.avgLen = total / self.flowLen
         self.flowLenBytes = total
-        # total = 0
-        # self.minLen = self.maxLen = pktList[0].frame_len
-        # for pkt in pktList:
-        #     if pkt.frame_len > self.maxLen:
-        #         self.maxLen = pkt.frame_len
-        #     elif pkt.frame_len < self.minLen:
-        #         self.minLen = pkt.frame_len
-        #     total += pkt.frame_len
-        # self.avgLen = total / self.flowLen
-        # self.flowLenBytes = total
 
     def getStdLen(self, pktList):
         if len(pktList) < 2:
@@ -202,6 +193,25 @@ class FlowStats():
             self.stdIA = 0
         else:
             self.stdIA = stdev([j.ts - i.ts for i,j in zip(pktList[:-1], pktList[1:])])
+
+    def getFlowDuration(self, pktList, biPktList):
+        if not biPktList:
+            if len(pktList) <= 1:
+                self.flowDuration = 0
+                return
+            else:
+                self.flowDuration = pktList[len(pktList) - 1].ts - pktList[0].ts
+        else:
+            if biPktList[len(biPktList) - 1].ts > pktList[len(pktList) - 1].ts: # biPkt is end of flow
+                endts = biPktList[len(biPktList) - 1].ts
+            else:
+                endts = pktList[len(pktList) - 1].ts
+            if biPktList[0].ts < pktList[0].ts:                                 # biPkt is beginning of flow
+                startts = biPktList[0].ts
+            else:
+                startts = pktList[0].ts
+
+            self.flowDuration = endts - startts
 
 
 class FlowTable:
@@ -273,7 +283,6 @@ class FlowTable:
         if transFlow == "Trans":
             self.FT[FK].procFlag = True
         elif transFlow == "NoTrans":
-
             self.FT[FK].procFlag = False
         else:
             print("ERROR: Invalid string")
