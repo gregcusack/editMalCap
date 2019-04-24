@@ -36,8 +36,8 @@ class NetSploit:
                 # print("flow bP: {}".format(flow.biPkts))
                 # print("BIFLOW!")
                 biflow = True
-            else:
-                print("NO BIFLOW!")
+            # else:
+            #     print("NO BIFLOW!")
 
             if flow.procFlag:
                 self.transformFlow(flow, biflow)
@@ -51,8 +51,8 @@ class NetSploit:
             config = self.config.flows[flow.flowKey[:-1]]
 
         if not self.needsTransform(flow, config):
-            print("No trans for flow: {}".format(flow))
-            print("\n#####################")
+            # print("No trans for flow: {}".format(flow))
+            # print("\n#####################")
             return
 
         tf = TC(config, flow, biflow) #(config.5_tuple, Flow)
