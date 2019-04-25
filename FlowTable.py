@@ -112,6 +112,7 @@ class FlowStats():
         self.flowLen = 0
         self.flowLenBytes = 0
         self.flowDuration = 0
+        self.maxLenIndex = self.minLenIndex = 0
 
     def __repr__(self):
         return "<LengthStats: min: {}, max: {}, avg: {}, std: {}, len: {}, lenBytes: {}>\n<IAStats: min: {}, max: {}, avg: {}, std:{}>"\
@@ -132,13 +133,18 @@ class FlowStats():
 
     def getMinMaxAvgLen(self, pktList):
         total = 0
+        i = 0
         self.minLen = self.maxLen = pktList[0].pload_len
+        self.maxLenIndex = self.minLenIndex = 0
         for pkt in pktList:
             if pkt.pload_len > self.maxLen:
                 self.maxLen = pkt.pload_len
+                self.maxLenIndex = i
             elif pkt.pload_len < self.minLen:
                 self.minLen = pkt.pload_len
+                self.minLenIndex = i
             total += pkt.pload_len
+            i += 1
         self.avgLen = total / self.flowLen
         self.flowLenBytes = total
 

@@ -1,19 +1,12 @@
 import copy
 from FlowTable import FlowTable
 import numpy as np
-from scipy.stats import truncnorm
-from itertools import islice
 from math import ceil
-from random import randint, uniform
 from scapy.all import *
-import warnings
+from TransformClasses.Splitter import Splitter
 
-ETH_HDR_LEN = 14
-
-def get_truncnorm(mean=0, sd=1, low=0, upp=10):
-    return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
-
-MAX_PKT_LOOPS = 10
+MAX_PKT_LOOPS = 6
+MAX_SPLIT_PKT = 6
 MAX_FRAME_SIZE = 3000
 
 class Transform:
@@ -30,6 +23,14 @@ class LengthTransform(Transform):
     def __init__(self, flowObj, config, biFlowFlag):
         Transform.__init__(self, flowObj, config)
         self.biFlowFlag = biFlowFlag
+
+        self.og_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["og"]
+        self.adv_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["adv"]
+
+        self.og_fwd_pkt_len_max = self.config["Fwd Pkt Len Max"]["og"]
+        self.adv_fwd_pkt_len_max = self.config["Fwd Pkt Len Max"]["adv"]
+        self.og_fwd_pkt_len_min = self.config["Fwd Pkt Len Min"]["og"]
+        self.adv_fwd_pkt_len_min = self.config["Fwd Pkt Len Min"]["adv"]
         # print("Creating new LengthTransform Object")
 
     def Process(self):
@@ -39,25 +40,97 @@ class LengthTransform(Transform):
         # print("LengthTransform Process()")
         # print("flow: {}".format(self.flow))
 
-        if "Tot Fwd Pkts" in self.config:
+        if self.og_tot_fwd_pkts != self.adv_tot_fwd_pkts:
             self.fixTotFwdPkts()
+        if self.flow.flowStats.maxLen != self.adv_fwd_pkt_len_max:
+            print("Fixing max packet len")
 
     def fixTotFwdPkts(self):
         print("fixing Tot Fwd Pkts")
-        og_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["og"]
-        adv_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["adv"]
 
-        if og_tot_fwd_pkts == adv_tot_fwd_pkts:
-            print("og Tot Fwd Pkts == adv Tot Fwd Pkts")
-            return
+        if self.og_tot_fwd_pkts < self.adv_tot_fwd_pkts:
+            if self.og_fwd_pkt_len_max == self.adv_fwd_pkt_len_max:
+                if self.og_fwd_pkt_len_max != 0:
+                    split = Splitter(self.flow, self.config)
+                    split.split_max_lens_eq()
+                else:
+                    print("max pkt len == 0, can't split")
+            elif self.og_fwd_pkt_len_max < self.adv_fwd_pkt_len_max:
+                print("og pkt len max < adv pkt len max -- merge 2 then split")
+            else:
+                print("og pkt len max > adv pkt len max -- split then merge 2")
+        else:                                                                       #og pkts > adv pkts -> so merge
+            print("we gone need to merge some packets here!")
 
-        if og_tot_fwd_pkts < adv_tot_fwd_pkts:
-            self.splitLooper(og_tot_fwd_pkts, adv_tot_fwd_pkts)
-        else:
-            self.mergeLooper(og_tot_fwd_pkts, adv_tot_fwd_pkts)
 
-    def mergeLooper(self, og_tot_fwd_pkts, adv_tot_fwd_pkts):
-        print("merge looper (og, adv): ({}, {})".format(og_tot_fwd_pkts, adv_tot_fwd_pkts))
+                # self.splitLooper_v2()
+            # self.splitLooper()
+        # else:
+        #     self.mergeLooper()
+
+
+
+    def splitLooper(self):
+        print("split looper (og, adv): ({}, {})".format(self.og_tot_fwd_pkts, self.adv_tot_fwd_pkts))
+
+        i = totalLoops = pktsGreaterThanMaxPktLen = 0
+        # SPLIT PACKETS, start with packets > maxPktLen set by user
+        while self.flow.flowStats.flowLen < self.adv_tot_fwd_pkts:# and self.flow.flowStats.maxLen > maxPktLen:
+            if i == self.flow.flowStats.flowLen:
+                if totalLoops == MAX_PKT_LOOPS or pktsGreaterThanMaxPktLen == 0:
+                    self.flow.calcPktLenStats()
+                    # warnings.warn("Reached max pkt loops, can't split more pkts.  max pkt len too small")
+                    break
+                i = 0
+                totalLoops += 1
+                pktsGreaterThanMaxPktLen = 0
+                continue
+            if self.flow.pkts[i].pload_len > self.adv_fwd_pkt_len_max:
+                pktsGreaterThanMaxPktLen += 1
+                if self.flow.pkts[i].pload_len // 2 < self.adv_fwd_pkt_len_min:        # don't split packet if goes below min pkt len
+                    i += 1
+                    continue
+                self.splitPkt(self.flow.pkts[i], i)
+                self.flow.calcPktLenStats()
+                i += 2
+            else:
+                i += 1
+
+        print("splitting all pkts now")
+
+        # if still haven't reached avg len.  Begin splitting all other packets with payload
+        minPktFlag = False
+        if self.adv_fwd_pkt_len_min > 0:
+            minPktFlag = True
+        pktsLessThanMinPktLen = 0
+        i = totalLoops = 0
+        while self.flow.flowStats.flowLen < self.adv_tot_fwd_pkts:
+            if minPktFlag and self.flow.flowStats.flowLen <= pktsLessThanMinPktLen:
+                warnings.warn("Min Packet Length set by user too small!")
+                warnings.warn("Can't converge on avg. packet length.  Ignorning min pkt length requirement")
+                minPktFlag = False
+            if i == self.flow.flowStats.flowLen:
+                # print("sup")
+                if totalLoops == MAX_PKT_LOOPS:
+                    self.flow.calcPktLenStats()
+                    print("Reached max pkt loops, can't split more pkts.  avg still > target avg.  NOT CONVERGED")
+                    break
+                i = 0
+                totalLoops += 1
+                pktsLessThanMinPktLen = 0
+                continue
+            if minPktFlag and self.flow.pkts[i].pload_len // 2 < self.adv_fwd_pkt_len_min:
+                i += 1
+            elif self.flow.pkts[i].pload_len > 0:
+                self.splitPkt(self.flow.pkts[i], i)
+                self.flow.calcPktLenStats()
+                i += 2
+            else:
+                i += 1
+            # print("flow len: {}".format(self.flow.flowStats.flowLen))
+
+    def mergeLooper(self):
+        print("merge looper (og, adv): ({}, {})".format(self.og_tot_fwd_pkts, self.adv_tot_fwd_pkts))
         return
         # i = totalLoops = 0
         # MaxPktLen = self.config["pktLens"]["max"]
@@ -81,77 +154,6 @@ class LengthTransform(Transform):
         #             i += 1
         #     else:
         #         i += 1
-
-
-    def splitLooper(self, og_tot_fwd_pkts, adv_tot_fwd_pkts):
-        print("split looper (og, adv): ({}, {})".format(og_tot_fwd_pkts, adv_tot_fwd_pkts))
-
-        fwd_pkt_len_max = self.config["Fwd Pkt Len Max"]["adv"]
-        fwd_pkt_len_min = self.config["Fwd Pkt Len Min"]["adv"]
-        flow_pkt_len_max = self.config["Pkt Len Max"]["adv"]
-        flow_pkt_len_min = self.config["Pkt Len Min"]["adv"]
-
-        # avgPktLen = self.config["pktLens"]["avg"]
-        # try:
-        #     maxPktLen = self.config["pktLens"]["max"]
-        # except KeyError:
-        #     maxPktLen = 1418
-        # try:
-        #     minPktLen = self.config["pktLens"]["min"]
-        # except KeyError:
-        #     minPktLen = 0
-
-        i = totalLoops = 0
-        # SPLIT PACKETS, start with packets > maxPktLen set by user
-        while self.flow.flowStats.flowLen < adv_tot_fwd_pkts:# and self.flow.flowStats.maxLen > maxPktLen:
-            if i == self.flow.flowStats.flowLen:
-                if totalLoops == MAX_PKT_LOOPS:
-                    # warnings.warn("Reached max pkt loops, can't split more pkts.  max pkt len too small")
-                    break
-                i = 0
-                totalLoops += 1
-                continue
-            if self.flow.pkts[i].pload_len > fwd_pkt_len_max:
-                if self.flow.pkts[i].pload_len // 2 < fwd_pkt_len_min:        # don't split packet if goes below min pkt len
-                    i += 1
-                    continue
-                self.splitPkt(self.flow.pkts[i], i)
-                self.flow.calcPktLenStats()
-                i += 2
-            else:
-                i += 1
-
-        print("splitting all pkts now")
-
-        # if still haven't reached avg len.  Begin splitting all other packets with payload
-        minPktFlag = False
-        if fwd_pkt_len_min > 0:
-            minPktFlag = True
-        pktsLessThanMinPktLen = 0
-        i = totalLoops = 0
-        while self.flow.flowStats.flowLen < adv_tot_fwd_pkts:
-            if minPktFlag and self.flow.flowStats.flowLen <= pktsLessThanMinPktLen:
-                warnings.warn("Min Packet Length set by user too small!")
-                warnings.warn("Can't converge on avg. packet length.  Ignorning min pkt length requirement")
-                minPktFlag = False
-            if i == self.flow.flowStats.flowLen:
-                # print("sup")
-                if totalLoops == MAX_PKT_LOOPS:
-                    print("Reached max pkt loops, can't split more pkts.  avg still > target avg.  NOT CONVERGED")
-                    break
-                i = 0
-                totalLoops += 1
-                pktsLessThanMinPktLen = 0
-                continue
-            if minPktFlag and self.flow.pkts[i].pload_len // 2 < fwd_pkt_len_min:
-                i += 1
-            elif self.flow.pkts[i].pload_len > 0:
-                self.splitPkt(self.flow.pkts[i], i)
-                self.flow.calcPktLenStats()
-                i += 2
-            else:
-                i += 1
-            # print("flow len: {}".format(self.flow.flowStats.flowLen))
 
     def mergePkt(self, pkt, npkt):
         if pkt.http_pload and npkt.http_pload:# and (pkt.tcp_flags == npkt.tcp_flags): # make sure both pkts have payload and same flags
@@ -226,17 +228,19 @@ class LengthTransform(Transform):
         else:
             return flag
 
-    def testPktSplit(self):
-        print(self.flow.flowStats)
-        newPkts = []
-        for p in self.flow.pkts:
-            newPkts.append(self.splitPkt(p))
-        self.flow.pkts += newPkts
-        self.flow.pkts.sort()
-        # self.splitPkt(self.flow.pkts[17])
-        # print("Transforming Pkt Lengths on these pkts: {}".format(self.flow))
+    # def testPktSplit(self):
+    #     print(self.flow.flowStats)
+    #     newPkts = []
+    #     for p in self.flow.pkts:
+    #         newPkts.append(self.splitPkt(p))
+    #     self.flow.pkts += newPkts
+    #     self.flow.pkts.sort()
+    #     # self.splitPkt(self.flow.pkts[17])
+    #     # print("Transforming Pkt Lengths on these pkts: {}".format(self.flow))
 
-
+    def adjustMaxPktLen(self):
+        if self.adv_fwd_pkt_len_max > self.flow.flowStats.maxLen:
+            print("adv_max_pkt_len < flow.maxLen")
 
 class TimeTransform(Transform):
     def __init__(self, flowObj, config, biFlowFlag):
