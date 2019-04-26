@@ -37,8 +37,17 @@ class TransformationController:
         fc = self.flowConfig["features"]
 
         if self.flow.flowKey[0] == 6:
-            if "Tot Fwd Pkts" in fc or "Fwd Pkt Len Max" in fc or "Fwd Pkt Len Min" in fc or "Pkt Len Min" in fc or "Pkt Len Max" in fc:
+            if fc["Tot Fwd Pkts"]["og"] != fc["Tot Fwd Pkts"]["adv"] or \
+                fc["Fwd Pkt Len Max"]["og"] != fc["Fwd Pkt Len Max"]["adv"] or \
+                fc["Fwd Pkt Len Min"]["og"] != fc["Fwd Pkt Len Min"]["adv"] or \
+                fc["Pkt Len Min"]["og"] != fc["Pkt Len Min"]["adv"] or \
+                fc["Pkt Len Max"]["og"] != fc["Pkt Len Max"]["adv"]:
+
                 self.transObjList.append(LengthTransform(self.flow, self.flowConfig["features"], self.biFlowFlag))
+
+
+            # if "Tot Fwd Pkts" in fc or "Fwd Pkt Len Max" in fc or "Fwd Pkt Len Min" in fc or "Pkt Len Min" in fc or "Pkt Len Max" in fc:
+            #     self.transObjList.append(LengthTransform(self.flow, self.flowConfig["features"], self.biFlowFlag))
             # if "Flow Duration" in fc or "Flow IAT Max" in fc or "Flow IAT Min" in fc or "Fwd IAT Max" in fc or "Fwd IAT Min" in fc:
             #     self.transObjList.append(TimeTransform(self.flow, self.flowConfig, self.biFlowFlag))
             # if "Fwd PSH Flags" in fc or "URG Flag Cnt" in fc or "FIN Flag Cnt" in fc or "CWE Flag Count" in fc:
