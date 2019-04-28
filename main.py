@@ -3,7 +3,7 @@ from TransformClasses.TransPkt import TransPkt
 from TestClasses.TestTransPkt import TestTransPkt
 from NetSploit import NetSploit
 from Config import Config
-from TestClasses.TestNetSploit import TestNetSploit
+
 from pathlib import Path
 from os import remove
 
@@ -41,6 +41,11 @@ def main(iname, oname):
 
     NS.ProcessFlows()
     NS.mergeModifiedPkts()
+
+    NS.run_flow_length_transformation_test()
+
+
+
     # NS.printFlowTable()
     # print(NS.pktMerger.inQueue)
     # print(len(NS.pktMerger.inQueue))

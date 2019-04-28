@@ -1,6 +1,7 @@
 from FlowTable import FlowTable, FlowFilter
 from PktMerger import PktMerger
 from TransformClasses.TransformationController import TransformationController as TC
+from TestClasses.TestFlowLengthTransformation import TestFlowLengthTransformation
 
 class NetSploit:
     def __init__(self, config):             # this should be a map of our config file
@@ -33,6 +34,7 @@ class NetSploit:
             if (biflowkey, tuple[1]) in self.flowTable.FT:
                 biFK = (biflowkey, tuple[1])
                 flow.biPkts = self.flowTable.FT[biFK].pkts  # give flow access to opposite dir flow
+                flow.biFlowKey = biFK
                 # print("flow bP: {}".format(flow.biPkts))
                 # print("BIFLOW!")
                 biflow = True
@@ -88,6 +90,7 @@ class NetSploit:
         # Delete Flow from FlowTable
         #self.flowTable.delFlow(pkt_5_tuple)
 
+    # Match flow config to pcap to flow in flow table (need due to timeouts)
     def needsTransform(self, flow, config):
         flow.calcPktLenStats()
         flow.calcPktIAStats()
@@ -123,15 +126,8 @@ class NetSploit:
             return False
         return True
 
-    def print_feats_to_match(self, fc, flow):
-        flowDur = round(flow.flowStats.flowDuration * 1000000)
-        print("Flow id: {}".format(flow))
-        print("flow_dur: {}, {}".format(flowDur, fc["Flow Duration"]["og"]))
-        print("flow_len: {}, {}".format(flow.flowStats.flowLen, fc["Tot Fwd Pkts"]["og"]))
-        print("biflow_len: {}, {}".format(len(flow.biPkts), fc["Tot Bwd Pkts"]["og"]))
-        print("flow_len_bytes: {}, {}".format(flow.flowStats.flowLenBytes, fc["TotLen Fwd Pkts"]["og"]))
-        total_len = 0
-        for pkt in flow.pkts:
-            print(pkt.pload_len)
-            total_len += pkt.pload_len
-        print("flow len bytes: {}".format(total_len))
+
+
+    def run_flow_length_transformation_test(self):
+        TestFLT = TestFlowLengthTransformation(self.config, self.flowTable)
+        TestFLT.check_length_transformations()

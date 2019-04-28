@@ -2,7 +2,7 @@ import copy
 from TransformClasses.Merger import Merger
 
 MAX_PKT_LOOPS = 6
-MAX_SPLIT_PKT = 6 #10 should work but just takes longer
+MAX_SPLIT_PKT = 10 #10 should work but just takes longer
 MAX_FRAME_SIZE = 3000
 
 class Splitter:
@@ -274,3 +274,13 @@ class Splitter:
             # print("--------")
             totalLoops += 1
         return True
+
+    def set_min_packet_length(self):
+        print("fixing min packet length")
+
+        if self.flow.flowStats.minLen < self.adv_fwd_pkt_len_min:
+            print("need to increase min pkt len")
+            print("can't do this. incr. # pkts and incr. min pkt len")
+        else:
+            print("need to decrease min pkt len")
+            print("********INJECT 1***********")

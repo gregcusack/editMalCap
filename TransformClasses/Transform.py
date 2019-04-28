@@ -43,12 +43,12 @@ class LengthTransform(Transform):
 
         if self.og_tot_fwd_pkts != self.adv_tot_fwd_pkts:
             if self.flow.flowStats.maxLen == 0:
-                print("max pkt length == 0.  Can't split.  Returning")
+                print("max pkt length == 0.  Can't split.  Need to inject hella")
             else:
                 self.fixTotFwdPkts()
         elif self.og_tot_fwd_pkts == self.adv_tot_fwd_pkts:
             if self.flow.flowStats.maxLen < self.adv_fwd_pkt_len_max:
-                print("Fixing max packet len")
+                print("og and adv tot pkts the same.  Fixing max packet len")
                 split = Splitter(self.flow, self.config)
                 index = split.create_max_packet_len()
                 if index != -1:
@@ -61,6 +61,9 @@ class LengthTransform(Transform):
                 print("cant set max pkt len.  config requires us to remove information")
 
         self.flow.calcPktLenStats()
+
+
+
         print("after length transform stats: {}".format(self.flow.flowStats))
 
 
@@ -70,16 +73,16 @@ class LengthTransform(Transform):
         if self.og_tot_fwd_pkts < self.adv_tot_fwd_pkts:
             split = Splitter(self.flow, self.config)
             if self.og_fwd_pkt_len_max == self.adv_fwd_pkt_len_max:
-                if self.og_fwd_pkt_len_max != 0:
-                    split.split_max_lens_eq()
-                else:
-                    print("max pkt len == 0, can't split")
+                split.split_max_lens_eq()
             elif self.og_fwd_pkt_len_max < self.adv_fwd_pkt_len_max:
                 print("og pkt len max < adv pkt len max -- merge 2 then split")
                 split.split_og_max_len_lt()
             else:
                 print("og pkt len max > adv pkt len max -- split then merge 2")
                 split.split_og_max_len_gt()
+
+            if self.flow.flowStats.minLen != self.adv_fwd_pkt_len_min:
+                split.set_min_packet_length()
         else:                                                                       #og pkts > adv pkts -> so merge
             merge = Merger(self.flow, self.config)
 
