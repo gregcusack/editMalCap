@@ -23,8 +23,6 @@ class TestFlowLengthTransformation:
                 flag = True
             except KeyError:
                 pass
-                # self.logger.info("Flow not up for transformation: {}".format(flow))
-                # print("Biflow not in length transformation config file")
 
             if flag and self.match_flow(flow, fc):
                 self.logger.info("Testing Flow: {}".format(flow))

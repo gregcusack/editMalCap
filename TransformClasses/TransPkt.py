@@ -105,7 +105,7 @@ class TransPkt:
         if "Raw" in self.pkt:
             load = len(self.pkt[Raw])
             if "Padding" in self.pkt:
-                load -= len(self.pkt[Padding])
+               load = load - len(self.pkt[Padding].load)
             return load
         return 0
 
@@ -180,6 +180,22 @@ class TransPkt:
     @http_pload.setter
     def http_pload(self, pload):
         self.pkt[Raw].load = pload
+
+    def prune(self):
+        if self.pkt.proto == 6:
+            self.pkt[TCP].remove_payload()
+        elif self.pkt.proto == 17:
+            self.pkt[UDP].remove_payload()
+        else:
+            print("unknown protocol! bad set payload")
+            exit(-1)
+
+    def set_pload(self, size_pload):
+        if "Raw" in self.pkt or "Padding" in self.pkt:
+            print("ERROR! Must prune packet before settting pload via prune()")
+            exit(-1)
+        pload = "\x00" * int(size_pload)
+        self.pkt = self.pkt / Raw(load=pload)
 
     def get_flags(self):
         return self.pkt[TCP].flags
@@ -320,6 +336,7 @@ class TransPkt:
     def __le__(self, other):
         return(self.ts <= other.ts)
     def __repr__(self):
+        print(self.pkt.show())
         return "Pkt({} @ ts: {}".format(self.flow_tuple, self.ts)
         # return "Pkt({} @ ts: {}, ip_len: {}, ip_id: {}, seq_num: {}, ack_num: {}, pload: {})"\
         #     .format(self.flow_tuple, self.ts, self.ip_len, self.ip_id, self.seq_num, self.ack_num, str(self.http_pload))

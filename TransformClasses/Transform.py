@@ -5,6 +5,7 @@ from math import ceil
 from scapy.all import *
 from TransformClasses.Splitter import Splitter
 from TransformClasses.Merger import Merger
+from TransformClasses.Injector import Injector
 
 MAX_PKT_LOOPS = 6
 MAX_SPLIT_PKT = 6
@@ -44,6 +45,9 @@ class LengthTransform(Transform):
         if self.og_tot_fwd_pkts != self.adv_tot_fwd_pkts:
             if self.flow.flowStats.maxLen == 0:
                 print("max pkt length == 0.  Can't split.  Need to inject hella")
+                injector = Injector(self.flow)
+                injector.inject_many(self.flow.pkts[len(self.flow.pkts) - 1],
+                                     self.adv_tot_fwd_pkts, self.adv_fwd_pkt_len_max, self.adv_fwd_pkt_len_min)
             else:
                 self.fixTotFwdPkts()
         elif self.og_tot_fwd_pkts == self.adv_tot_fwd_pkts:
