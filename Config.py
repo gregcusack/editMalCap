@@ -10,17 +10,33 @@ class Config:
         else:
             print("ERROR: No configuration file")
             exit(-1)
+        features_to_change = ["Tot Fwd Pkts",
+                              "Fwd Pkt Len Max",
+                              "Fwd Pkt Len Min",
+                              "Pkt Len Min",
+                              "Pkt Len Max",
+
+                              "Flow Duration",
+                              "Flow IAT Max",
+                              "Flow IAT Min",
+                              "Fwd IAT Max",
+                              "Fwd IAT Min",
+
+                              "Fwd PSH Flags",
+                              "URG Flag Cnt",
+                              "FIN Flag Cnt",
+                              "CWE Flag Count",
+
+                              "Init Fwd Win Byts"
+                              ]
 
     def parseConfig(self, jData):
-        print("Parsing config and setting config vals...")
-        self.pkt_thresh = jData["sysConfig"]["pkt_thresh"]
-        self.time_since_last_pkt = jData["sysConfig"]["timeout"]
-        self.merge_batch_size = jData["sysConfig"]["merge_batch_size"]
-        #self.split_flows = jData["flowFeatures"]["numFlows"]
-        #print(jData["flowFeatures"])
+        # print("Parsing config and setting config vals...")
+        # self.time_since_last_pkt = jData["sysConfig"]["timeout"]
 
         # convert JSON to python dictionary
-        for k,v in jData["flowFeatures"].items():
+        # for k,v in jData["flowFeatures"].items():
+        for k,v in jData["flows"].items():
             key = [x.strip() for x in k.split(',')]
             # print(key)
             key[0] = int(key[0])

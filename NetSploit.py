@@ -1,64 +1,80 @@
 from FlowTable import FlowTable, FlowFilter
 from PktMerger import PktMerger
 from TransformClasses.TransformationController import TransformationController as TC
+from TestClasses.TestFlowLengthTransformation import TestFlowLengthTransformation
 
 class NetSploit:
     def __init__(self, config):             # this should be a map of our config file
         # try to keep this just objects
         self.filter = FlowFilter(config.flows)
         self.flowTable = FlowTable()
-        self.pktMerger = PktMerger(config.merge_batch_size)
+        self.pktMerger = PktMerger()
         self.config = config
 
     def loadFlowTable(self, pkt):
-        # print(pkt.flow_tuple)
+        # print(pkt.biflow_tuple)
         addToFT = self.filter.needsTrans(pkt.flow_tuple)
         if addToFT:
             # print("Send packet for transformation")
             self.flowTable.procPkt(pkt, addToFT)
         else:
+            # print("pkt no trans just merge: {}".format(pkt))
             self.pktMerger.mergePkt(pkt)
 
     def ProcessFlows(self):
-       for tuple,flow in self.flowTable.FT.items():
-           biflow = False # need to check if biflow exists
-           if flow.procFlag:
-               if flow.flowKey[0] == 6:
-                   biflowkey = flow.biFlowKey
-               else:
-                   biflowkey = flow.biFlowKey[:-1]      # UDP
+        # print("flow table: {}".format(self.flowTable.FT))
+        for tuple,flow in self.flowTable.FT.items():
+            # print("processing: {} -- {}".format(tuple, flow))
+            biflow = False # need to check if biflow exists
+            if flow.flowKey[0] == 6:
+                biflowkey = flow.biFlowKey
+            else:
+                biflowkey = flow.biFlowKey[:-1]      # UDP
 
-               if biflowkey in self.flowTable.FT:
-                   flow.biPkts = self.flowTable.FT[biflowkey].pkts      # give flow access to opposite dir flow
-                   biflow = True
-               else:
-                   print("NO BIFLOW!")
-               #self.flowTable.FT[flow.flowKey].getDiffs()
-               # print("FLOW: {}".format(flow))
-               self.transformFlow(flow, biflow)
+            if (biflowkey, tuple[1]) in self.flowTable.FT:
+                biFK = (biflowkey, tuple[1])
+                flow.biPkts = self.flowTable.FT[biFK].pkts  # give flow access to opposite dir flow
+                flow.biFlowKey = biFK
+                # print("flow bP: {}".format(flow.biPkts))
+                # print("BIFLOW!")
+                biflow = True
+            # else:
+            #     print("NO BIFLOW!")
+
+            if flow.procFlag:
+                self.transformFlow(flow, biflow)
+
+            # print("ProcProcProcProc")
 
     def transformFlow(self, flow, biflow):
         if flow.flowKey[0] == 6:
             config = self.config.flows[flow.flowKey]
         else:
             config = self.config.flows[flow.flowKey[:-1]]
+
+        if not self.needsTransform(flow, config):
+            # print("No trans for flow: {}".format(flow))
+            # print("\n#####################")
+            return
+
         tf = TC(config, flow, biflow) #(config.5_tuple, Flow)
-        print(config)
+
+
         tf.buildTransformations()
         tf.runTransformations()
-        self.mergeModifiedPkts()
+        # self.mergeModifiedPkts()
 
     def mergeModifiedPkts(self):
         for tuple,flow in self.flowTable.FT.items():
-            # print(flow)
+            # print("flow to store: {}".format(flow))
             for pkt in flow.pkts:
                 #print(pkt)
-                # if pkt.ip_src == "172.217.2.4" and pkt.ip_dst == "10.201.73.154" and pkt.src_port == 443 and pkt.dst_port == 60043:
-                #     print(pkt)
+                # if pkt.flow_tuple == (6, '192.168.10.14', 49474, '104.97.95.20', 443):
+                #     print("to merge: {}".format(pkt))
                 self.pktMerger.mergePkt(pkt)
 
     def redistributeFlowTable(self, flow):
-        print("redistributing flow table")
+        # print("redistributing flow table")
         splitFlows = self.flowTable.FT[flow.flowKey].pkts
         print(splitFlows)
         del self.flowTable.FT[flow.flowKey]
@@ -68,7 +84,50 @@ class NetSploit:
             self.flowTable.FT[pkt.flow_tuple] = pkt
         print(self.flowTable.FT)
 
-
+    def printFlowTable(self):
+        print("flowtable: {}".format(self.flowTable.FT))
 
         # Delete Flow from FlowTable
         #self.flowTable.delFlow(pkt_5_tuple)
+
+    # Match flow config to pcap to flow in flow table (need due to timeouts)
+    def needsTransform(self, flow, config):
+        flow.calcPktLenStats()
+        flow.calcPktIAStats()
+
+        fc = config["features"]
+
+        match_counter_checker = 0
+        assert_flag = False
+        flowDur = round(flow.flowStats.flowDuration * 1000000)
+        if flowDur != fc["Flow Duration"]["og"]:
+            match_counter_checker += 1
+            assert_flag = True
+        if flow.flowStats.flowLen != fc["Tot Fwd Pkts"]["og"]:
+            match_counter_checker += 1
+            assert_flag = True
+        if flow.biPkts:
+            if len(flow.biPkts) != fc["Tot Bwd Pkts"]["og"]:
+                match_counter_checker += 1
+                assert_flag = True
+        if flow.flowStats.flowLenBytes != fc["TotLen Fwd Pkts"]["og"]:
+            match_counter_checker += 1
+            assert_flag = True
+
+        if assert_flag:
+            if flow.biPkts and match_counter_checker != 4:
+                print("ERROR! Match count checker != 4.  EXITING...")
+                self.print_feats_to_match(fc, flow)
+                exit(-1)
+            elif not flow.biPkts and match_counter_checker != 3:
+                print("ERROR! Match count checker != 3.  EXITING...")
+                self.print_feats_to_match(fc, flow)
+                exit(-1)
+            return False
+        return True
+
+
+
+    def run_flow_length_transformation_test(self):
+        TestFLT = TestFlowLengthTransformation(self.config, self.flowTable)
+        TestFLT.check_length_transformations()

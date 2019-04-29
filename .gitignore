@@ -6,5 +6,8 @@ __pycache__/
 .idea
 config.json
 *backup.json
-*.ipynb
 .ipynb_checkpoints/
+feature_set_test.json
+*.log
+.log
+

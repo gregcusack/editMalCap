@@ -16,6 +16,7 @@ class TransPkt:
     def __init__(self, pkt):
         if not isinstance(pkt, scapy.layers.l2.Ether):
             self.dropPkt = 1
+            print("DROP packet!")
             return
             # print("ERROR: Attempting to initialize transPkt class with non-scapy packet")
             # exit()
@@ -102,7 +103,10 @@ class TransPkt:
     @property
     def pload_len(self):
         if "Raw" in self.pkt:
-            return len(self.pkt[Raw])
+            load = len(self.pkt[Raw])
+            if "Padding" in self.pkt:
+               load = load - len(self.pkt[Padding].load)
+            return load
         return 0
 
     # Setter: General Packet Features
@@ -177,6 +181,25 @@ class TransPkt:
     def http_pload(self, pload):
         self.pkt[Raw].load = pload
 
+    def prune(self):
+        if self.pkt.proto == 6:
+            self.pkt[TCP].remove_payload()
+        elif self.pkt.proto == 17:
+            self.pkt[UDP].remove_payload()
+        else:
+            print("unknown protocol! bad set payload")
+            exit(-1)
+
+    def set_pload(self, size_pload):
+        if "Raw" in self.pkt or "Padding" in self.pkt:
+            print("ERROR! Must prune packet before settting pload via prune()")
+            exit(-1)
+        pload = "\x00" * int(size_pload)
+        self.pkt = self.pkt / Raw(load=pload)
+
+    def get_flags(self):
+        return self.pkt[TCP].flags
+
     # Set TCP Flags
     def set_FIN(self):
         self.pkt[TCP].flags |= TCP_FLAGS.FIN.value
@@ -227,10 +250,20 @@ class TransPkt:
     def update_5_tuple(self):
         if self.pkt.proto == 6: #TCP
             self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[TCP].sport, self.pkt[IP].dst, self.pkt[TCP].dport)
+            self.update_bi_5_tuple()
         elif self.pkt.proto == 17: #UDP
             self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[UDP].sport, self.pkt[IP].dst, self.pkt[UDP].dport)
+            self.update_bi_5_tuple()
         else:
             print("Unknown pkt proto...ignoring")
+
+    def update_bi_5_tuple(self):
+        if self.pkt.proto == 6:
+            self.biflow_tuple = (self.pkt.proto, self.pkt[IP].dst, self.pkt[TCP].dport, self.pkt[IP].src, self.pkt[TCP].sport)
+        elif self.pkt.proto == 17:
+            self.biflow_tuple = (self.pkt.proto, self.pkt[IP].dst, self.pkt[UDP].dport, self.pkt[IP].src, self.pkt[UDP].sport)
+
+
 
     def pktSetUDPTuple(self, flowKey):
         self.ip_proto = flowKey[0]
@@ -263,6 +296,15 @@ class TransPkt:
         if "DF" in flags:
             self.set_DF()
 
+    def check_FIN(self):
+        # print("checking fin")
+        # x = bool((self.pkt[TCP].flags & TCP_FLAGS.FIN.value))
+        # print("flags!: {}".format(self.pkt[TCP].flags))
+        # print("fin?: {}".format(x))
+        # print("fin ts: {}".format(self.pkt.time))
+        # return x
+        return self.pkt[TCP].flags & TCP_FLAGS.FIN.value
+
     # Write Packet to File (Append)
     def write_pcap(self, file):
         #print(self.pkt[IP].src)
@@ -294,6 +336,7 @@ class TransPkt:
     def __le__(self, other):
         return(self.ts <= other.ts)
     def __repr__(self):
+        print(self.pkt.show())
         return "Pkt({} @ ts: {}".format(self.flow_tuple, self.ts)
         # return "Pkt({} @ ts: {}, ip_len: {}, ip_id: {}, seq_num: {}, ack_num: {}, pload: {})"\
         #     .format(self.flow_tuple, self.ts, self.ip_len, self.ip_id, self.seq_num, self.ack_num, str(self.http_pload))

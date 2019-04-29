@@ -1,15 +1,15 @@
 from statistics import stdev
-from collections import namedtuple
 
-DirTuple = namedtuple('DirTuple', ['dir', 'ts'])
+FLOWTIMEOUT = 120 # 120 seconds
 
 # Flows contain a list of pkts sharing a mutual 5 tuple (proto, srcIP, srcPort, dstIP, dstPort)
 class Flow:
-    def __init__(self, flow_tuple):
+    def __init__(self, flow_tuple, _flow_start_time):
         self.pkts = []
         self.flowStats = FlowStats()
         self.flowKey = flow_tuple
         self.biFlowKey = None
+        self.flowStartTime = _flow_start_time
         if flow_tuple[0] == 6:
             self.biFlowKey = (flow_tuple[0], flow_tuple[3], flow_tuple[4], flow_tuple[1], flow_tuple[2])
         elif flow_tuple[0] == 17:
@@ -27,7 +27,7 @@ class Flow:
         self.pkts.append(pkt)
 
     def calcPktLenStats(self):
-        self.flowStats.updateLenStats(self.pkts)
+        self.flowStats.updateLenStats(self.pkts, self.biPkts)
 
     # def incLenStats(self, pktLen):
     #     self.flowStats.getIncLenStats(pktLen)
@@ -111,17 +111,20 @@ class FlowStats():
         self.minIA = self.maxIA = self.avgIA = self.stdIA = self.totalIA = 0
         self.flowLen = 0
         self.flowLenBytes = 0
+        self.flowDuration = 0
+        self.maxLenIndex = self.minLenIndex = 0
 
     def __repr__(self):
         return "<LengthStats: min: {}, max: {}, avg: {}, std: {}, len: {}, lenBytes: {}>\n<IAStats: min: {}, max: {}, avg: {}, std:{}>"\
             .format(self.minLen, self.maxLen, self.avgLen, self.stdLen, self.flowLen, self.flowLenBytes,
                     self.minIA, self.maxIA, self.avgIA, self.stdIA)
 
-    def updateLenStats(self, pktList):
+    def updateLenStats(self, pktList, biPktList):
         self.resetLenStats()
         self.flowLen = len(pktList)
         self.getMinMaxAvgLen(pktList)
         self.getStdLen(pktList)
+        self.getFlowDuration(pktList, biPktList)
 
     def updateIAStats(self, pktList):
         self.resetIAStats()
@@ -130,28 +133,28 @@ class FlowStats():
 
     def getMinMaxAvgLen(self, pktList):
         total = 0
+        i = 0
         self.minLen = self.maxLen = pktList[0].pload_len
+        self.maxLenIndex = self.minLenIndex = 0
         for pkt in pktList:
             if pkt.pload_len > self.maxLen:
                 self.maxLen = pkt.pload_len
+                self.maxLenIndex = i
             elif pkt.pload_len < self.minLen:
                 self.minLen = pkt.pload_len
+                self.minLenIndex = i
             total += pkt.pload_len
+            i += 1
         self.avgLen = total / self.flowLen
         self.flowLenBytes = total
-        # total = 0
-        # self.minLen = self.maxLen = pktList[0].frame_len
-        # for pkt in pktList:
-        #     if pkt.frame_len > self.maxLen:
-        #         self.maxLen = pkt.frame_len
-        #     elif pkt.frame_len < self.minLen:
-        #         self.minLen = pkt.frame_len
-        #     total += pkt.frame_len
-        # self.avgLen = total / self.flowLen
-        # self.flowLenBytes = total
 
     def getStdLen(self, pktList):
-        self.stdLen = stdev(pkt.frame_len for pkt in pktList)
+        if len(pktList) < 2:
+            # print("1 pkt in flow...stddev = 0")
+            self.stdLen = 0
+            return
+
+        self.stdLen = stdev(pkt.pload_len for pkt in pktList)
         if self.stdLen < 0:
             print("ERROR: Std Dev. len < 0.  std val is: {}".format(self.stdLen))
             exit(-1)
@@ -197,11 +200,31 @@ class FlowStats():
         else:
             self.stdIA = stdev([j.ts - i.ts for i,j in zip(pktList[:-1], pktList[1:])])
 
+    def getFlowDuration(self, pktList, biPktList):
+        if not biPktList:
+            if len(pktList) <= 1:
+                self.flowDuration = 0
+                return
+            else:
+                self.flowDuration = pktList[len(pktList) - 1].ts - pktList[0].ts
+        else:
+            if biPktList[len(biPktList) - 1].ts > pktList[len(pktList) - 1].ts: # biPkt is end of flow
+                endts = biPktList[len(biPktList) - 1].ts
+            else:
+                endts = pktList[len(pktList) - 1].ts
+            if biPktList[0].ts < pktList[0].ts:                                 # biPkt is beginning of flow
+                startts = biPktList[0].ts
+            else:
+                startts = pktList[0].ts
+
+            self.flowDuration = endts - startts
+
 
 class FlowTable:
     def __init__(self):               # list is our config list
         # have tables as all caps (and acronyms)
         self.FT = {}
+        self.timeout_count = {}     # count # of flow timeouts
         # self.filter = filter
 
     def procPkt(self, pkt, transFlow):
@@ -217,19 +240,62 @@ class FlowTable:
             exit(-1)
 
         # print("FLOW TUPLE: {}".format(flow_tuple))
+        # timeout_count manages flows with same 5-tuples but have timed out
+        if flow_tuple in self.timeout_count:
+            FK = (flow_tuple, self.timeout_count[flow_tuple])
+        else:
+            self.timeout_count[flow_tuple] = 0
+            self.timeout_count[pkt.biflow_tuple] = 0        # if either direction of flow ends, new flows created for both directions
+            FK = (flow_tuple, self.timeout_count[flow_tuple])
 
-        if flow_tuple not in self.FT:
-            self.FT[flow_tuple] = Flow(pkt.flow_tuple)
-            if transFlow == "Trans":
-                self.FT[flow_tuple].procFlag = True
-            elif transFlow == "NoTrans":
-                # print('no trans')
-                self.FT[flow_tuple].procFlag = False
-            else:
-                print("ERROR: Invalid string")
+        # print(FK)
+        if FK not in self.FT:
+            self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts) # add pkt with start time
+            # self.setProcFlag(FK, transFlow)
+            # self.FT[FK].addPkt(pkt)
+        elif pkt.ts - self.FT[FK].flowStartTime > FLOWTIMEOUT:  # watch for flow timeout
+            self.timeout_count[flow_tuple] += 1
+            self.timeout_count[pkt.biflow_tuple] += 1    # if either direction of flow ends, new flows created for both directions
+            if self.timeout_count[flow_tuple] != self.timeout_count[pkt.biflow_tuple]:
+                print("ERROR in flowtimeout: biflow timeout # != flow timeout #")
+                exit(-1)
+            # print("len flow before timeout: {}".format(len(self.FT[FK].pkts)))
+            # print("TO pkt.ts: {}".format(pkt.ts))
+            FK = (flow_tuple, self.timeout_count[flow_tuple])
+            # print("Flow timeout! --> {}".format(FK))
+            self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts)
+            # self.setProcFlag(FK, transFlow)
+            # self.FT[FK].addPkt(pkt)
+
+        elif pkt.check_FIN():
+            # print("FIN flag!")
+            # print("fin pkt (ts): {}".format(pkt.ts))
+            # self.setProcFlag(FK, transFlow)
+            # self.FT[FK].addPkt(pkt)
+            self.timeout_count[flow_tuple] += 1
+            self.timeout_count[pkt.biflow_tuple] += 1        # if either direction of flow ends, new flows created for both directions
+            if self.timeout_count[flow_tuple] != self.timeout_count[pkt.biflow_tuple]:
+                print("ERROR in fin flag: biflow timeout # != flow timeout #")
                 exit(-1)
 
-        self.FT[flow_tuple].addPkt(pkt)
+        self.setProcFlag(FK, transFlow)
+
+        # if FK == ((6, '172.217.2.4', 443, '10.201.73.154', 60043), 0) or FK == ((6, '172.217.2.4', 443, '10.201.73.154', 60043), 1):
+        #     print(pkt.ts, FK)
+        self.FT[FK].addPkt(pkt)
+
+
+    def setProcFlag(self, FK, transFlow):
+        if transFlow == "Trans":
+            self.FT[FK].procFlag = True
+        elif transFlow == "NoTrans":
+            self.FT[FK].procFlag = False
+        else:
+            print("ERROR: Invalid string")
+            exit(-1)
+
+    def evictFlow(self):
+        print("timeout reached.  evict flow")
 
 class FlowFilter:
     def __init__(self, list): #TODO: this list needs to be the global config_file
@@ -244,9 +310,7 @@ class FlowFilter:
         elif pkt_tuple[0] == 17:
             biTuple = (pkt_tuple[0], pkt_tuple[3], pkt_tuple[4], pkt_tuple[1])
             pkt_tuple = pkt_tuple[:-1]
-            # print(pkt_tuple)
-            # print(biTuple)
-            # print("----")
+
         #pkt needs to be a TransPkt type
         if pkt_tuple in self.tuple_set:
             # print(pkt_tuple)

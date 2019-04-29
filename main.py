@@ -3,7 +3,7 @@ from TransformClasses.TransPkt import TransPkt
 from TestClasses.TestTransPkt import TestTransPkt
 from NetSploit import NetSploit
 from Config import Config
-from TestClasses.TestNetSploit import TestNetSploit
+
 from pathlib import Path
 from os import remove
 
@@ -20,7 +20,8 @@ def check_input():
 def main(iname, oname):
     pkts = rdpcap(iname)
 
-    config = Config("config.json")
+    # config = Config("config.json")
+    config = Config("feature_set.json")
     NS = NetSploit(config)
 
     counter = 0
@@ -39,8 +40,15 @@ def main(iname, oname):
         # print(counter, droppedPkts)#, tpkt.ip_src, tpkt.ip_proto)
 
     NS.ProcessFlows()
+    NS.mergeModifiedPkts()
 
-    print(NS.pktMerger.inQueue)
+    NS.run_flow_length_transformation_test()
+
+
+
+    # NS.printFlowTable()
+    # print(NS.pktMerger.inQueue)
+    # print(len(NS.pktMerger.inQueue))
     #TestNetSploit(merger=NS.pktMerger)
 
     # Write to PCAP
@@ -48,7 +56,8 @@ def main(iname, oname):
     if out_pcap.is_file():
         os.remove(oname)
     for pkt in NS.pktMerger.inQueue:
-        #print(pkt)
+        # if pkt.flow_tuple == (6, '192.168.10.14', 49474, '104.97.95.20', 443):
+        #     print(pkt)
         pkt.write_pcap(oname)
 
 
