@@ -1,1246 +1,62 @@
 {
   "flows": {
-    "6,192.168.10.14,59054,204.79.197.200,443": {
+    "0,172.16.0.1,0,192.168.10.50,0": {
       "features": {
         "Flow Duration": {
-          "og": 66581361.0,
-          "adv": 43548876.0
+          "og": 34167189.0,
+          "adv": 29491000.0
         },
         "Tot Fwd Pkts": {
-          "og": 14.0,
-          "adv": 80.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 22.0,
-          "adv": 22.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 6156.0,
-          "adv": 6156.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 5781.0,
-          "adv": 5781.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 10000937.0,
-          "adv": 10155875.0
-        },
-        "Fwd IAT Max": {
-          "og": 10023371.0,
-          "adv": 17630604.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 5781.0,
-          "adv": 5781.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 18161.0
-        }
-      }
-    },
-    "6,192.168.10.14,49601,204.8.234.202,80": {
-      "features": {
-        "Flow Duration": {
-          "og": 5314915.0,
-          "adv": 14267800.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 35.0,
-          "adv": 240.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 49.0,
-          "adv": 49.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 316.0,
-          "adv": 316.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 316.0,
-          "adv": 316.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 3277631.0,
-          "adv": 5705371.0
-        },
-        "Flow IAT Min": {
-          "og": 2.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 3277631.0,
-          "adv": 6086493.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 2261.0
-        }
-      }
-    },
-    "6,192.168.10.14,49641,204.8.234.202,80": {
-      "features": {
-        "Flow Duration": {
-          "og": 4969555.0,
-          "adv": 10810292.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 36.0,
-          "adv": 211.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 57.0,
-          "adv": 57.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1110.0,
-          "adv": 1110.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 563.0,
-          "adv": 563.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 3000304.0,
-          "adv": 5975252.0
-        },
-        "Fwd IAT Max": {
-          "og": 3000304.0,
-          "adv": 5715573.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 3847.0
-        }
-      }
-    },
-    "6,192.168.10.14,49662,204.8.234.202,80": {
-      "features": {
-        "Flow Duration": {
-          "og": 5236706.0,
-          "adv": 7909119.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 34.0,
-          "adv": 155.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 56.0,
-          "adv": 56.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1110.0,
-          "adv": 1110.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 563.0,
-          "adv": 563.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 3243062.0,
-          "adv": 6707346.0
-        },
-        "Flow IAT Min": {
-          "og": 6.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 3243147.0,
-          "adv": 6846974.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 2920.0,
-          "adv": 2920.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 3303.0
-        }
-      }
-    },
-    "6,192.168.10.14,49827,204.8.234.202,80": {
-      "features": {
-        "Flow Duration": {
-          "og": 5240279.0,
-          "adv": 6003317.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 37.0,
-          "adv": 192.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 55.0,
-          "adv": 55.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1110.0,
-          "adv": 1110.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 563.0,
-          "adv": 563.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 3428011.0,
-          "adv": 6482025.0
-        },
-        "Fwd IAT Max": {
-          "og": 3428011.0,
-          "adv": 7015180.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 3444.0,
-          "adv": 3444.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 2964.0
-        }
-      }
-    },
-    "6,192.168.10.14,49841,204.8.234.202,80": {
-      "features": {
-        "Flow Duration": {
-          "og": 5264984.0,
-          "adv": 11408520.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 37.0,
-          "adv": 282.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 56.0,
-          "adv": 56.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1110.0,
-          "adv": 1110.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 563.0,
-          "adv": 563.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 3020373.0,
-          "adv": 5631424.0
-        },
-        "Flow IAT Min": {
-          "og": 3.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 3020533.0,
-          "adv": 5654176.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 352.0
-        }
-      }
-    },
-    "6,192.168.10.14,50016,204.8.234.202,80": {
-      "features": {
-        "Flow Duration": {
-          "og": 5271301.0,
-          "adv": 21673086.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 36.0,
-          "adv": 434.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 47.0,
-          "adv": 47.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1110.0,
-          "adv": 1110.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 563.0,
-          "adv": 563.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 3197234.0,
-          "adv": 7201811.0
-        },
-        "Fwd IAT Max": {
-          "og": 3197234.0,
-          "adv": 6182706.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 4978.0
-        }
-      }
-    },
-    "6,192.168.10.14,50030,204.8.234.202,80": {
-      "features": {
-        "Flow Duration": {
-          "og": 5279453.0,
-          "adv": 13989828.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 37.0,
-          "adv": 139.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 55.0,
-          "adv": 55.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1110.0,
-          "adv": 1110.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 563.0,
-          "adv": 563.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 3110438.0,
-          "adv": 5952250.0
-        },
-        "Fwd IAT Max": {
-          "og": 3110438.0,
-          "adv": 5254098.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 3217.0,
-          "adv": 3217.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 1852.0
-        }
-      }
-    },
-    "6,192.168.10.14,50140,204.8.234.202,80": {
-      "features": {
-        "Flow Duration": {
-          "og": 5252051.0,
-          "adv": 18420596.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 32.0,
-          "adv": 218.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 52.0,
-          "adv": 52.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1110.0,
-          "adv": 1110.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 563.0,
-          "adv": 563.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 3817911.0,
-          "adv": 5864690.0
-        },
-        "Fwd IAT Max": {
-          "og": 3817911.0,
-          "adv": 5905710.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 815.0
-        }
-      }
-    },
-    "6,192.168.10.14,50153,204.8.234.202,80": {
-      "features": {
-        "Flow Duration": {
-          "og": 5497272.0,
-          "adv": 18200406.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 37.0,
-          "adv": 210.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 52.0,
-          "adv": 52.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1110.0,
-          "adv": 1110.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 563.0,
-          "adv": 563.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 3491278.0,
-          "adv": 5845834.0
-        },
-        "Flow IAT Min": {
-          "og": 1.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 3491282.0,
-          "adv": 6346064.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 2394.0
-        }
-      }
-    },
-    "6,192.168.10.14,50183,204.8.234.202,80": {
-      "features": {
-        "Flow Duration": {
-          "og": 6246131.0,
-          "adv": 18345642.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 38.0,
-          "adv": 427.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 54.0,
-          "adv": 54.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1110.0,
-          "adv": 1110.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 563.0,
-          "adv": 563.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Min": {
           "og": 4.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 3973666.0,
-          "adv": 6181360.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 4021.0
-        }
-      }
-    },
-    "6,192.168.10.15,56933,204.236.236.52,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 61580764.0,
-          "adv": 48892696.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 15.0,
-          "adv": 16.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 14.0,
-          "adv": 14.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 3016.0,
-          "adv": 3016.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 2685.0,
-          "adv": 2685.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10047664.0,
-          "adv": 12121216.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 2685.0,
-          "adv": 2685.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 37008.0
-        }
-      }
-    },
-    "6,192.168.10.15,60043,204.236.236.52,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 64038506.0,
-          "adv": 45586140.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 15.0,
-          "adv": 16.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 14.0,
-          "adv": 14.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 3166.0,
-          "adv": 3166.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 2835.0,
-          "adv": 2835.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10093885.0,
-          "adv": 13449790.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 2835.0,
-          "adv": 2835.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 45746.0
-        }
-      }
-    },
-    "6,192.168.10.15,50696,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 63796133.0,
-          "adv": 24717958.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 16.0,
-          "adv": 60.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 23.0,
-          "adv": 23.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 3107.0,
-          "adv": 3107.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 1701.0,
-          "adv": 1701.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10022712.0,
-          "adv": 15145788.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 1701.0,
-          "adv": 1701.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 39393.0
-        }
-      }
-    },
-    "6,192.168.10.15,53761,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 5566226.0,
-          "adv": 4629758.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 9.0,
-          "adv": 15.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 8.0,
-          "adv": 8.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 422.0,
-          "adv": 422.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 187.0,
-          "adv": 187.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Min": {
-          "og": 3.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 5378412.0,
-          "adv": 5438342.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 2920.0,
-          "adv": 2920.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 8861.0
-        }
-      }
-    },
-    "6,192.168.10.15,56357,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 67059973.0,
-          "adv": 36128676.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 14.0,
-          "adv": 15.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 17.0,
-          "adv": 17.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1470.0,
-          "adv": 1470.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 1061.0,
-          "adv": 1061.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Min": {
-          "og": 2.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10024658.0,
-          "adv": 13248504.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 2920.0,
-          "adv": 2920.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 40885.0
-        }
-      }
-    },
-    "6,192.168.10.15,56358,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 65503739.0,
-          "adv": 53843144.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 15.0,
-          "adv": 16.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 17.0,
-          "adv": 17.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1694.0,
-          "adv": 1694.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 1285.0,
-          "adv": 1285.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 10001247.0,
-          "adv": 10115636.0
-        },
-        "Flow IAT Min": {
-          "og": 2.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10023649.0,
-          "adv": 15422056.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 2425.0,
-          "adv": 2425.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 31086.0
-        }
-      }
-    },
-    "6,192.168.10.15,52125,205.174.165.73,8080": {
-      "features": {
-        "Flow Duration": {
-          "og": 2.0,
-          "adv": -35140.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 1.0,
-          "adv": 1.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 1.0,
-          "adv": 1.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 0.0,
-          "adv": 24566.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 256.0,
-          "adv": 285.0
-        }
-      }
-    },
-    "6,192.168.10.15,52134,205.174.165.73,8080": {
-      "features": {
-        "Flow Duration": {
-          "og": 1.0,
-          "adv": 18529860.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 1.0,
-          "adv": 189.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 1.0,
-          "adv": 1.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 0.0,
-          "adv": 345.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 0.0,
-          "adv": 345.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 1.0,
-          "adv": 8086218.0
-        },
-        "Flow IAT Min": {
-          "og": 1.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 0.0,
-          "adv": 9359432.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 0.0,
-          "adv": 345.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 256.0,
-          "adv": 0.0
-        }
-      }
-    },
-    "6,205.174.165.73,8080,192.168.10.15,52224": {
-      "features": {
-        "Flow Duration": {
-          "og": 2.0,
-          "adv": 57161.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 1.0,
-          "adv": 2.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 1.0,
-          "adv": 1.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 2.0,
-          "adv": 31080.0
-        },
-        "Flow IAT Min": {
-          "og": 2.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 0.0,
-          "adv": 6761.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 237.0,
-          "adv": 208.0
-        }
-      }
-    },
-    "6,205.174.165.73,8080,192.168.10.15,52326": {
-      "features": {
-        "Flow Duration": {
-          "og": 2.0,
-          "adv": 664271.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 1.0,
-          "adv": 2.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 1.0,
-          "adv": 1.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 2.0,
-          "adv": 161965.0
-        },
-        "Flow IAT Min": {
-          "og": 2.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 0.0,
-          "adv": 429580.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 237.0,
-          "adv": 594.0
-        }
-      }
-    },
-    "6,192.168.10.15,52346,205.174.165.73,8080": {
-      "features": {
-        "Flow Duration": {
-          "og": 2.0,
-          "adv": 56939.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 1.0,
-          "adv": 1.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 1.0,
-          "adv": 1.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 2.0,
-          "adv": 19754.0
-        },
-        "Flow IAT Min": {
-          "og": 2.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 0.0,
-          "adv": 30556.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 256.0,
-          "adv": 287.0
-        }
-      }
-    },
-    "6,205.174.165.73,8080,192.168.10.15,52713": {
-      "features": {
-        "Flow Duration": {
-          "og": 2.0,
-          "adv": 909101.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 1.0,
-          "adv": 2.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 1.0,
-          "adv": 1.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 2.0,
-          "adv": 281606.0
-        },
-        "Flow IAT Min": {
-          "og": 2.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 0.0,
-          "adv": 512684.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 237.0,
-          "adv": 721.0
-        }
-      }
-    },
-    "6,192.168.10.15,52854,205.174.165.73,8080": {
-      "features": {
-        "Flow Duration": {
-          "og": 1.0,
-          "adv": 19545876.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 1.0,
-          "adv": 197.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 1.0,
-          "adv": 1.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 0.0,
-          "adv": 225.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 0.0,
-          "adv": 225.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 1.0,
-          "adv": 7015220.0
-        },
-        "Flow IAT Min": {
-          "og": 1.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 0.0,
-          "adv": 468358.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 0.0,
-          "adv": 225.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 256.0,
-          "adv": 0.0
-        }
-      }
-    },
-    "6,192.168.10.15,52855,205.174.165.73,8080": {
-      "features": {
-        "Flow Duration": {
-          "og": 97665.0,
-          "adv": -1813655.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 5.0,
-          "adv": 78.0
+          "adv": 4.0
         },
         "Tot Bwd Pkts": {
           "og": 4.0,
           "adv": 4.0
         },
         "TotLen Fwd Pkts": {
-          "og": 3444.0,
-          "adv": 3444.0
+          "og": 0.0,
+          "adv": 171.0
         },
         "Fwd Pkt Len Max": {
-          "og": 1984.0,
-          "adv": 1984.0
+          "og": 0.0,
+          "adv": 171.0
         },
         "Fwd Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Flow IAT Max": {
-          "og": 94946.0,
-          "adv": 1799812.0
-        },
-        "Flow IAT Min": {
-          "og": 31.0,
-          "adv": 0.0
+          "og": 32166863.0,
+          "adv": 32166864.0
         },
         "Fwd IAT Max": {
-          "og": 97032.0,
-          "adv": 7000988.0
+          "og": 32166999.0,
+          "adv": 32167000.0
         },
         "Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Pkt Len Max": {
-          "og": 1984.0,
-          "adv": 1984.0
+          "og": 0.0,
+          "adv": 171.0
         },
         "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 0.0
+          "og": -1.0,
+          "adv": 24853.0
         }
       }
     },
-    "6,192.168.10.15,52911,205.174.165.73,8080": {
+    "6,172.16.0.1,32810,192.168.10.50,60020": {
       "features": {
         "Flow Duration": {
-          "og": 1.0,
-          "adv": 15279566.0
+          "og": 2.0,
+          "adv": 180269.0
         },
         "Tot Fwd Pkts": {
           "og": 1.0,
-          "adv": 33.0
+          "adv": 2.0
         },
         "Tot Bwd Pkts": {
           "og": 1.0,
@@ -1248,570 +64,22 @@
         },
         "TotLen Fwd Pkts": {
           "og": 0.0,
-          "adv": 359.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 0.0,
-          "adv": 359.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 1.0,
-          "adv": 17088302.0
-        },
-        "Flow IAT Min": {
-          "og": 1.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 0.0,
-          "adv": 3745096.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 0.0,
-          "adv": 359.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 256.0,
-          "adv": 5366.0
-        }
-      }
-    },
-    "6,192.168.10.5,50046,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 5734788.0,
-          "adv": 23893746.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 10.0,
-          "adv": 52.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 7.0,
-          "adv": 7.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 456.0,
-          "adv": 456.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 221.0,
-          "adv": 221.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 5488134.0,
-          "adv": 8679542.0
-        },
-        "Flow IAT Min": {
-          "og": 4.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 5488134.0,
-          "adv": 10434318.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 2920.0,
-          "adv": 2920.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 13012.0
-        }
-      }
-    },
-    "6,192.168.10.5,50266,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 64668954.0,
-          "adv": 59712668.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 15.0,
-          "adv": 16.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 17.0,
-          "adv": 17.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1486.0,
-          "adv": 1486.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 1077.0,
-          "adv": 1077.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Min": {
-          "og": 12.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10026525.0,
-          "adv": 14388556.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 2425.0,
-          "adv": 2425.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 22059.0
-        }
-      }
-    },
-    "6,192.168.10.5,50267,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 65592069.0,
-          "adv": 47932204.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 16.0,
-          "adv": 17.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 17.0,
-          "adv": 17.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1486.0,
-          "adv": 1486.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 1077.0,
-          "adv": 1077.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 10004284.0,
-          "adv": 10371684.0
-        },
-        "Flow IAT Min": {
-          "og": 70.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10026521.0,
-          "adv": 13117376.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 2920.0,
-          "adv": 2920.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 44176.0
-        }
-      }
-    },
-    "6,192.168.10.5,50359,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 70537647.0,
-          "adv": 32021640.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 17.0,
-          "adv": 18.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 22.0,
-          "adv": 22.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 2070.0,
-          "adv": 2070.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 597.0,
-          "adv": 597.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 10001696.0,
-          "adv": 10697260.0
-        },
-        "Fwd IAT Max": {
-          "og": 10024336.0,
-          "adv": 12085086.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 1460.0,
-          "adv": 1460.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 27201.0
-        }
-      }
-    },
-    "6,192.168.10.5,50360,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 75489994.0,
-          "adv": 36929812.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 18.0,
-          "adv": 19.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 19.0,
-          "adv": 19.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1506.0,
-          "adv": 1506.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 581.0,
-          "adv": 581.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 10003933.0,
-          "adv": 10155167.0
-        },
-        "Flow IAT Min": {
-          "og": 1.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10025857.0,
-          "adv": 13525330.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 3885.0,
-          "adv": 3885.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 33715.0
-        }
-      }
-    },
-    "6,192.168.10.5,50366,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 66467776.0,
-          "adv": 41458924.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 15.0,
-          "adv": 30.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 16.0,
-          "adv": 16.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1102.0,
-          "adv": 1102.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 693.0,
-          "adv": 693.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Min": {
-          "og": 21.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10028789.0,
-          "adv": 12431402.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 36912.0
-        }
-      }
-    },
-    "6,192.168.10.5,51783,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 67534581.0,
-          "adv": 53123144.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 14.0,
-          "adv": 15.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 15.0,
-          "adv": 15.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1054.0,
-          "adv": 1054.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 677.0,
-          "adv": 677.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 10005722.0,
-          "adv": 10075722.0
-        },
-        "Flow IAT Min": {
-          "og": 15.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10028089.0,
-          "adv": 14099224.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 45901.0
-        }
-      }
-    },
-    "6,192.168.10.5,52718,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 5853086.0,
-          "adv": 45432580.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 10.0,
-          "adv": 34.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 7.0,
-          "adv": 7.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 456.0,
-          "adv": 456.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 221.0,
-          "adv": 221.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 5504955.0,
-          "adv": 9244737.0
-        },
-        "Flow IAT Min": {
-          "og": 3.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 5504955.0,
-          "adv": 14488400.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 34587.0
-        }
-      }
-    },
-    "6,192.168.10.5,52909,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 65697657.0,
-          "adv": 44642324.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 14.0,
-          "adv": 15.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 16.0,
-          "adv": 16.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 908.0,
-          "adv": 908.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 533.0,
-          "adv": 533.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 9998440.0,
-          "adv": 10139944.0
-        },
-        "Flow IAT Min": {
-          "og": 31.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10020687.0,
-          "adv": 11445141.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 38509.0
-        }
-      }
-    },
-    "6,192.168.10.5,52910,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 5355420.0,
-          "adv": 45513316.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 9.0,
-          "adv": 44.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 6.0,
-          "adv": 6.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 422.0,
-          "adv": 422.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 187.0,
-          "adv": 187.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 5183828.0,
-          "adv": 11298605.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 3885.0,
-          "adv": 3885.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 34310.0
-        }
-      }
-    },
-    "6,192.168.10.5,53374,204.79.197.200,443": {
-      "features": {
-        "Flow Duration": {
-          "og": 25658915.0,
-          "adv": 24795908.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 12.0,
-          "adv": 15.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 12.0,
           "adv": 12.0
         },
-        "TotLen Fwd Pkts": {
-          "og": 1210.0,
-          "adv": 1210.0
-        },
         "Fwd Pkt Len Max": {
-          "og": 805.0,
-          "adv": 805.0
+          "og": 0.0,
+          "adv": 12.0
         },
         "Fwd Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
+        "Flow IAT Max": {
+          "og": 2.0,
+          "adv": 89424.0
+        },
         "Flow IAT Min": {
-          "og": 27.0,
+          "og": 2.0,
           "adv": 0.0
         },
         "Pkt Len Min": {
@@ -1819,68 +87,76 @@
           "adv": 0.0
         },
         "Pkt Len Max": {
-          "og": 2425.0,
-          "adv": 2425.0
+          "og": 0.0,
+          "adv": 12.0
         },
         "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 8134.0
+          "og": 29200.0,
+          "adv": 29145.0
         }
       }
     },
-    "6,192.168.10.5,54098,205.147.105.94,443": {
+    "6,172.16.0.1,32892,192.168.10.50,666": {
       "features": {
         "Flow Duration": {
-          "og": 7829613.0,
-          "adv": 33231628.0
+          "og": 55164462.0,
+          "adv": 56613896.0
         },
         "Tot Fwd Pkts": {
-          "og": 15.0,
-          "adv": 124.0
+          "og": 2.0,
+          "adv": 3.0
         },
         "Tot Bwd Pkts": {
-          "og": 21.0,
-          "adv": 21.0
+          "og": 2.0,
+          "adv": 2.0
         },
         "TotLen Fwd Pkts": {
-          "og": 973.0,
-          "adv": 973.0
+          "og": 0.0,
+          "adv": 195.0
         },
         "Fwd Pkt Len Max": {
-          "og": 328.0,
-          "adv": 328.0
+          "og": 0.0,
+          "adv": 195.0
         },
         "Fwd Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Fwd IAT Max": {
-          "og": 243248.0,
-          "adv": 10458308.0
+          "og": 55164369.0,
+          "adv": 55164368.0
+        },
+        "Fwd IAT Min": {
+          "og": 55164369.0,
+          "adv": 21042896.0
         },
         "Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Pkt Len Max": {
-          "og": 2920.0,
-          "adv": 2920.0
+          "og": 0.0,
+          "adv": 195.0
+        },
+        "FIN Flag Cnt": {
+          "og": 0.0,
+          "adv": 1.0
         },
         "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 16636.0
+          "og": 29200.0,
+          "adv": 39822.0
         }
       }
     },
-    "6,204.8.234.202,80,192.168.10.8,8042": {
+    "6,172.16.0.1,32910,192.168.10.50,1145": {
       "features": {
         "Flow Duration": {
-          "og": 3.0,
-          "adv": 28040680.0
+          "og": 1.0,
+          "adv": 21673600.0
         },
         "Tot Fwd Pkts": {
           "og": 1.0,
-          "adv": 15.0
+          "adv": 98.0
         },
         "Tot Bwd Pkts": {
           "og": 1.0,
@@ -1888,23 +164,27 @@
         },
         "TotLen Fwd Pkts": {
           "og": 0.0,
-          "adv": 268.0
+          "adv": 421.0
         },
         "Fwd Pkt Len Max": {
           "og": 0.0,
-          "adv": 268.0
+          "adv": 421.0
         },
         "Fwd Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Flow IAT Max": {
-          "og": 3.0,
-          "adv": 1914534.0
+          "og": 1.0,
+          "adv": 9897082.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
         },
         "Fwd IAT Max": {
           "og": 0.0,
-          "adv": 3799872.0
+          "adv": 7293379.0
         },
         "Pkt Len Min": {
           "og": 0.0,
@@ -1912,34 +192,1094 @@
         },
         "Pkt Len Max": {
           "og": 0.0,
-          "adv": 268.0
+          "adv": 421.0
         },
         "Init Fwd Win Byts": {
-          "og": 8190.0,
-          "adv": 679.0
+          "og": 29200.0,
+          "adv": 6843.0
         }
       }
     },
-    "6,192.168.10.8,8059,204.8.234.202,80": {
+    "6,172.16.0.1,32950,192.168.10.50,1085": {
       "features": {
         "Flow Duration": {
-          "og": 5285945.0,
-          "adv": 16282905.0
+          "og": 1.0,
+          "adv": 23521090.0
         },
         "Tot Fwd Pkts": {
-          "og": 29.0,
-          "adv": 207.0
+          "og": 1.0,
+          "adv": 389.0
         },
         "Tot Bwd Pkts": {
-          "og": 53.0,
-          "adv": 53.0
+          "og": 1.0,
+          "adv": 1.0
         },
         "TotLen Fwd Pkts": {
-          "og": 1120.0,
-          "adv": 1120.0
+          "og": 0.0,
+          "adv": 321.0
         },
         "Fwd Pkt Len Max": {
-          "og": 568.0,
+          "og": 0.0,
+          "adv": 321.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 10614416.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 123523.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 321.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 29200.0,
+          "adv": 16743.0
+        }
+      }
+    },
+    "6,172.16.0.1,33012,192.168.10.50,1009": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 24779012.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 432.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 306.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 306.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 10959137.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 306.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 29200.0,
+          "adv": 21761.0
+        }
+      }
+    },
+    "6,172.16.0.1,33030,192.168.10.50,44443": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 23793768.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 304.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 280.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 280.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 10625772.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 1312492.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 280.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 29200.0,
+          "adv": 1128.0
+        }
+      }
+    },
+    "6,172.16.0.1,33104,192.168.10.50,1067": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 24659126.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 464.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 360.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 360.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 11965195.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 360.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 29200.0,
+          "adv": 11817.0
+        }
+      }
+    },
+    "6,172.16.0.1,33180,192.168.10.50,1044": {
+      "features": {
+        "Flow Duration": {
+          "og": 2.0,
+          "adv": 37288.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 2.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 2.0,
+          "adv": 18586.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 29200.0,
+          "adv": 29181.0
+        }
+      }
+    },
+    "6,172.16.0.1,33248,192.168.10.50,32780": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 27747936.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 442.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 313.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 313.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 12523180.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 313.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 29200.0,
+          "adv": 12237.0
+        }
+      }
+    },
+    "6,172.16.0.1,33274,192.168.10.50,19101": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 25529676.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 432.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 355.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 355.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 11341350.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 430214.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 355.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 29200.0,
+          "adv": 16869.0
+        }
+      }
+    },
+    "6,172.16.0.1,33420,192.168.10.50,3689": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 23825232.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 279.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 346.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 346.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 9448751.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 270668.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 346.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 29200.0,
+          "adv": 19858.0
+        }
+      }
+    },
+    "6,172.16.0.1,33503,192.168.10.50,13782": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 20105816.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 292.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 279.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 279.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 7773247.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 3521014.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 279.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 224.0
+        }
+      }
+    },
+    "6,172.16.0.1,33503,192.168.10.50,443": {
+      "features": {
+        "Flow Duration": {
+          "og": 2.0,
+          "adv": 38344.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 2.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 2.0,
+          "adv": 16476.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 1003.0
+        }
+      }
+    },
+    "6,172.16.0.1,33503,192.168.10.50,5405": {
+      "features": {
+        "Flow Duration": {
+          "og": 2.0,
+          "adv": 38705.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 2.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 2.0,
+          "adv": 16418.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 2946.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 1003.0
+        }
+      }
+    },
+    "6,172.16.0.1,33503,192.168.10.50,5862": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 12034537.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 133.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 212.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 212.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 12508521.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 7059876.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 212.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 5634.0
+        }
+      }
+    },
+    "6,172.16.0.1,33503,192.168.10.50,666": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 17554646.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 36.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 392.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 392.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 10704121.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 6601683.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 392.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 2082.0
+        }
+      }
+    },
+    "6,172.16.0.1,33503,192.168.10.50,8333": {
+      "features": {
+        "Flow Duration": {
+          "og": 2.0,
+          "adv": 37019.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 2.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 2.0,
+          "adv": 16154.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 426.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 1002.0
+        }
+      }
+    },
+    "6,172.16.0.1,33503,192.168.10.50,9099": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 14466760.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 161.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 248.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 248.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 13200276.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 4638284.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 248.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 3157.0
+        }
+      }
+    },
+    "6,172.16.0.1,33503,192.168.10.50,9100": {
+      "features": {
+        "Flow Duration": {
+          "og": 2.0,
+          "adv": 35507.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 2.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 2.0,
+          "adv": 15778.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 117.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 1004.0
+        }
+      }
+    },
+    "6,172.16.0.1,33514,192.168.10.50,1075": {
+      "features": {
+        "Flow Duration": {
+          "og": 2.0,
+          "adv": 36010.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 2.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 2.0,
+          "adv": 15632.0
+        },
+        "Flow IAT Min": {
+          "og": 2.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 3398.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 1.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 29200.0,
+          "adv": 29180.0
+        }
+      }
+    },
+    "6,172.16.0.1,33562,192.168.10.50,1287": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 22810616.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 76.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 376.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 376.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 15185462.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 2691620.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 376.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 5812.0
+        }
+      }
+    },
+    "6,172.16.0.1,33562,192.168.10.50,1322": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 17944940.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 253.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 274.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 274.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 12108704.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 3541699.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 274.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 15414.0
+        }
+      }
+    },
+    "6,172.16.0.1,33562,192.168.10.50,1600": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 41558160.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 115.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 499.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 499.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 9029529.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 4929416.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 499.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 9444.0
+        }
+      }
+    },
+    "6,172.16.0.1,33562,192.168.10.50,1719": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 26084254.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 98.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 473.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 473.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 9881244.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 4906389.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 473.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 1024.0,
+          "adv": 4058.0
+        }
+      }
+    },
+    "6,172.16.0.1,33562,192.168.10.50,21571": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 16026562.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 59.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 568.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
           "adv": 568.0
         },
         "Fwd Pkt Len Min": {
@@ -1947,376 +1287,280 @@
           "adv": 0.0
         },
         "Flow IAT Max": {
-          "og": 3533850.0,
-          "adv": 6777592.0
+          "og": 1.0,
+          "adv": 11271770.0
         },
         "Flow IAT Min": {
-          "og": 3.0,
+          "og": 1.0,
           "adv": 0.0
         },
         "Fwd IAT Max": {
-          "og": 3533905.0,
-          "adv": 6282682.0
+          "og": 0.0,
+          "adv": 4405122.0
         },
         "Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Pkt Len Max": {
-          "og": 4380.0,
-          "adv": 4380.0
+          "og": 0.0,
+          "adv": 568.0
         },
         "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 1296.0
+          "og": 1024.0,
+          "adv": 12770.0
         }
       }
     },
-    "6,192.168.10.9,8657,204.79.197.200,443": {
+    "6,172.16.0.1,33562,192.168.10.50,9502": {
       "features": {
         "Flow Duration": {
-          "og": 65474268.0,
-          "adv": 43895724.0
+          "og": 2.0,
+          "adv": 31470.0
         },
         "Tot Fwd Pkts": {
-          "og": 14.0,
-          "adv": 15.0
+          "og": 1.0,
+          "adv": 2.0
         },
         "Tot Bwd Pkts": {
-          "og": 16.0,
-          "adv": 16.0
+          "og": 1.0,
+          "adv": 1.0
         },
         "TotLen Fwd Pkts": {
-          "og": 828.0,
-          "adv": 828.0
+          "og": 0.0,
+          "adv": 0.0
         },
         "Fwd Pkt Len Max": {
-          "og": 453.0,
-          "adv": 453.0
+          "og": 0.0,
+          "adv": 0.0
         },
         "Fwd Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Flow IAT Max": {
-          "og": 10001233.0,
-          "adv": 12039409.0
+          "og": 2.0,
+          "adv": 14648.0
         },
         "Flow IAT Min": {
-          "og": 70.0,
+          "og": 2.0,
           "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 10023488.0,
-          "adv": 14924268.0
         },
         "Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Pkt Len Max": {
-          "og": 2920.0,
-          "adv": 2920.0
+          "og": 0.0,
+          "adv": 0.0
         },
         "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 23382.0
+          "og": 1024.0,
+          "adv": 1007.0
         }
       }
     },
-    "6,192.168.10.9,1847,205.174.165.73,8080": {
+    "6,172.16.0.1,33616,192.168.10.50,1114": {
       "features": {
         "Flow Duration": {
-          "og": 65033.0,
-          "adv": 29520416.0
+          "og": 1.0,
+          "adv": 25368094.0
         },
         "Tot Fwd Pkts": {
-          "og": 4.0,
-          "adv": 19.0
+          "og": 1.0,
+          "adv": 355.0
         },
         "Tot Bwd Pkts": {
-          "og": 3.0,
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 357.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 357.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 11457916.0
+        },
+        "Flow IAT Min": {
+          "og": 1.0,
+          "adv": 0.0
+        },
+        "Fwd IAT Max": {
+          "og": 0.0,
+          "adv": 1042368.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 357.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 29200.0,
+          "adv": 11908.0
+        }
+      }
+    },
+    "6,172.16.0.1,33664,192.168.10.50,20222": {
+      "features": {
+        "Flow Duration": {
+          "og": 56452624.0,
+          "adv": 56613080.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 2.0,
           "adv": 3.0
         },
+        "Tot Bwd Pkts": {
+          "og": 2.0,
+          "adv": 2.0
+        },
         "TotLen Fwd Pkts": {
-          "og": 1858.0,
-          "adv": 1858.0
+          "og": 0.0,
+          "adv": 181.0
         },
         "Fwd Pkt Len Max": {
-          "og": 1858.0,
-          "adv": 1858.0
+          "og": 0.0,
+          "adv": 181.0
         },
         "Fwd Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Flow IAT Max": {
-          "og": 62233.0,
-          "adv": 1257426.0
+          "og": 56452526.0,
+          "adv": 56452528.0
+        },
+        "Fwd IAT Max": {
+          "og": 56452575.0,
+          "adv": 56452576.0
+        },
+        "Fwd IAT Min": {
+          "og": 56452575.0,
+          "adv": 20436318.0
+        },
+        "Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Pkt Len Max": {
+          "og": 0.0,
+          "adv": 181.0
+        },
+        "Init Fwd Win Byts": {
+          "og": 29200.0,
+          "adv": 34764.0
+        }
+      }
+    },
+    "6,172.16.0.1,33768,192.168.10.50,3766": {
+      "features": {
+        "Flow Duration": {
+          "og": 1.0,
+          "adv": 24573332.0
+        },
+        "Tot Fwd Pkts": {
+          "og": 1.0,
+          "adv": 366.0
+        },
+        "Tot Bwd Pkts": {
+          "og": 1.0,
+          "adv": 1.0
+        },
+        "TotLen Fwd Pkts": {
+          "og": 0.0,
+          "adv": 355.0
+        },
+        "Fwd Pkt Len Max": {
+          "og": 0.0,
+          "adv": 355.0
+        },
+        "Fwd Pkt Len Min": {
+          "og": 0.0,
+          "adv": 0.0
+        },
+        "Flow IAT Max": {
+          "og": 1.0,
+          "adv": 11981998.0
         },
         "Flow IAT Min": {
-          "og": 55.0,
+          "og": 1.0,
           "adv": 0.0
         },
         "Fwd IAT Max": {
-          "og": 64158.0,
-          "adv": 8020231.0
+          "og": 0.0,
+          "adv": 919138.0
         },
         "Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Pkt Len Max": {
-          "og": 1858.0,
-          "adv": 1858.0
+          "og": 0.0,
+          "adv": 355.0
         },
         "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 0.0
+          "og": 29200.0,
+          "adv": 12990.0
         }
       }
     },
-    "6,192.168.10.9,3394,205.174.165.73,8080": {
+    "6,172.16.0.1,33776,192.168.10.50,3389": {
       "features": {
         "Flow Duration": {
-          "og": 81188.0,
-          "adv": -78624.0
+          "og": 2.0,
+          "adv": 28372.0
         },
         "Tot Fwd Pkts": {
-          "og": 4.0,
-          "adv": 21.0
+          "og": 1.0,
+          "adv": 2.0
         },
         "Tot Bwd Pkts": {
-          "og": 3.0,
-          "adv": 3.0
+          "og": 1.0,
+          "adv": 1.0
         },
         "TotLen Fwd Pkts": {
-          "og": 1858.0,
-          "adv": 1858.0
+          "og": 0.0,
+          "adv": 0.0
         },
         "Fwd Pkt Len Max": {
-          "og": 1858.0,
-          "adv": 1858.0
+          "og": 0.0,
+          "adv": 0.0
         },
         "Fwd Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Flow IAT Max": {
-          "og": 78727.0,
-          "adv": 322755.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 1858.0,
-          "adv": 1858.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 8564.0
-        }
-      }
-    },
-    "6,192.168.10.9,3652,205.174.165.73,8080": {
-      "features": {
-        "Flow Duration": {
-          "og": 97631.0,
-          "adv": 9803229.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 4.0,
-          "adv": 204.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 3.0,
-          "adv": 3.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1858.0,
-          "adv": 1858.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 1858.0,
-          "adv": 1858.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
+          "og": 2.0,
+          "adv": 14538.0
         },
         "Flow IAT Min": {
-          "og": 81.0,
+          "og": 2.0,
           "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 96951.0,
-          "adv": 8874256.0
         },
         "Pkt Len Min": {
           "og": 0.0,
           "adv": 0.0
         },
         "Pkt Len Max": {
-          "og": 1858.0,
-          "adv": 1858.0
+          "og": 0.0,
+          "adv": 0.0
         },
         "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 0.0
-        }
-      }
-    },
-    "6,192.168.10.9,4076,205.174.165.73,8080": {
-      "features": {
-        "Flow Duration": {
-          "og": 179618.0,
-          "adv": 15698579.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 6.0,
-          "adv": 152.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 5.0,
-          "adv": 5.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 5725.0,
-          "adv": 5725.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 2805.0,
-          "adv": 2805.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 176075.0,
-          "adv": 18975104.0
-        },
-        "Flow IAT Min": {
-          "og": 48.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 177989.0,
-          "adv": 18372694.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 2805.0,
-          "adv": 2805.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 0.0
-        }
-      }
-    },
-    "6,192.168.10.9,4078,205.174.165.73,8080": {
-      "features": {
-        "Flow Duration": {
-          "og": 225433.0,
-          "adv": 38570096.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 4.0,
-          "adv": 31.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 3.0,
-          "adv": 3.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1858.0,
-          "adv": 1858.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 1858.0,
-          "adv": 1858.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 222374.0,
-          "adv": 5398824.0
-        },
-        "Flow IAT Min": {
-          "og": 65.0,
-          "adv": 0.0
-        },
-        "Fwd IAT Max": {
-          "og": 224116.0,
-          "adv": 10071979.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 1858.0,
-          "adv": 1858.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 0.0
-        }
-      }
-    },
-    "6,192.168.10.9,4173,205.174.165.73,8080": {
-      "features": {
-        "Flow Duration": {
-          "og": 97051.0,
-          "adv": 2828958.0
-        },
-        "Tot Fwd Pkts": {
-          "og": 4.0,
-          "adv": 35.0
-        },
-        "Tot Bwd Pkts": {
-          "og": 3.0,
-          "adv": 3.0
-        },
-        "TotLen Fwd Pkts": {
-          "og": 1858.0,
-          "adv": 1858.0
-        },
-        "Fwd Pkt Len Max": {
-          "og": 1858.0,
-          "adv": 1858.0
-        },
-        "Fwd Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Flow IAT Max": {
-          "og": 94413.0,
-          "adv": 170414.0
-        },
-        "Fwd IAT Max": {
-          "og": 95913.0,
-          "adv": 871938.0
-        },
-        "Pkt Len Min": {
-          "og": 0.0,
-          "adv": 0.0
-        },
-        "Pkt Len Max": {
-          "og": 1858.0,
-          "adv": 1858.0
-        },
-        "Init Fwd Win Byts": {
-          "og": 8192.0,
-          "adv": 8100.0
+          "og": 29200.0,
+          "adv": 29186.0
         }
       }
     }
