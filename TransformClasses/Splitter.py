@@ -7,9 +7,10 @@ MAX_SPLIT_PKT = 10 #10 should work but just takes longer
 MAX_FRAME_SIZE = 3000
 
 class Splitter:
-    def __init__(self, flowObj, config):
+    def __init__(self, flowObj, config, logger):
         self.flow = flowObj
         self.config = config
+        self.logger = logger
 
         self.og_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["og"]
         self.adv_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["adv"]
@@ -19,71 +20,79 @@ class Splitter:
         self.og_fwd_pkt_len_min = self.config["Fwd Pkt Len Min"]["og"]
         self.adv_fwd_pkt_len_min = self.config["Fwd Pkt Len Min"]["adv"]
 
-        self.injector = Injector(flowObj)
+        self.injector = Injector(flowObj, self.logger)
 
         # print("transform create")
         #self.pktsToRemove = []
 
     def split_max_lens_eq(self):
-        print("split_max_lens_eq (og, adv): ({}, {})".format(self.og_tot_fwd_pkts, self.adv_tot_fwd_pkts))
+        self.logger.info("split_max_lens_eq (og, adv): ({}, {})".format(self.og_tot_fwd_pkts, self.adv_tot_fwd_pkts))
         if self.flow.flowStats.maxLen == 0:
-            print("max pkt length == 0.  Can't split.  Returning")
+            self.logger.info("max pkt length == 0.  Can't split.  Returning")
             return
 
         if self.split_looper_avoid_index(self.flow.flowStats.maxLenIndex):
-            print("flow len correct and max pkt len correct!")
+            self.logger.info("flow len correct and max pkt len correct!")
             return
 
+        self.flow.calcPktLenStats()
         # can't converge, so split packet that == max_len
+        if self.flow.flowStats.flowLen == self.adv_tot_fwd_pkts - 1: # off by one, splitting max will create too many pkts
+            self.logger.info("tot pkts off by one, split max and inject will result in too many pkts.  Inject")
+            self.injector.inject_one(self.flow.pkts[len(self.flow.pkts) - 1], self.adv_fwd_pkt_len_max)
+            return
         if self.split_max_packet(): # totallen == adv_len but
-            print("total_len == adv_len, now inject packet with max pkt len")
+            self.logger.info("total_len == adv_len, now inject packet with max pkt len")
             self.injector.inject_one(self.flow.pkts[len(self.flow.pkts) - 1], self.adv_fwd_pkt_len_max)
         else:
-            print("CAN'T CONVERGE!")
+            self.injector.inject_many(self.flow.pkts[len(self.flow.pkts) - 1],
+                                      self.adv_tot_fwd_pkts, self.adv_fwd_pkt_len_max, self.adv_fwd_pkt_len_min)
 
     def split_og_max_len_lt(self):                                        # index to store location of max packet
         # NOTE: we have not split any packets at this point
         index = self.create_max_packet_len()                # this means we have an index set and we have a packet that == adv_fwd_pkt_len_max
         if index != -1:
             if self.split_looper_avoid_index(index):         # if return true, then max lens are equal AND flow lens are equal
-                print("split_og_max_len_lt success!")
+                self.logger.info("split_og_max_len_lt success!")
                 return
             else:                                           # didn't reach max length, so need to split the packet with length == max length
-                print("split_og_max_len_lt not quite there.  split max pkt, then inject")
+                self.logger.info("split_og_max_len_lt not quite there.  split max pkt, then inject")
                 self.split_max_packet()
                 self.injector.inject_one(self.flow.pkts[len(self.flow.pkts) - 1], self.adv_fwd_pkt_len_max)
         else:                                               # no two packets sum to > adv_max_len, split all packets then inject
             if self.split_looper_all(True):                    # split all packets and tot_pkts == adv_tot_pkts
-                print("Split success, still need to inject")
+                self.logger.info("Split success, still need to inject")
                 self.injector.inject_one(self.flow.pkts[len(self.flow.pkts) - 1], self.adv_fwd_pkt_len_max)
             else:
-                print("can't reach tot. # pkts.  inject to reach")
+                self.logger.info("can't reach tot. # pkts.  inject to reach")
                 self.injector.inject_many(self.flow.pkts[len(self.flow.pkts) - 1],
                                           self.adv_tot_fwd_pkts, self.adv_fwd_pkt_len_max, self.adv_fwd_pkt_len_min)
 
     def split_og_max_len_gt(self):
         if self.split_looper_start_with_max():     # totalpkts == adv_pkts
-            print("total_pkts == adv_pkts")
+            self.logger.info("total_pkts == adv_pkts")
             if self.flow.flowStats.maxLen > self.adv_fwd_pkt_len_max:
-                print("after split max: tot_pkts == adv_pkts but maxLen still > adv_max_len, can't fix")
+                self.logger.info("after split max: tot_pkts == adv_pkts but maxLen still > adv_max_len, can't fix")
                 return
             index = self.create_max_packet_len()
             if index != -1:
-                print("able to create max packet!")
+                self.logger.info("able to create max packet!")
             else:
-                print("tot_pkts == adv_pkts but can't reach max pkt len -- inject!")
+                self.logger.info("tot_pkts == adv_pkts but can't reach max pkt len -- inject!")
                 self.injector.inject_one(self.flow.pkts[len(self.flow.pkts) - 1], self.adv_fwd_pkt_len_max)
         else:                   # split rest of packets
             if self.split_looper_all(False):  # tot_pkt == adv_pkts
                 if self.flow.flowStats.maxLen > self.adv_fwd_pkt_len_max:
-                    print("after split all: tot_pkts == adv_pkts but maxLen still > adv_max_len, can't fix")
+                    self.logger.info("after split all: tot_pkts == adv_pkts but maxLen still > adv_max_len, can't fix")
                     return
                 index = self.create_max_packet_len()
                 if index != -1:
-                    print("split all: able to create max packet!")
+                    self.logger.info("split all: able to create max packet!")
                 else:
-                    print("tot_pkts == adv_pkts but can't reach max pkt len -- inject!")
+                    self.logger.info("tot_pkts == adv_pkts but can't reach max pkt len -- inject!")
                     self.injector.inject_one(self.flow.pkts[len(self.flow.pkts) - 1], self.adv_fwd_pkt_len_max)
+            else:
+                self.logger.error("Should not get here")
 
         # else:
         #     print("cant converge to total_pkts == adv_pkts")
@@ -118,7 +127,7 @@ class Splitter:
 
 
     def split_looper_avoid_index(self, index_to_reserve):
-        print("index to reserve: {}".format(index_to_reserve))
+        self.logger.info("index to reserve: {}".format(index_to_reserve))
         i = totalLoops = 0
         while self.flow.flowStats.flowLen < self.adv_tot_fwd_pkts:
             if i == self.flow.flowStats.flowLen:
@@ -153,15 +162,15 @@ class Splitter:
             inj = 0
         while self.flow.flowStats.flowLen < self.adv_tot_fwd_pkts - inj:            # subtract one if know we're injecting at end
             if minPktFlag and self.flow.flowStats.flowLen <= pktsLessThanMinPktLen:
-                print("Min Packet Length set by user too small!")
-                print("Can't converge on avg. packet length.  Ignorning min pkt length requirement")
+                self.logger.warning("Min Packet Length set by user too small!")
+                self.logger.warning("Can't converge on avg. packet length.  Ignorning min pkt length requirement")
                 minPktFlag = False
                 totalLoops -= 1
             if i == self.flow.flowStats.flowLen:
                 # print("sup")
                 if totalLoops == MAX_PKT_LOOPS:
                     self.flow.calcPktLenStats()
-                    print("Reached max pkt loops, can't split more pkts.  avg still > target avg.  NOT CONVERGED")
+                    self.logger.warning("Reached max pkt loops, can't split more pkts.  avg still > target avg.  NOT CONVERGED")
                     return False
                 i = 0
                 totalLoops += 1
@@ -215,7 +224,7 @@ class Splitter:
         biPkt = self.getMostRecentBiPkt(dupPkt)
         if biPkt:
             if not biPkt.http_pload:
-                print("ERROR: ACKing an ACK.  uh oh!  biPkt should have a payload!")
+                self.logger.error("ERROR: ACKing an ACK.  uh oh!  biPkt should have a payload!")
                 exit(-1)
             pkt.ackSplitCount += 1
             dupPkt.ackSplitCount += 1
@@ -255,9 +264,9 @@ class Splitter:
         for i in range(1, len(self.flow.pkts)):
             if i + 1 == len(self.flow.pkts):
                 return index
-            print("len pkts: {}, {}".format(cur.pload_len, self.flow.pkts[i].pload_len))
+            # print("len pkts: {}, {}".format(cur.pload_len, self.flow.pkts[i].pload_len))
             if cur.pload_len + self.flow.pkts[i].pload_len >= self.adv_fwd_pkt_len_max:
-                print("merge pkts to set max pkt len")  # not really merge just push data to second packet
+                self.logger.info("merge pkts to set max pkt len")  # not really merge just push data to second packet
                 self.distribute_payload(cur, self.flow.pkts[i])
                 index = i - 1
                 return index
@@ -265,16 +274,20 @@ class Splitter:
 
     def split_max_packet(self):
         # can't avoid index. split max pkt
-        print("can't keep max pkt len, must split")
+        self.logger.info("can't keep max pkt len, must split")
         totalLoops = 0
         splits = 1
         base_index = self.flow.flowStats.maxLenIndex
+        self.logger.info("max_len_index: {}".format(base_index))
         while self.flow.flowStats.flowLen < self.adv_tot_fwd_pkts:
             if totalLoops > MAX_SPLIT_PKT:
                 return False
             i = base_index
             # print(i)
-            for k in range(splits):
+            #for k in range(splits):
+            k = 0
+            while k < splits:
+                # print("k: {}".format(k))
                 # print(i, splits)
                 # print(self.flow.pkts[i].ts)
                 if self.flow.pkts[i].pload_len > 1:
@@ -286,17 +299,21 @@ class Splitter:
                     i += 2
                 else:
                     i += 1
+                k += 1
+                self.flow.calcPktLenStats()
+                if self.flow.flowStats.maxLen == 1 and self.flow.flowStats.flowLen != self.adv_tot_fwd_pkts - 1:
+                    return False
             splits *= 2
             # print("--------")
             totalLoops += 1
         return True
 
     def set_min_packet_length(self):
-        print("fixing min packet length")
+        self.logger.info("fixing min packet length")
 
         if self.flow.flowStats.minLen < self.adv_fwd_pkt_len_min:
-            print("need to increase min pkt len")
-            print("can't do this. incr. # pkts and incr. min pkt len")
+            self.logger.info("need to increase min pkt len")
+            self.logger.warning("can't do this. incr. # pkts and incr. min pkt len")
         else:
-            print("need to decrease min pkt len")
+            self.logger.info("need to decrease min pkt len")
             self.injector.inject_one(self.flow.pkts[len(self.flow.pkts) - 1], self.adv_fwd_pkt_len_min)

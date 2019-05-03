@@ -2,14 +2,25 @@ from FlowTable import FlowTable, FlowFilter
 from PktMerger import PktMerger
 from TransformClasses.TransformationController import TransformationController as TC
 from TestClasses.TestFlowLengthTransformation import TestFlowLengthTransformation
+import logging, time
 
 class NetSploit:
-    def __init__(self, config):             # this should be a map of our config file
+    def __init__(self, config, attack):             # this should be a map of our config file
         # try to keep this just objects
         self.filter = FlowFilter(config.flows)
         self.flowTable = FlowTable()
         self.pktMerger = PktMerger()
         self.config = config
+        ts = time.time()
+
+        logger_name = "Logs/" + attack + "/" + attack + "-logger-info-" + str(ts) + ".log"
+        logger_name = "Bot-logger-info-tmp-IAT.log"
+        logging.basicConfig(filename=logger_name,
+                            format='%(message)s',
+                            filemode='w')
+        self.logger = logging.getLogger()
+        self.logger.setLevel(logging.DEBUG)
+        print("Logging to: {}".format(logger_name))
 
     def loadFlowTable(self, pkt):
         # print(pkt.biflow_tuple)
@@ -57,7 +68,7 @@ class NetSploit:
             # print("\n#####################")
             return
 
-        tf = TC(config, flow, biflow) #(config.5_tuple, Flow)
+        tf = TC(config, flow, biflow, self.logger) #(config.5_tuple, Flow)
 
 
         tf.buildTransformations()
@@ -103,27 +114,31 @@ class NetSploit:
         if flowDur != fc["Flow Duration"]["og"]:
             match_counter_checker += 1
             assert_flag = True
+            return False
         if flow.flowStats.flowLen != fc["Tot Fwd Pkts"]["og"]:
             match_counter_checker += 1
             assert_flag = True
+            return False
         if flow.biPkts:
             if len(flow.biPkts) != fc["Tot Bwd Pkts"]["og"]:
                 match_counter_checker += 1
                 assert_flag = True
+                return False
         if flow.flowStats.flowLenBytes != fc["TotLen Fwd Pkts"]["og"]:
             match_counter_checker += 1
             assert_flag = True
-
-        if assert_flag:
-            if flow.biPkts and match_counter_checker != 4:
-                print("ERROR! Match count checker != 4.  EXITING...")
-                self.print_feats_to_match(fc, flow)
-                exit(-1)
-            elif not flow.biPkts and match_counter_checker != 3:
-                print("ERROR! Match count checker != 3.  EXITING...")
-                self.print_feats_to_match(fc, flow)
-                exit(-1)
             return False
+
+        # if assert_flag:
+        #     if flow.biPkts and match_counter_checker != 3:
+        #         print("ERROR! Match count checker != 3.  EXITING...")
+        #         self.print_feats_to_match(fc, flow)
+        #         exit(-1)
+        #     elif not flow.biPkts and match_counter_checker != 2:
+        #         print("ERROR! Match count checker != 2.  EXITING...")
+        #         self.print_feats_to_match(fc, flow)
+        #         exit(-1)
+        #     return False
         return True
 
 
@@ -131,3 +146,11 @@ class NetSploit:
     def run_flow_length_transformation_test(self):
         TestFLT = TestFlowLengthTransformation(self.config, self.flowTable)
         TestFLT.check_length_transformations()
+
+    def print_feats_to_match(self, fc, flow):
+        print("flow: {}".format(flow))
+        print("flowdDur (is, should be): ({}, {})".format(flow.flowStats.flowDuration * 1000000, fc["Flow Duration"]["og"]))
+        print("flowlen (is, should be): ({}, {})".format(flow.flowStats.flowLen, fc["Tot Fwd Pkts"]["og"]))
+        if flow.biPkts:
+            print("flow bi pkts: (is, should be): ({}, {})".format(len(flow.biPkts), fc["Tot Bwd Pkts"]["og"]))
+        print("flowlenbytes (is, should be): ({}, {})".format(flow.flowStats.flowLenBytes, fc["TotLen Fwd Pkts"]["og"]))

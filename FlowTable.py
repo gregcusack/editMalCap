@@ -36,7 +36,7 @@ class Flow:
     #     self.flowStats.updateSplitIncLenStats(oPktLen, nPkt1Len, nPkt2Len, self.pkts)
 
     def calcPktIAStats(self):
-        self.flowStats.updateIAStats(self.pkts)
+        self.flowStats.updateIAStats(self.pkts, self.biPkts)
 
     def getDiffs(self):
         # print("getting DIFFS!")
@@ -115,9 +115,9 @@ class FlowStats():
         self.maxLenIndex = self.minLenIndex = 0
 
     def __repr__(self):
-        return "<LengthStats: min: {}, max: {}, avg: {}, std: {}, len: {}, lenBytes: {}>\n<IAStats: min: {}, max: {}, avg: {}, std:{}>"\
+        return "<LengthStats: min: {}, max: {}, avg: {}, std: {}, len: {}, lenBytes: {}>\n<IAStats: min: {}, max: {}, avg: {}, std:{}, flowDur: {}>"\
             .format(self.minLen, self.maxLen, self.avgLen, self.stdLen, self.flowLen, self.flowLenBytes,
-                    self.minIA, self.maxIA, self.avgIA, self.stdIA)
+                    self.minIA, self.maxIA, self.avgIA, self.stdIA, self.flowDuration)
 
     def updateLenStats(self, pktList, biPktList):
         self.resetLenStats()
@@ -126,10 +126,11 @@ class FlowStats():
         self.getStdLen(pktList)
         self.getFlowDuration(pktList, biPktList)
 
-    def updateIAStats(self, pktList):
+    def updateIAStats(self, pktList, biPktList):
         self.resetIAStats()
         self.getMinMaxAvgIA(pktList)
         self.getStdIA(pktList)
+        self.getFlowDuration(pktList, biPktList)
 
     def getMinMaxAvgLen(self, pktList):
         total = 0

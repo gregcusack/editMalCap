@@ -2,12 +2,12 @@ import copy
 
 
 class Injector:
-    def __init__(self, flowObj):
+    def __init__(self, flowObj, logger):
         self.flow = flowObj
+        self.logger = logger
 
     def inject_one(self, pkt, size_payload):
-        print("inject_one()")
-        print(size_payload)
+        self.logger.info("inject_one() with payload size: {}".format(size_payload))
         injectPacket = copy.deepcopy(pkt)
 
         self.init_pkt(injectPacket)
@@ -17,7 +17,7 @@ class Injector:
         self.flow.pkts.append(injectPacket)
 
     def inject_many(self, pkt, tot_fwd_pkts, fwd_pkt_len_max, fwd_pkt_len_min):
-        print("inject_many()")
+        self.logger.info("inject_many()")
 
         dummy_pkt = copy.deepcopy(pkt)
         self.init_pkt(dummy_pkt)

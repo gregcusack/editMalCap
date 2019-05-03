@@ -7,7 +7,7 @@ class TestFlowLengthTransformation:
     def __init__(self, config, flow_table):
         self.config = config
         self.flow_table = flow_table
-        logging.basicConfig(filename="logger.log",
+        logging.basicConfig(filename="logger-check-results.log",
                             format='%(message)s',
                             filemode='w')
         self.logger = logging.getLogger()
@@ -76,19 +76,22 @@ class TestFlowLengthTransformation:
         if flowDur != fc["Flow Duration"]["og"]:
             match_counter_checker += 1
             assert_flag = True
+            return False
         if flow.biPkts:
             if len(flow.biPkts) != fc["Tot Bwd Pkts"]["og"]:
                 match_counter_checker += 1
                 assert_flag = True
-
-        if assert_flag:
-            if flow.biPkts and match_counter_checker != 2:
-                print("ERROR! Match count checker != 2.  EXITING...")
-                # self.print_feats_to_match(fc, flow)
-                exit(-1)
-            elif not flow.biPkts and match_counter_checker != 1:
-                print("ERROR! Match count checker != 1.  EXITING...")
-                # self.print_feats_to_match(fc, flow)
-                exit(-1)
-            return False
+                return False
         return True
+
+        # if assert_flag:
+        #     if flow.biPkts and match_counter_checker != 2:
+        #         print("ERROR! Match count checker != 2.  EXITING...")
+        #         # self.print_feats_to_match(fc, flow)
+        #         exit(-1)
+        #     elif not flow.biPkts and match_counter_checker != 1:
+        #         print("ERROR! Match count checker != 1.  EXITING...")
+        #         # self.print_feats_to_match(fc, flow)
+        #         exit(-1)
+        #     return False
+        # return True

@@ -1,9 +1,10 @@
 
 
 class Merger:
-    def __init__(self, flowObj, config):
+    def __init__(self, flowObj, config, logger):
         self.flow = flowObj
         self.config = config
+        self.logger = logger
 
         self.og_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["og"]
         self.adv_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["adv"]
