@@ -92,6 +92,10 @@ class TransPkt:
     def tcp_chksum(self):
         return self.pkt[TCP].chksum
 
+    @property
+    def tcp_window(self):
+        return self.pkt[TCP].window
+
     # Getter: HTTP Features
     @property
     def http_pload(self):
@@ -176,6 +180,10 @@ class TransPkt:
     def tcp_chksum(self, chksum):
         self.pkt[TCP].chksum = chksum
 
+    @tcp_window.setter
+    def tcp_window(self, window):
+        self.pkt[TCP].window = window
+
     # Setter: HTTP Features
     @http_pload.setter
     def http_pload(self, pload):
@@ -198,7 +206,27 @@ class TransPkt:
         self.pkt = self.pkt / Raw(load=pload)
 
     def get_flags(self):
-        return self.pkt[TCP].flags
+        # return self.pkt[TCP].flags
+        flags = ""
+        tcp_flags = self.pkt[TCP].flags
+        if tcp_flags & "F":
+            flags += "F"
+        if tcp_flags & "S":
+            flags += "S"
+        if tcp_flags & "R":
+            flags += "R"
+        if tcp_flags & "P":
+            flags += "P"
+        if tcp_flags & "A":
+            flags += "A"
+        if tcp_flags & "U":
+            flags += "U"
+        if tcp_flags & "E":
+            flags += "E"
+        if tcp_flags & "C":
+            flags += "C"
+        # print("flags: {}".format(flags))
+        return flags
 
     # Set TCP Flags
     def set_FIN(self):
@@ -336,7 +364,7 @@ class TransPkt:
     def __le__(self, other):
         return(self.ts <= other.ts)
     def __repr__(self):
-        print(self.pkt.show())
-        return "Pkt({} @ ts: {}".format(self.flow_tuple, self.ts)
+        # print(self.pkt.show())
+        return "Pkt({} @ ts: {}, load: {}".format(self.flow_tuple, self.ts, self.pload_len)
         # return "Pkt({} @ ts: {}, ip_len: {}, ip_id: {}, seq_num: {}, ack_num: {}, pload: {})"\
         #     .format(self.flow_tuple, self.ts, self.ip_len, self.ip_id, self.seq_num, self.ack_num, str(self.http_pload))

@@ -53,7 +53,7 @@ def main(iname, oname, flows_json):
     NS.mergeModifiedPkts()
 
     print("Testing Flow Length Transformation Results...")
-    NS.run_flow_length_transformation_test()
+    NS.run_flow_transformation_test()
 
 
 
@@ -68,8 +68,9 @@ def main(iname, oname, flows_json):
     if out_pcap.is_file():
         os.remove(oname)
     for pkt in NS.pktMerger.inQueue:
-        # if pkt.flow_tuple == (6, '192.168.10.14', 49474, '104.97.95.20', 443):
+        # if pkt.flow_tuple == (6, '192.168.10.15', 52854, '205.174.165.73', 8080):
         #     print(pkt)
+        # print(pkt)
         pkt.write_pcap(oname)
 
 

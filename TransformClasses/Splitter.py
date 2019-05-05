@@ -7,10 +7,11 @@ MAX_SPLIT_PKT = 10 #10 should work but just takes longer
 MAX_FRAME_SIZE = 3000
 
 class Splitter:
-    def __init__(self, flowObj, config, logger):
+    def __init__(self, flowObj, config, logger, flowtable):
         self.flow = flowObj
         self.config = config
         self.logger = logger
+        self.FT = flowtable
 
         self.og_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["og"]
         self.adv_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["adv"]
@@ -20,7 +21,7 @@ class Splitter:
         self.og_fwd_pkt_len_min = self.config["Fwd Pkt Len Min"]["og"]
         self.adv_fwd_pkt_len_min = self.config["Fwd Pkt Len Min"]["adv"]
 
-        self.injector = Injector(flowObj, self.logger)
+        self.injector = Injector(flowObj, config, logger, self.FT)
 
         # print("transform create")
         #self.pktsToRemove = []

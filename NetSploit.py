@@ -1,7 +1,7 @@
 from FlowTable import FlowTable, FlowFilter
 from PktMerger import PktMerger
 from TransformClasses.TransformationController import TransformationController as TC
-from TestClasses.TestFlowLengthTransformation import TestFlowLengthTransformation
+from TestClasses.TestFlowTransformation import TestFlowTransformation
 import logging, time
 
 class NetSploit:
@@ -14,7 +14,7 @@ class NetSploit:
         ts = time.time()
 
         logger_name = "Logs/" + attack + "/" + attack + "-logger-info-" + str(ts) + ".log"
-        logger_name = "Bot-logger-info-tmp-IAT.log"
+        logger_name = "logger-debug.log"
         logging.basicConfig(filename=logger_name,
                             format='%(message)s',
                             filemode='w')
@@ -52,7 +52,9 @@ class NetSploit:
             # else:
             #     print("NO BIFLOW!")
 
+            flow.flowStats.get_flag_counts(flow.pkts)
             if flow.procFlag:
+                # print(len(flow.pkts), len(flow.biPkts))
                 self.transformFlow(flow, biflow)
 
             # print("ProcProcProcProc")
@@ -68,11 +70,13 @@ class NetSploit:
             # print("\n#####################")
             return
 
-        tf = TC(config, flow, biflow, self.logger) #(config.5_tuple, Flow)
+        tf = TC(config, flow, biflow, self.logger, self.flowTable.FT) #(config.5_tuple, Flow)
 
 
         tf.buildTransformations()
         tf.runTransformations()
+        # flow.calcPktLenStats()
+        # print(flow.flowStats.maxIA)
         # self.mergeModifiedPkts()
 
     def mergeModifiedPkts(self):
@@ -87,7 +91,7 @@ class NetSploit:
     def redistributeFlowTable(self, flow):
         # print("redistributing flow table")
         splitFlows = self.flowTable.FT[flow.flowKey].pkts
-        print(splitFlows)
+        # print(splitFlows)
         del self.flowTable.FT[flow.flowKey]
         for pkt in splitFlows:
             if pkt.flow_tuple not in self.flowTable.FT:
@@ -143,9 +147,9 @@ class NetSploit:
 
 
 
-    def run_flow_length_transformation_test(self):
-        TestFLT = TestFlowLengthTransformation(self.config, self.flowTable)
-        TestFLT.check_length_transformations()
+    def run_flow_transformation_test(self):
+        TestFT = TestFlowTransformation(self.config, self.flowTable)
+        TestFT.check_flow_transformations()
 
     def print_feats_to_match(self, fc, flow):
         print("flow: {}".format(flow))
