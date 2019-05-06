@@ -238,7 +238,15 @@ class WindowTransform(Transform):
         self.logger = logger
 
     def Process(self):
-        self.flow.pkts[0].tcp_window = int(self.config["Init Fwd Win Byts"]["adv"])
+        new_window_size = 0
+        if int(self.config["Init Fwd Win Byts"]["adv"]) > 65535:
+            new_window_size = 65535
+        elif int(self.config["Init Fwd Win Byts"]["adv"]) < 0:
+            new_window_size = 0
+        else:
+            new_window_size = int(self.config["Init Fwd Win Byts"]["adv"])
+
+        self.flow.pkts[0].tcp_window = new_window_size
 
 
 ####################################################
