@@ -128,7 +128,7 @@ class Splitter:
 
 
     def split_looper_avoid_index(self, index_to_reserve):
-        print("fcn enter: index to reserve: {}".format(index_to_reserve))
+        # print("fcn enter: index to reserve: {}".format(index_to_reserve))
         self.logger.info("index to reserve: {}".format(index_to_reserve))
         i = totalLoops = 0
         while self.flow.flowStats.flowLen < self.adv_tot_fwd_pkts:
@@ -142,7 +142,7 @@ class Splitter:
             if i == index_to_reserve:
                 i += 1
             elif self.flow.pkts[i].pload_len > 1:  # could have option not to split if < adv_min_pkt_len
-                print("i, index to reserve: {}, {}".format(i, index_to_reserve))
+                # print("i, index to reserve: {}, {}".format(i, index_to_reserve))
                 if i < index_to_reserve:
                     index_to_reserve += 1
                 self.splitPkt(self.flow.pkts[i], i)

@@ -81,7 +81,11 @@ class TransIATimes():
         prev_dur = (biPkt_N_old_ts - self.flow.pkts[0].ts)
         cur_dur = (self.flow.biPkts[len(self.flow.biPkts) - 1].ts - self.flow.pkts[0].ts)
 
-        fraction_reduced = (prev_dur - cur_dur) / prev_dur
+
+        if prev_dur == 0:
+            fraction_reduced = 1
+        else:
+            fraction_reduced = (prev_dur - cur_dur) / prev_dur
         # print("fraction reduced (F,B): {}".format(fraction_reduced))
         self.distribute(fraction_reduced, False, directions[1])
         self.flow.getDiffs()
@@ -149,7 +153,10 @@ class TransIATimes():
             self.logger.error("Error! pkt_1 is past pkt_N...should not happen.  Exiting...")
             # exit(-1)
 
-        fraction_reduced = (prev_diff - cur_diff) / prev_diff
+        if prev_diff == 0:
+            fraction_reduced = 1
+        else:
+            fraction_reduced = (prev_diff - cur_diff) / prev_diff
 
         return fraction_reduced
         # print(fraction_reduced)
@@ -186,7 +193,10 @@ class TransIATimes():
             self.logger.error("Error! pkt_1 is past pkt_N...should not happen.  Exiting...")
             # exit(-1)
 
-        fraction_reduced = (prev_diff - cur_diff) / prev_diff
+        if prev_diff == 0:
+            fraction_reduced = 1
+        else:
+            fraction_reduced = (prev_diff - cur_diff) / prev_diff
         return fraction_reduced
         # print(fraction_reduced)
 

@@ -20,7 +20,7 @@ class TransPkt:
             return
             # print("ERROR: Attempting to initialize transPkt class with non-scapy packet")
             # exit()
-        if pkt.proto != 6 or pkt.proto != 17:
+        if not (pkt.proto == 6 or pkt.proto == 17):
             self.dropPkt = 1
             print("DROP packet")
             return
