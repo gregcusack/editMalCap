@@ -128,6 +128,7 @@ class Splitter:
 
 
     def split_looper_avoid_index(self, index_to_reserve):
+        print("fcn enter: index to reserve: {}".format(index_to_reserve))
         self.logger.info("index to reserve: {}".format(index_to_reserve))
         i = totalLoops = 0
         while self.flow.flowStats.flowLen < self.adv_tot_fwd_pkts:
@@ -141,6 +142,7 @@ class Splitter:
             if i == index_to_reserve:
                 i += 1
             elif self.flow.pkts[i].pload_len > 1:  # could have option not to split if < adv_min_pkt_len
+                print("i, index to reserve: {}, {}".format(i, index_to_reserve))
                 if i < index_to_reserve:
                     index_to_reserve += 1
                 self.splitPkt(self.flow.pkts[i], i)
@@ -264,6 +266,7 @@ class Splitter:
         cur = self.flow.pkts[0]
         for i in range(1, len(self.flow.pkts)):
             if i + 1 == len(self.flow.pkts):
+                print("index in create max pkt len returning!")
                 return index
             # print("len pkts: {}, {}".format(cur.pload_len, self.flow.pkts[i].pload_len))
             if cur.pload_len + self.flow.pkts[i].pload_len >= self.adv_fwd_pkt_len_max:
@@ -272,6 +275,8 @@ class Splitter:
                 index = i - 1
                 return index
             cur = self.flow.pkts[i]
+        return index
+        # print("exiting create_max_pkt_len. index: {}".format(index))
 
     def split_max_packet(self):
         # can't avoid index. split max pkt

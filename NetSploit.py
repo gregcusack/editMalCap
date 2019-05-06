@@ -14,7 +14,7 @@ class NetSploit:
         ts = time.time()
 
         logger_name = "Logs/" + attack + "/" + attack + "-logger-info-" + str(ts) + ".log"
-        logger_name = "logger-debug.log"
+        # logger_name = "logger-debug.log"
         logging.basicConfig(filename=logger_name,
                             format='%(message)s',
                             filemode='w')

@@ -20,6 +20,10 @@ class TransPkt:
             return
             # print("ERROR: Attempting to initialize transPkt class with non-scapy packet")
             # exit()
+        if pkt.proto != 6 or pkt.proto != 17:
+            self.dropPkt = 1
+            print("DROP packet")
+            return
         self.pkt = pkt  # probaby don't want to do this
         self.update_5_tuple()
         self.dropPkt = 0
@@ -283,6 +287,13 @@ class TransPkt:
             self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[UDP].sport, self.pkt[IP].dst, self.pkt[UDP].dport)
             self.update_bi_5_tuple()
         else:
+            print(self.pkt.time)
+            print(self.pkt.proto)
+            print(self.pkt[IP].src)
+            print(self.pkt[TCP].sport)
+            print(self.pkt[IP].dst)
+            print(self.pkt[TCP].dport)
+            print(self.pkt)
             print("Unknown pkt proto...ignoring")
 
     def update_bi_5_tuple(self):

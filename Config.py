@@ -50,8 +50,9 @@ class Config:
             elif key[0] == 17:
                 self.flows[key[:-1]] = v
             else:
-                print("Error: unexpected proto #...exiting...")
-                exit(-1)
+                print("unknown protocol: {}".format(key[0]))
+            #     print("Error: unexpected proto #...exiting...")
+            #     exit(-1)
                 # print(key)
 
         #print(self.flows[(6, '155.98.38.79', 80, '142.44.154.169', 38130)]["pktLens"])

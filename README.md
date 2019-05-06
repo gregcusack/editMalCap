@@ -10,3 +10,8 @@
         - new IA times are generated via a truncated normal distribution
             - the more pkts in the flow, the closer the IA times will match the desired values
             
+            
+Dependencies:
+numpy
+scapy
+scipy
