@@ -34,6 +34,10 @@ class NetSploit:
 
     def ProcessFlows(self):
         # print("flow table: {}".format(self.flowTable.FT))
+        len_FT = len(self.flowTable.FT)
+        print("total flows in table: {}".format(len_FT))
+        self.logger.info("total flows in table: {}".format(len_FT))
+        count = 0
         for tuple,flow in self.flowTable.FT.items():
             # print("processing: {} -- {}".format(tuple, flow))
             biflow = False # need to check if biflow exists
@@ -54,8 +58,11 @@ class NetSploit:
 
             flow.flowStats.get_flag_counts(flow.pkts)
             if flow.procFlag:
+                print("Processing flow {}/{}".format(count,len_FT))
+                self.logger.info("Processing flow {}/{}".format(count, len_FT))
                 # print(len(flow.pkts), len(flow.biPkts))
                 self.transformFlow(flow, biflow)
+            count += 1
 
             # print("ProcProcProcProc")
 

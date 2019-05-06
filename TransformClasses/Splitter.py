@@ -3,7 +3,7 @@ from TransformClasses.Merger import Merger
 from TransformClasses.Injector import Injector
 
 MAX_PKT_LOOPS = 6
-MAX_SPLIT_PKT = 10 #10 should work but just takes longer
+MAX_SPLIT_PKT = 8 #10 should work but just takes longer
 MAX_FRAME_SIZE = 3000
 
 class Splitter:
@@ -280,25 +280,25 @@ class Splitter:
 
     def split_max_packet(self):
         # can't avoid index. split max pkt
-        self.logger.info("can't keep max pkt len, must split")
+        self.logger.info("can't keep max pkt len, must split. split_max_packet()")
         totalLoops = 0
         splits = 1
         base_index = self.flow.flowStats.maxLenIndex
-        print("max pkt len: {}".format(self.flow.pkts[base_index].http_pload))
+        # print("max pkt len: {}".format(self.flow.pkts[base_index].http_pload))
         self.logger.info("max_len_index: {}".format(base_index))
         while self.flow.flowStats.flowLen < self.adv_tot_fwd_pkts:
             if totalLoops > MAX_SPLIT_PKT:
                 return False
             i = base_index
-            print(i)
+            # print(i)
             #for k in range(splits):
             k = 0
             while k < splits:
                 if i >= len(self.flow.pkts):
                     break
-                print("k: {}".format(k))
-                print(i, splits)
-                print(self.flow.pkts[i].pload_len)
+                # print("k: {}".format(k))
+                # print(i, splits)
+                # print(self.flow.pkts[i].pload_len)
                 if self.flow.pkts[i].pload_len > 1:
                     self.splitPkt(self.flow.pkts[i], i)
                     self.flow.calcPktLenStats()
@@ -314,7 +314,7 @@ class Splitter:
                     return False
             splits *= 2
             # print("--------")
-            print("total loops: {}".format(totalLoops))
+            # print("total loops: {}".format(totalLoops))
             totalLoops += 1
         return True
 
