@@ -284,18 +284,21 @@ class Splitter:
         totalLoops = 0
         splits = 1
         base_index = self.flow.flowStats.maxLenIndex
+        print("max pkt len: {}".format(self.flow.pkts[base_index].http_pload))
         self.logger.info("max_len_index: {}".format(base_index))
         while self.flow.flowStats.flowLen < self.adv_tot_fwd_pkts:
             if totalLoops > MAX_SPLIT_PKT:
                 return False
             i = base_index
-            # print(i)
+            print(i)
             #for k in range(splits):
             k = 0
             while k < splits:
-                # print("k: {}".format(k))
-                # print(i, splits)
-                # print(self.flow.pkts[i].ts)
+                if i >= len(self.flow.pkts):
+                    break
+                print("k: {}".format(k))
+                print(i, splits)
+                print(self.flow.pkts[i].pload_len)
                 if self.flow.pkts[i].pload_len > 1:
                     self.splitPkt(self.flow.pkts[i], i)
                     self.flow.calcPktLenStats()
@@ -311,6 +314,7 @@ class Splitter:
                     return False
             splits *= 2
             # print("--------")
+            print("total loops: {}".format(totalLoops))
             totalLoops += 1
         return True
 
