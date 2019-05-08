@@ -281,10 +281,10 @@ class TransIATimes():
         # print("Create MIN")
         self.logger.info("Create MIN")
         if self.flow.flowStats.flowLen <= 3:
-            print("Can't create min IAT since less than 3 pkts.")
+            self.logger.warning("Can't create min IAT since less than 3 pkts.")
             return
         if self.config["Tot Fwd Pkts"]["og"] > 0:
-            print("Can't create min IAT since less than 3 pkts.")
+            self.logger.warning("Can't create min IAT since OG flow has less than 3 pkts.")
             return
         if self.adv_fwd_iat_min < self.flow.flowStats.minIA:
             self.logger.info("decrease minIA")
