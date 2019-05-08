@@ -13,10 +13,11 @@ class TransformationController:
 
     def runTransformations(self):
         # print("transobjlist: {}".format(self.transObjList))
+        print("Processing flow: {}".format(self.flow))
         for trans in self.transObjList:
             self.flow.calcPktLenStats()
             self.flow.calcPktIAStats()
-            print("pre process flow stats: {}".format(self.flow.flowStats))
+            # print("pre process flow stats: {}".format(self.flow.flowStats))
             # if self.biFlowFlag:
             #     print("pre process biflow: {}".format(len(self.flow.biPkts)))
             trans.Process()

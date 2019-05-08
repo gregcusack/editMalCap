@@ -50,10 +50,10 @@ class LengthTransform(Transform):
     def Process(self):
         # return
         self.logger.info("processing Length Transformation: {}".format(self.flow))
-        print("processing Length Transformation: {}".format(self.flow))
+        # print("processing Length Transformation: {}".format(self.flow))
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
-        # print("LengthTransform Process()")
+        print("LengthTransform Process()")
         # print("flow: {}".format(self.flow))
 
         if self.og_tot_fwd_pkts != self.adv_tot_fwd_pkts:
