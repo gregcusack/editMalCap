@@ -47,7 +47,7 @@ class Config:
                 # print(timeout, feature)
                 key = tuple(key)
                 key = (key, timeout)
-                print("key: {}".format(key))
+                # print("key: {}".format(key))
                 # if key[0] == 17 and len(key) == 5: # need check in case dstPort was left off in config file already
                 #     key.pop(4) # get rid of dstPort
                 # key = tuple(key)

@@ -7,7 +7,7 @@ import logging, time
 class NetSploit:
     def __init__(self, config, attack):             # this should be a map of our config file
         # try to keep this just objects
-        print(config.flows)
+        # print(config.flows)
         self.filter = FlowFilter(config.flows)
         self.flowTable = FlowTable()
         self.pktMerger = PktMerger()

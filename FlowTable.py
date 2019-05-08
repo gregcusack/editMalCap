@@ -363,7 +363,7 @@ class FlowFilter:
         for k in self.tuple_set:
             self.tuple_set_no_timeout.add(k[0])
             # self.tuple_set_string.add(str(k))
-        print(self.tuple_set_no_timeout)
+        # print(self.tuple_set_no_timeout)
 
     def needsTrans(self, pkt_tuple):
         #print(self.tuple_set)
