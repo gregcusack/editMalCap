@@ -4,6 +4,7 @@ class Config:
     def __init__(self, config_file):       # this needs to read in the actual config file and parse it
         if config_file:
             self.flows = {}
+            self.total_flows_to_modify = 0
             with open(config_file) as f:
                 self.data = json.load(f)
             self.parseConfig(self.data)
@@ -45,6 +46,7 @@ class Config:
             # if key[0] == 17 and len(key) == 5: # need check in case dstPort was left off in config file already
             #     key.pop(4) # get rid of dstPort
             key = tuple(key)
+            self.total_flows_to_modify += 1
             if key[0] == 6:
                 self.flows[key] = v
             elif key[0] == 17:

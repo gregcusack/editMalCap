@@ -12,6 +12,8 @@ class NetSploit:
         self.pktMerger = PktMerger()
         self.config = config
         ts = time.time()
+        self.total_flows_to_modify = config.total_flows_to_modify
+        self.flows_processed = 0
 
         logger_name = "Logs/" + attack + "/" + attack + "-logger-info-" + str(ts) + ".log"
         # logger_name = "logger-debug.log"
@@ -82,9 +84,9 @@ class NetSploit:
 
         tf.buildTransformations()
         tf.runTransformations()
-        # flow.calcPktLenStats()
-        # print(flow.flowStats.maxIA)
-        # self.mergeModifiedPkts()
+        self.flows_processed += 1
+        print("Number of flows processed: {}/{}".format(self.flows_processed, self.total_flows_to_modify))
+        self.logger.info("Number of flows processed: {}/{}".format(self.flows_processed, self.total_flows_to_modify))
 
     def mergeModifiedPkts(self):
         for tuple,flow in self.flowTable.FT.items():
@@ -118,10 +120,13 @@ class NetSploit:
         flow.calcPktIAStats()
 
         fc = config["features"]
+        flowDur = round(flow.flowStats.flowDuration * 1000000)
+        print("dur: (ogFlow, actFlow): ({}, {})".format(fc["Flow Duration"]["og"], flowDur))
+        print("pkts: (og, actual): ({}, {})".format(fc["Tot Fwd Pkts"]["og"], flow.flowStats.flowLen))
 
         match_counter_checker = 0
         assert_flag = False
-        flowDur = round(flow.flowStats.flowDuration * 1000000)
+
         if flowDur != fc["Flow Duration"]["og"]:
             match_counter_checker += 1
             assert_flag = True
