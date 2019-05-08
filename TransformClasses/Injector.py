@@ -10,6 +10,8 @@ class Injector:
         self.FT = flowtable
 
     def inject_one(self, pkt, size_payload):
+        if size_payload > 1400:
+            size_payload = 1400
         self.logger.info("inject_one() with payload size: {}".format(size_payload))
         injectPacket = copy.deepcopy(pkt)
 
@@ -26,6 +28,8 @@ class Injector:
         self.flow.pkts.append(injectPacket)
 
     def inject_many(self, pkt, tot_fwd_pkts, fwd_pkt_len_max, fwd_pkt_len_min):
+        if fwd_pkt_len_max > 1400:
+            fwd_pkt_len_max = 1400
         self.logger.info("inject_many()")
         dummy_pkt = copy.deepcopy(pkt)
 
@@ -49,8 +53,8 @@ class Injector:
             pkt.set_flags(flags)
         else:
             pkt.unset_flags()
-        pkt.tcp_chksum = 0x00
-        pkt.ip_chksum = 0x00
+        # pkt.tcp_chksum = 0x00
+        # pkt.ip_chksum = 0x00
 
     def generate_and_inject(self, dummy_pkt, pload_len):
         injectPacket = copy.deepcopy(dummy_pkt)

@@ -34,6 +34,7 @@ class TransIATimes():
         self.logger.info("F -> F adv_dur > og_dur")
 
         self.flow.pkts[self.flow.flowStats.flowLen - 1].ts += toextend
+        self.flow.amount_flow_extended = toextend
 
         if self.flow.pkts[self.flow.flowStats.flowLen - 1].ts - \
                 self.flow.pkts[self.flow.flowStats.flowLen - 2].ts > self.adv_fwd_iat_max:
@@ -51,6 +52,7 @@ class TransIATimes():
         toextend = self.adv_flow_dur - self.og_flow_dur
         # print(toextend)
         self.flow.biPkts[len(self.flow.biPkts) - 1].ts += toextend
+        self.flow.amount_flow_extended = toextend
 
         if self.flow.pkts[self.flow.flowStats.flowLen - 1].ts - \
                 self.flow.pkts[self.flow.flowStats.flowLen - 2].ts > self.adv_fwd_iat_max:
@@ -59,6 +61,8 @@ class TransIATimes():
 
             self.distribute_create_min_max_iat_inc(directions[1])  # for increasing flow duration
         else:
+            self.flow.calcPktIAStats()
+            print("new flow dur: {}".format(self.flow.flowStats.flowDuration))
             # print(self.flow.pkts[0].ts - self.flow.pkts[self.flow.flowStats.flowLen - 1].ts)
             self.logger.info("max IAT not exceeded, all good")
             self.logger.info("NEED TO CREATE MIN IAT!")
@@ -278,6 +282,7 @@ class TransIATimes():
 
     def create_min(self, fraction_reduced):
         self.flow.calcPktIAStats()
+        self.flow.calcPktLenStats()
         # print("Create MIN")
         self.logger.info("Create MIN")
         if self.flow.flowStats.flowLen < 3:
@@ -287,7 +292,7 @@ class TransIATimes():
             if int(self.config["Fwd IAT Max"]["adv"]) + int(self.config["Fwd IAT Min"]["adv"]) != int(self.config["Flow Duration"]["adv"]):
                 self.logger.warning("Can't set min IAT because 3 pkts and min iat + max iat != Flow duration")
                 return
-        if self.config["Tot Fwd Pkts"]["og"] > 0:
+        if self.config["Tot Fwd Pkts"]["og"] < 3:
             self.logger.warning("Can't create min IAT since OG flow has less than 3 pkts.")
             return
         if self.adv_fwd_iat_min < self.flow.flowStats.minIA:

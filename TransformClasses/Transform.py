@@ -147,6 +147,7 @@ class TimeTransform(Transform):
             # print("new adv flow dur: {}".format(self.adv_flow_dur))
 
         TransTimes = TransIATimes(self.flow, self.config, self.logger, self.biFlowFlag)
+        directions = TransTimes.get_start_and_end_pkt_directon()
 
         if self.biFlowFlag:
             if self.flow.flowStats.flowLen == 1:
@@ -154,7 +155,7 @@ class TimeTransform(Transform):
                 return
             self.flow.getDiffs()
 
-            directions = TransTimes.get_start_and_end_pkt_directon()
+
             # print(len(self.flow.diffs))
             if self.adv_flow_dur > self.og_flow_dur:
                 # print("adv_flow_dur > og_flow_dur")
@@ -200,6 +201,12 @@ class TimeTransform(Transform):
 
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
+
+        if directions[1] == "F":
+            self.flow.flowEndTime = self.flow.pkts[self.flow.flowStats.flowLen - 1].ts
+        else:
+            self.flow.flowEndTime = self.flow.biPkts[len(self.flow.biPkts) - 1].ts
+
         # print("post iat trans stats: {}".format(self.flow.flowStats))
 
 # class FlagTransform(Transform):

@@ -21,6 +21,7 @@ class TransformationController:
             # if self.biFlowFlag:
             #     print("pre process biflow: {}".format(len(self.flow.biPkts)))
             trans.Process()
+            print("new flow stats: {}".format(self.flow.flowStats))
             # print("Flow tuple: {}".format(self.flow.flowKey))
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()

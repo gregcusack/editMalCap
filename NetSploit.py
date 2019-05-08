@@ -42,6 +42,7 @@ class NetSploit:
         self.logger.info("total flows in table: {}".format(len_FT))
         count = 0
         for tuple,flow in self.flowTable.FT.items():
+            print("flow start, end ts, end fin?: {}, {}, {}".format(flow.flowStartTime, flow.flowEndTime, flow.end_fin))
             # print("processing: {} -- {}".format(tuple, flow))
             biflow = False # need to check if biflow exists
             if flow.flowKey[0] == 6:
@@ -67,6 +68,7 @@ class NetSploit:
                 self.transformFlow(flow, biflow)
             count += 1
 
+        self.extend_flows()
             # print("ProcProcProcProc")
 
     def transformFlow(self, flow, biflow):
@@ -98,6 +100,7 @@ class NetSploit:
         self.flows_processed += 1
         print("Number of flows processed: {}/{}".format(self.flows_processed, self.total_flows_to_modify))
         self.logger.info("Number of flows processed: {}/{}".format(self.flows_processed, self.total_flows_to_modify))
+        print("Amount flow extended: {} (s)".format(flow.amount_flow_extended))
 
     def mergeModifiedPkts(self):
         for tuple,flow in self.flowTable.FT.items():
@@ -130,8 +133,6 @@ class NetSploit:
         flow.calcPktLenStats()
         flow.calcPktIAStats()
         # print("config in needsTransform(): {}".format(config))
-
-
         # fc = config["features"]
         flowDur = round(flow.flowStats.flowDuration * 1000000)
 
@@ -172,18 +173,47 @@ class NetSploit:
             assert_flag = True
             return False
 
-        # if assert_flag:
-        #     if flow.biPkts and match_counter_checker != 3:
-        #         print("ERROR! Match count checker != 3.  EXITING...")
-        #         self.print_feats_to_match(fc, flow)
-        #         exit(-1)
-        #     elif not flow.biPkts and match_counter_checker != 2:
-        #         print("ERROR! Match count checker != 2.  EXITING...")
-        #         self.print_feats_to_match(fc, flow)
-        #         exit(-1)
-        #     return False
-        # config = configToReturn
         return configToReturn
+
+
+    def extend_flows(self):
+        d = {} # holds flow/tuple in order
+        for tuple, flow in self.flowTable.FT.items():
+            fk = tuple[0]
+            if fk not in d:
+                d[fk] = []
+            d[fk].append((tuple, flow))
+        for tuple, flows in d.items():
+            flows.sort()
+            # print(flows[0])
+            i = 0
+            # prev_flow = flows[i][1]
+            # print(len(flows))
+            # print(flows)
+            for i in range(0, len(flows) - 1):
+                flow = flows[i][1]
+                next_flow = flows[i + 1][1]
+                # flow.calcPktLenStats()
+                # next_flow.calcPktLenStats()
+                print("flow: {}".format(flow))
+                timeout = flows[i][0][0]
+                if flow.flowEndTime > next_flow.flowStartTime:
+                    # print(flow)
+                    print("WOAH: {}".format(flow))
+                    print("flow extend: {}".format(flow.amount_flow_extended))
+                    toextend = flow.amount_flow_extended
+                    for j in range(i + 1, len(flows)):
+                        flow_to_mod = flows[i + 1][1]
+                        for pkt in flow_to_mod.pkts:
+                            pkt.ts += toextend
+                        for pkt in flow_to_mod.biPkts:
+                            pkt.ts += toextend
+                prev_flow = flow
+                i += 1
+
+        print(d)
+
+
 
 
 

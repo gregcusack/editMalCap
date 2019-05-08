@@ -11,6 +11,7 @@ class Flow:
         self.flow_timeout = timeout
         self.biFlowKey = None
         self.flowStartTime = _flow_start_time
+        self.flowEndTime = 0
         if flow_tuple[0] == 6:
             self.biFlowKey = (flow_tuple[0], flow_tuple[3], flow_tuple[4], flow_tuple[1], flow_tuple[2])
         elif flow_tuple[0] == 17:
@@ -18,11 +19,13 @@ class Flow:
         else:
             print("Bad flow protocol...exiting")
             exit(-1)
+        self.end_fin = False
         self.biPkts = None
         self.procFlag = None
         self.diffs = []
         self.oldFlowDuration = 0
         self.adj_flow_dir = 0 # this is set when fwd_iat_max > flow_duration...this becomes new adv_flow
+        self.amount_flow_extended = 0
 
         #print(self.flowKey)
         #print(self.biFlowKey)
@@ -311,6 +314,7 @@ class FlowTable:
             # self.setProcFlag(FK, transFlow)
             # self.FT[FK].addPkt(pkt)
         elif pkt.ts - self.FT[FK].flowStartTime > FLOWTIMEOUT:  # watch for flow timeout
+            self.FT[FK].flowEndTime = pkt.ts
             self.timeout_count[flow_tuple] += 1
             self.timeout_count[pkt.biflow_tuple] += 1    # if either direction of flow ends, new flows created for both directions
             if self.timeout_count[flow_tuple] != self.timeout_count[pkt.biflow_tuple]:
@@ -332,6 +336,8 @@ class FlowTable:
             # self.FT[FK].addPkt(pkt)
             self.timeout_count[flow_tuple] += 1
             self.timeout_count[pkt.biflow_tuple] += 1        # if either direction of flow ends, new flows created for both directions
+            self.FT[FK].end_fin = True
+            self.FT[FK].flowEndTime = pkt.ts
             if self.timeout_count[flow_tuple] != self.timeout_count[pkt.biflow_tuple]:
                 print("ERROR in fin flag: biflow timeout # != flow timeout #")
                 exit(-1)
