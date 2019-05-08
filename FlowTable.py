@@ -23,6 +23,7 @@ class Flow:
         self.diffs = []
         self.oldFlowDuration = 0
         self.adj_flow_dir = 0 # this is set when fwd_iat_max > flow_duration...this becomes new adv_flow
+
         #print(self.flowKey)
         #print(self.biFlowKey)
 
@@ -279,7 +280,7 @@ class FlowTable:
     def __init__(self):               # list is our config list
         # have tables as all caps (and acronyms)
         self.FT = {}
-        self.timeout_count = {}     # count # of flow timeouts
+        self.timeout_count = {} # count # of flow timeouts
         # self.filter = filter
 
     def procPkt(self, pkt, transFlow):
