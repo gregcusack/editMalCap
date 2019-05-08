@@ -4,10 +4,11 @@ FLOWTIMEOUT = 120 # 120 seconds
 
 # Flows contain a list of pkts sharing a mutual 5 tuple (proto, srcIP, srcPort, dstIP, dstPort)
 class Flow:
-    def __init__(self, flow_tuple, _flow_start_time):
+    def __init__(self, flow_tuple, _flow_start_time, timeout):
         self.pkts = []
         self.flowStats = FlowStats()
         self.flowKey = flow_tuple
+        self.flow_timeout = timeout
         self.biFlowKey = None
         self.flowStartTime = _flow_start_time
         if flow_tuple[0] == 6:
@@ -304,7 +305,8 @@ class FlowTable:
 
         # print(FK)
         if FK not in self.FT:
-            self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts) # add pkt with start time
+            timeout = self.timeout_count[flow_tuple]
+            self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts, timeout) # add pkt with start time
             # self.setProcFlag(FK, transFlow)
             # self.FT[FK].addPkt(pkt)
         elif pkt.ts - self.FT[FK].flowStartTime > FLOWTIMEOUT:  # watch for flow timeout
@@ -317,7 +319,8 @@ class FlowTable:
             # print("TO pkt.ts: {}".format(pkt.ts))
             FK = (flow_tuple, self.timeout_count[flow_tuple])
             # print("Flow timeout! --> {}".format(FK))
-            self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts)
+            timeout = self.timeout_count[flow_tuple]
+            self.FT[FK] = Flow(pkt.flow_tuple, pkt.ts, timeout)
             # self.setProcFlag(FK, transFlow)
             # self.FT[FK].addPkt(pkt)
 
@@ -354,6 +357,13 @@ class FlowTable:
 class FlowFilter:
     def __init__(self, list): #TODO: this list needs to be the global config_file
         self.tuple_set = set(list) # convert dict of flows to set (aka left with just the dict keys)
+        self.tuple_set_no_timeout = set()
+        # self.tuple_set_string = set()
+        # print(self.tuple_set)
+        for k in self.tuple_set:
+            self.tuple_set_no_timeout.add(k[0])
+            # self.tuple_set_string.add(str(k))
+        print(self.tuple_set_no_timeout)
 
     def needsTrans(self, pkt_tuple):
         #print(self.tuple_set)
@@ -366,11 +376,11 @@ class FlowFilter:
             pkt_tuple = pkt_tuple[:-1]
 
         #pkt needs to be a TransPkt type
-        if pkt_tuple in self.tuple_set:
+        if pkt_tuple in self.tuple_set_no_timeout:
             # print(pkt_tuple)
             return "Trans"
             # add and transform flag = true
-        elif biTuple and biTuple in self.tuple_set:  # need this to ensure biflow is in flow table if flow needs transformation
+        elif biTuple and biTuple in self.tuple_set_no_timeout:  # need this to ensure biflow is in flow table if flow needs transformation
             # print("bituple!")
             return "NoTrans"
         else:

@@ -7,6 +7,7 @@ import logging, time
 class NetSploit:
     def __init__(self, config, attack):             # this should be a map of our config file
         # try to keep this just objects
+        print(config.flows)
         self.filter = FlowFilter(config.flows)
         self.flowTable = FlowTable()
         self.pktMerger = PktMerger()
@@ -69,15 +70,25 @@ class NetSploit:
             # print("ProcProcProcProc")
 
     def transformFlow(self, flow, biflow):
-        if flow.flowKey[0] == 6:
-            config = self.config.flows[flow.flowKey]
-        else:
-            config = self.config.flows[flow.flowKey[:-1]]
+        flow.calcPktIAStats()
+        flow_key = flow.flowKey
+        flag = False
+        for f in self.config.flows:
+            if flow_key == f[0]:
+                if flow.flowKey[0] == 6:
+                    config = self.config.flows
+                    flag = True
+                    break
+        if not flag:
+            return
 
-        if not self.needsTransform(flow, config):
+        config = self.needsTransform(flow, config)
+        if not config:
             # print("No trans for flow: {}".format(flow))
             # print("\n#####################")
             return
+
+        # print("config returning: {}".format(config))
 
         tf = TC(config, flow, biflow, self.logger, self.flowTable.FT) #(config.5_tuple, Flow)
 
@@ -118,11 +129,27 @@ class NetSploit:
     def needsTransform(self, flow, config):
         flow.calcPktLenStats()
         flow.calcPktIAStats()
+        # print("config in needsTransform(): {}".format(config))
 
-        fc = config["features"]
+
+        # fc = config["features"]
         flowDur = round(flow.flowStats.flowDuration * 1000000)
+
+        configToReturn = None
+        for k,v in config.items():
+            if v["features"]["Flow Duration"]["og"] == flowDur:
+                fc = v["features"]
+                configToReturn = v
+                # print("config found: {}".format(configToReturn))
+                # print("!!!!!!!!!!!!!!!")
+        if configToReturn == None:
+            # print("flow dur not matched: {}".format(flowDur))
+            return False
+
         print("dur: (ogFlow, actFlow): ({}, {})".format(fc["Flow Duration"]["og"], flowDur))
         print("pkts: (og, actual): ({}, {})".format(fc["Tot Fwd Pkts"]["og"], flow.flowStats.flowLen))
+        self.logger.info("dur: (ogFlow, actFlow): ({}, {})".format(fc["Flow Duration"]["og"], flowDur))
+        self.logger.info("pkts: (og, actual): ({}, {})".format(fc["Tot Fwd Pkts"]["og"], flow.flowStats.flowLen))
 
         match_counter_checker = 0
         assert_flag = False
@@ -155,7 +182,8 @@ class NetSploit:
         #         self.print_feats_to_match(fc, flow)
         #         exit(-1)
         #     return False
-        return True
+        # config = configToReturn
+        return configToReturn
 
 
 
