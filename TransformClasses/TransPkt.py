@@ -221,8 +221,8 @@ class TransPkt:
         # self.pkt[IP].len = len(pload)
 
     def create_pkt(self, size_pload):
-        if size_pload + 32 + 20 + 14 + 1000 > 65535:
-            size_pload = 65535 - 32 - 20 - 14 - 1000
+        if size_pload > 5000: #+ 32 + 20 + 14 + 1000 > 65535:
+            size_pload = 5000 #65535 - 32 - 20 - 14 - 1000
         pload = "\x00" * size_pload
         pkt = Ether()
         pkt[Ether].src = self.pkt[Ether].src

@@ -224,7 +224,7 @@ class NetSploit:
                 prev_flow = flow
                 i += 1
 
-        print(d)
+        # print(d)
 
 
 
