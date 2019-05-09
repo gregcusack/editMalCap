@@ -72,6 +72,7 @@ class NetSploit:
             count += 1
 
         self.extend_flows()
+        self.check_pkts()
             # print("ProcProcProcProc")
 
     def transformFlow(self, flow, biflow):
@@ -227,7 +228,29 @@ class NetSploit:
         # print(d)
 
 
+    def check_pkts(self):
+        print("Running check pkts")
+        for tuple, flow in self.flowTable.FT.items():
+            for pkt in flow:
 
+                if pkt.frame_len > 65535:
+                    pkt.frame_len = 65535
+
+                if pkt.ip_len > 65535:
+                    pkt.ip_len = 65535
+
+                if pkt.ip_id > 65535:
+                    pkt.ip_id = 65535
+
+                if pkt.src_port > 65535:
+                    pkt.src_port = 65535
+                if pkt.dst_port > 65535:
+                    pkt.dst_port = 65535
+                if pkt.tcp_window > 65535:
+                    pkt.tcp_window = 65535
+                # @property
+                # def tcp_window(self):
+                #     return self.pkt[TCP].window
 
 
     def run_flow_transformation_test(self):

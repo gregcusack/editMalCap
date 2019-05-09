@@ -231,9 +231,13 @@ class TransPkt:
         id = self.pkt[IP].id
         if id > 65535:
             id = 65535
+        if id < 0:
+            id = 0
         ttl = self.pkt[IP].ttl
         if ttl > 65535:
             ttl = 65535
+        if ttl < 0:
+            ttl = 0
         length = size_pload + 32 + 20
         if length > 65535:
             size_pload = 65535 - 32 - 20 - 14 - 30000
