@@ -231,7 +231,7 @@ class NetSploit:
     def check_pkts(self):
         print("Running check pkts")
         for tuple, flow in self.flowTable.FT.items():
-            for pkt in flow:
+            for pkt in flow.pkts:
 
                 if pkt.frame_len > 65535:
                     pkt.frame_len = 65535
