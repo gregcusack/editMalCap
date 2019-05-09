@@ -35,6 +35,7 @@ class TransIATimes():
 
         self.flow.pkts[self.flow.flowStats.flowLen - 1].ts += toextend
         self.flow.amount_flow_extended = toextend
+        # print("toextend: {}".format(toextend))
 
         if self.flow.pkts[self.flow.flowStats.flowLen - 1].ts - \
                 self.flow.pkts[self.flow.flowStats.flowLen - 2].ts > self.adv_fwd_iat_max:
@@ -45,6 +46,9 @@ class TransIATimes():
         else:
             self.logger.info(self.flow.pkts[0].ts - self.flow.pkts[self.flow.flowStats.flowLen - 1].ts)
             self.logger.info("max IAT not exceeded, all good")
+            # self.create_min(0)
+            self.distribute_create_min_max_iat_inc(directions[1])
+
             # print("NEED TO CREATE MIN IAT!")
 
     def process_increase_duration_F_B(self, directions, toextend):
@@ -66,6 +70,7 @@ class TransIATimes():
             # print(self.flow.pkts[0].ts - self.flow.pkts[self.flow.flowStats.flowLen - 1].ts)
             self.logger.info("max IAT not exceeded, all good")
             self.logger.info("NEED TO CREATE MIN IAT!")
+            # self.distribute_create_min_max_iat_inc(directions[1])
 
     def process_decrease_duration_F_F(self, directions, toreduce):
         # print("flow_dur new 0: {}".format(self.flow.pkts[self.flow.flowStats.flowLen - 1].ts - self.flow.pkts[0].ts))
@@ -85,16 +90,21 @@ class TransIATimes():
         prev_dur = (biPkt_N_old_ts - self.flow.pkts[0].ts)
         cur_dur = (self.flow.biPkts[len(self.flow.biPkts) - 1].ts - self.flow.pkts[0].ts)
 
-
         if prev_dur == 0:
             fraction_reduced = 1
         else:
             fraction_reduced = (prev_dur - cur_dur) / prev_dur
+        # print("frac reduced 1: {}".format(fraction_reduced))
+        # print("flow diffs 1: {}".format(len(self.flow.diffs)))
+
         # print("fraction reduced (F,B): {}".format(fraction_reduced))
         self.distribute(fraction_reduced, False, directions[1])
+        self.flow.calcPktIAStats()
         self.flow.getDiffs()
+        # print("flow diffs: {}".format(len(self.flow.diffs)))
+        # self.distribute_create_min_max_iat_dec(pkt_N_old_ts, directions[1])
+        self.distribute_create_min_max_iat_dec(biPkt_N_old_ts, directions[1])
 
-        self.distribute_create_min_max_iat_dec(pkt_N_old_ts, directions[1])
 
     def process_noBiPkts(self):
         self.flow.get_1D_diffs()
@@ -125,6 +135,7 @@ class TransIATimes():
 
     def distribute_create_min_max_iat_dec(self, pkt_N_old_ts, last_pkt_dir):
         fraction_reduced = self.create_max_dec(pkt_N_old_ts, last_pkt_dir)
+        # print("frac reduced 2: {}".format(fraction_reduced))
         self.distribute(fraction_reduced, True, last_pkt_dir)
         # self.flow.calcPktIAStats()
         # print("new diffs: {}".format(self.flow.getDiffs()))
@@ -138,21 +149,27 @@ class TransIATimes():
         pkt_0 = self.flow.pkts[0]
         pkt_1 = self.flow.pkts[1]
         pkt_N = self.flow.pkts[num_flow_pkts - 1]  # this was pkt pushed in to match flow dur
-
-        if last_pkt_dir == "B":
-            diff = self.flow.biPkts[len(self.flow.biPkts) - 1].ts - pkt_N.ts
-            toMaxIAT = self.adv_flow_dur - (pkt_1.ts - pkt_0.ts) - diff         # not exact but gets close
-        else:
-            toMaxIAT = self.adv_fwd_iat_max - (pkt_1.ts - pkt_0.ts)
-            pkt_1.ts += toMaxIAT
+        # biPkt_N = self.flow.biPkts[len(self.flow.biPkts) - 1]
 
         prev_diff = pkt_N_old_ts - pkt_1.ts
+
+        # if last_pkt_dir == "B":
+        #     diff = self.flow.biPkts[len(self.flow.biPkts) - 1].ts - pkt_N.ts
+        #     print("diff: {}".format(diff))
+        #     toMaxIAT = self.adv_flow_dur - (pkt_1.ts - pkt_0.ts) - diff         # not exact but gets close
+        # else:
+        toMaxIAT = self.adv_fwd_iat_max - (pkt_1.ts - pkt_0.ts)
+        # print("tomaxiat: {}".format(toMaxIAT))
+        pkt_1.ts += toMaxIAT
+
+        # prev_diff = pkt_N_old_ts - pkt_1.ts
 
         if pkt_1.ts > pkt_N.ts:
             self.logger.error("Error, max IAT exceeds flow duration.  Exiting...")
             # exit(-1)
 
         cur_diff = pkt_N.ts - pkt_1.ts
+        # cur_diff = biPkt_N.ts - pkt_1.ts
         if cur_diff < 0:
             self.logger.error("Error! pkt_1 is past pkt_N...should not happen.  Exiting...")
             # exit(-1)
@@ -174,19 +191,16 @@ class TransIATimes():
         pkt_1 = self.flow.pkts[1]
         pkt_N = self.flow.pkts[num_flow_pkts - 1] # this was pkt pushed out to match flow dur
 
-        toMaxIAT = self.adv_fwd_iat_max - (pkt_1.ts - pkt_0.ts)
-        if last_pkt_dir == "B" and pkt_1.ts + toMaxIAT > pkt_N.ts:
-            self.logger.info("p1 create max shift past pkt_N...will reduce p1 shift")
-            diff = self.flow.biPkts[len(self.flow.biPkts) - 1].ts - pkt_N.ts
-            toMaxIAT = self.adv_flow_dur - (pkt_1.ts - pkt_0.ts) - diff         # not exact but gets close
-        else:
-            # toMaxIAT = self.adv_fwd_iat_max - (pkt_1.ts - pkt_0.ts)
-            pkt_1.ts += toMaxIAT
-
         prev_diff = pkt_N.ts - pkt_1.ts
-
-        # toMaxIAT = self.adv_fwd_iat_max - (pkt_1.ts - pkt_0.ts)
-        # pkt_1.ts += toMaxIAT
+        toMaxIAT = self.adv_fwd_iat_max - (pkt_1.ts - pkt_0.ts)
+        # if last_pkt_dir == "B" and pkt_1.ts + toMaxIAT > pkt_N.ts:
+        #     self.logger.info("p1 create max shift past pkt_N...will reduce p1 shift")
+        #     diff = self.flow.biPkts[len(self.flow.biPkts) - 1].ts - pkt_N.ts
+        #     toMaxIAT = self.adv_flow_dur - (pkt_1.ts - pkt_0.ts) - diff         # not exact but gets close
+        # else:
+        #     # toMaxIAT = self.adv_fwd_iat_max - (pkt_1.ts - pkt_0.ts)
+        pkt_1.ts += toMaxIAT
+        # print("toMaxIAT: {}".format(toMaxIAT))
 
         if pkt_1.ts > pkt_N.ts:
             self.logger.error("Error, max IAT exceeds flow duration.  Exiting...")
@@ -229,24 +243,31 @@ class TransIATimes():
 
         # print("i: {}, j: {}, k: {}".format(i,j,k))
 
+        # self.flow.calcPktIAStats()
+        # print("flow dur: {}".format(self.flow.flowStats.flowDuration))
+        # print("flow dur end - start: {}".format(self.flow.pkts[len(self.flow.pkts) - 1].ts - self.flow.pkts[0].ts))
+        # print("fraction reduced: {}".format(fraction_reduced))
         lastFDiffIndex = None
         # flag = False
         # first_flag = True
         # print(len(self.flow.diffs))
         # print("total flow len: {}".format(self.flow.flowStats.flowLen))
         while k < len(self.flow.diffs):
-            if last_pkt_dir == "F":
-                if i == self.flow.flowStats.flowLen - 1:  # this is only good if end with F
-                    break
-            elif last_pkt_dir == "B":
-                if j == len(self.flow.biPkts) - 1:
-                    break
+            # print(k)
+            # if last_pkt_dir == "F":
+            #     if i == self.flow.flowStats.flowLen - 1:  # this is only good if end with F
+            #         break
+            # elif last_pkt_dir == "B":
+            #     # print("last pkt dir == B")
+            #     if j == len(self.flow.biPkts) - 1:
+            #         break
             if max_created:
                 if self.flow.diffs[k][0] == "F":
                     prev_ts = self.flow.pkts[i].ts
                     f_count += 1
                     i += 1
                     if f_count == 2: # reached
+                        # print("create min iat")
                         max_created = False
                 elif self.flow.diffs[k][0] == "B":
                     prev_ts = self.flow.biPkts[j].ts
@@ -258,9 +279,18 @@ class TransIATimes():
                 k += 1
             elif not max_created:
                 # print(i,j,k,f_count, self.flow.diffs[k][0])
+                if last_pkt_dir == "B" and self.flow.diffs[k][0] == "B" and j == len(self.flow.biPkts) - 1:
+                    j += 1
+                    k += 1
+                    continue
+                if last_pkt_dir == "F" and self.flow.diffs[k][0] == "F" and i == len(self.flow.pkts) - 1:
+                    i += 1
+                    k += 1
+                    continue
                 if self.flow.diffs[k][0] == "F":
                     self.flow.pkts[i].ts = prev_ts + (1 - fraction_reduced) * self.flow.diffs[k][1]
                     prev_ts = self.flow.pkts[i].ts
+                    # print("fwd pkt ts: {}".format(self.flow.pkts[i].ts))
                     i += 1
                 elif self.flow.diffs[k][0] == "B":
                     self.flow.biPkts[j].ts = prev_ts + (1 - fraction_reduced) * self.flow.diffs[k][1]
@@ -273,6 +303,9 @@ class TransIATimes():
                     i += 1
                     j += 1
                 k += 1
+        # self.flow.calcPktIAStats()
+        # print("flow dur post: {}".format(self.flow.flowStats.flowDuration))
+        # print("flow dur end - start post: {}".format(self.flow.pkts[len(self.flow.pkts) - 1].ts - self.flow.pkts[0].ts))
 
         # print(self.flow.diffs)
         # self.flow.getDiffs()
@@ -292,7 +325,7 @@ class TransIATimes():
             if int(self.config["Fwd IAT Max"]["adv"]) + int(self.config["Fwd IAT Min"]["adv"]) != int(self.config["Flow Duration"]["adv"]):
                 self.logger.warning("Can't set min IAT because 3 pkts and min iat + max iat != Flow duration")
                 return
-        if self.config["Tot Fwd Pkts"]["og"] < 3:
+        if self.config["Tot Fwd Pkts"]["og"] == 3:
             self.logger.warning("Can't create min IAT since OG flow has less than 3 pkts.")
             return
         if self.adv_fwd_iat_min < self.flow.flowStats.minIA:

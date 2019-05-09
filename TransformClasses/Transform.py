@@ -154,6 +154,7 @@ class TimeTransform(Transform):
                 self.logger.info("can't change flow length of flow with 1 pkt")
                 return
             self.flow.getDiffs()
+            # print(len(self.flow.diffs))
 
 
             # print(len(self.flow.diffs))
@@ -179,11 +180,11 @@ class TimeTransform(Transform):
                 self.logger.info("adv_flow_dur < og_flow_dur")
                 toreduce = self.og_flow_dur - self.adv_flow_dur
                 if directions[0] == "F" and directions[1] == "F":
-                    # print("F -> F adv_dur < og_dur")
+                    self.logger.info("F -> F adv_dur < og_dur")
                     TransTimes.process_decrease_duration_F_F(directions, toreduce)
 
                 elif directions[0] == "F" and directions[1] == "B":
-                    # print("F -> B adv_dur < og_dur")
+                    self.logger.info("F -> B adv_dur < og_dur")
                     TransTimes.process_decrease_duration_F_B(directions, toreduce)
 
                 elif directions[0] == "B" and directions[1] == "F":

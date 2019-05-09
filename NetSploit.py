@@ -60,6 +60,9 @@ class NetSploit:
             # else:
             #     print("NO BIFLOW!")
 
+            # for pkt in flow.pkts:
+            #     print(pkt.get_flags(), pkt.ts)
+
             flow.flowStats.get_flag_counts(flow.pkts)
             if flow.procFlag:
                 print("Processing flow {}/{}".format(count,len_FT))
@@ -189,7 +192,8 @@ class NetSploit:
             i = 0
             # prev_flow = flows[i][1]
             # print(len(flows))
-            # print(flows)
+            # print("flows: {}".format(flows))
+            # print("init len flows: {}".format(len(flows)))
             for i in range(0, len(flows) - 1):
                 flow = flows[i][1]
                 next_flow = flows[i + 1][1]
@@ -198,17 +202,25 @@ class NetSploit:
                 # print("flow: {}".format(flow))
                 timeout = flows[i][0][0]
                 if flow.flowEndTime > next_flow.flowStartTime:
-                    # print(flow)
+                    # print("flow exceed: {}".format(flow))
                     # print("WOAH: {}".format(flow))
                     # print("flow extend: {}".format(flow.amount_flow_extended))
                     toextend = flow.amount_flow_extended
+                    # print("len flows: {}".format(len(flows)))
+                    # print("i: {}".format(i))
                     for j in range(i + 1, len(flows)):
-                        flow_to_mod = flows[i + 1][1]
+                        flow_to_mod = flows[j][1]
+                        # print("flow to mod: {}".format(flow_to_mod))
                         for pkt in flow_to_mod.pkts:
+                            # print(pkt.ts)
                             pkt.ts += toextend
+                            # print("pkt.ts: {}".format(pkt.ts))
+                            # print(pkt.get_flags())
                         if flow_to_mod.biPkts:
                             for pkt in flow_to_mod.biPkts:
                                 pkt.ts += toextend
+                                # print("bipkt.ts: {}".format(pkt.ts))
+                                # print(pkt.get_flags())
                 prev_flow = flow
                 i += 1
 

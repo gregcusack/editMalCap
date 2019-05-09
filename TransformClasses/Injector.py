@@ -32,7 +32,11 @@ class Injector:
         # print("inject payload size: {}".format(injectPacket.http_pload))
         # print("inject pkt ts: {}".format(injectPacket.ts))
 
-        self.flow.pkts.append(injectPacket)
+        if "F" in self.flow.pkts[len(self.flow.pkts) - 1].get_flags():
+            print("Last pkt a FIN!")
+            self.flow.pkts.insert(len(self.flow.pkts) - 1, injectPacket)
+        else:
+            self.flow.pkts.append(injectPacket)
 
     def inject_many(self, pkt, tot_fwd_pkts, fwd_pkt_len_max, fwd_pkt_len_min):
         self.logger.info("inject_many()")
