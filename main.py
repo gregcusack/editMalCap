@@ -8,24 +8,32 @@ from pathlib import Path
 from os import remove
 
 def check_input():
-    if len(sys.argv) != 3:
-        print("Error: Need to specify input pcap to edit and output pcap filename")
-        print("e.g. python edit.py <input.pcap> <output.pcap>")
+    if len(sys.argv) != 4:
+        print("Error: Need to specify input pcap to edit, output pcap filename, and json file with flows")
+        print("e.g. python edit.py <input.pcap> <output.pcap> <flows.json>")
         exit()
 
-    return sys.argv[1], sys.argv[2]
+    return sys.argv[1], sys.argv[2], sys.argv[3]
 
 
 
-def main(iname, oname):
+def main(iname, oname, flows_json):
+    print("Reading in PCAP...")
     pkts = rdpcap(iname)
 
+    attack = iname.split("/")
+    attack = attack[-1:]
+    attack = attack[0].split("_")
+    attack = attack[0]
+    print("attack: {}".format(attack))
+
     # config = Config("config.json")
-    config = Config("feature_set.json")
-    NS = NetSploit(config)
+    config = Config(flows_json)
+    NS = NetSploit(config, attack)
 
     counter = 0
     droppedPkts = 0
+    print("Loading PCAPs into Flow Table...")
     for pkt in pkts:
 
         # print(pkt[IP].src)
@@ -39,10 +47,13 @@ def main(iname, oname):
             droppedPkts += 1
         # print(counter, droppedPkts)#, tpkt.ip_src, tpkt.ip_proto)
 
+    print("Processing Flows...")
     NS.ProcessFlows()
+    print("Merging Modified Packets...")
     NS.mergeModifiedPkts()
 
-    NS.run_flow_length_transformation_test()
+    print("Testing Flow Length Transformation Results...")
+    NS.run_flow_transformation_test()
 
 
 
@@ -52,16 +63,18 @@ def main(iname, oname):
     #TestNetSploit(merger=NS.pktMerger)
 
     # Write to PCAP
+    print("Writing back files to PCAP")
     out_pcap = Path(oname)
     if out_pcap.is_file():
         os.remove(oname)
     for pkt in NS.pktMerger.inQueue:
-        # if pkt.flow_tuple == (6, '192.168.10.14', 49474, '104.97.95.20', 443):
+        # if pkt.flow_tuple == (6, '192.168.10.15', 52854, '205.174.165.73', 8080):
         #     print(pkt)
+        # print(pkt)
         pkt.write_pcap(oname)
 
 
 
 if __name__ == "__main__":
-    iname, oname = check_input()
-    main(iname, oname)
+    iname, oname, flows_json = check_input()
+    main(iname, oname, flows_json)

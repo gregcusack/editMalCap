@@ -20,6 +20,10 @@ class TransPkt:
             return
             # print("ERROR: Attempting to initialize transPkt class with non-scapy packet")
             # exit()
+        if not (pkt.proto == 6 or pkt.proto == 17):
+            self.dropPkt = 1
+            print("DROP packet")
+            return
         self.pkt = pkt  # probaby don't want to do this
         self.update_5_tuple()
         self.dropPkt = 0
@@ -91,6 +95,10 @@ class TransPkt:
     @property
     def tcp_chksum(self):
         return self.pkt[TCP].chksum
+
+    @property
+    def tcp_window(self):
+        return self.pkt[TCP].window
 
     # Getter: HTTP Features
     @property
@@ -176,6 +184,10 @@ class TransPkt:
     def tcp_chksum(self, chksum):
         self.pkt[TCP].chksum = chksum
 
+    @tcp_window.setter
+    def tcp_window(self, window):
+        self.pkt[TCP].window = window
+
     # Setter: HTTP Features
     @http_pload.setter
     def http_pload(self, pload):
@@ -191,14 +203,59 @@ class TransPkt:
             exit(-1)
 
     def set_pload(self, size_pload):
-        if "Raw" in self.pkt or "Padding" in self.pkt:
-            print("ERROR! Must prune packet before settting pload via prune()")
-            exit(-1)
-        pload = "\x00" * int(size_pload)
-        self.pkt = self.pkt / Raw(load=pload)
+        # self.pkt.show()
+        # pload = "\x00" * int(size_pload)
+        if "Raw" in self.pkt:
+            # diff = int(size_pload) - len(self.pkt[Raw].load)
+            size_pload = len(self.pkt[Raw].load)
+            pload = "\x00" * int(size_pload)
+            self.pkt[Raw].load =  pload # "\x00" #pload
+            self.pkt[IP].len += 0#diff
+            # print("diff: {}".format(diff))
+
+        # if "Raw" in self.pkt or "Padding" in self.pkt:
+        #     print("ERROR! Must prune packet before settting pload via prune()")
+        #     exit(-1)
+        # pload = "\x00" * int(size_pload)
+        # self.pkt = self.pkt / Raw(load=pload)
+        # self.pkt[IP].len = len(pload)
+
+    def create_pkt(self, size_pload):
+        pload = "\x00" * size_pload
+        pkt = Ether()
+        pkt[Ether].src = self.pkt[Ether].src
+        pkt[Ether].dst = self.pkt[Ether].dst
+        pkt[Ether].type = self.pkt[Ether].type
+        pkt = pkt / IP(version=4, ihl=5, len=20+32+size_pload, id=self.pkt[IP].id, ttl=self.pkt[IP].ttl,
+                       proto=self.pkt[IP].proto, src=self.pkt[IP].src, dst=self.pkt[IP].dst)
+        pkt = pkt / TCP(sport=self.pkt[TCP].sport, dport=self.pkt[TCP].dport, seq=self.pkt[TCP].seq, ack=self.pkt[TCP].ack,
+                        flags=self.pkt[TCP].flags, window=self.pkt[TCP].window, options=self.pkt[TCP].options)
+        pkt = pkt / Raw(load=pload)
+        pkt.time = self.pkt.time
+        return pkt
 
     def get_flags(self):
-        return self.pkt[TCP].flags
+        # return self.pkt[TCP].flags
+        flags = ""
+        tcp_flags = self.pkt[TCP].flags
+        if tcp_flags & "F":
+            flags += "F"
+        if tcp_flags & "S":
+            flags += "S"
+        if tcp_flags & "R":
+            flags += "R"
+        if tcp_flags & "P":
+            flags += "P"
+        if tcp_flags & "A":
+            flags += "A"
+        if tcp_flags & "U":
+            flags += "U"
+        if tcp_flags & "E":
+            flags += "E"
+        if tcp_flags & "C":
+            flags += "C"
+        # print("flags: {}".format(flags))
+        return flags
 
     # Set TCP Flags
     def set_FIN(self):
@@ -255,6 +312,13 @@ class TransPkt:
             self.flow_tuple = (self.pkt.proto, self.pkt[IP].src, self.pkt[UDP].sport, self.pkt[IP].dst, self.pkt[UDP].dport)
             self.update_bi_5_tuple()
         else:
+            print(self.pkt.time)
+            print(self.pkt.proto)
+            print(self.pkt[IP].src)
+            print(self.pkt[TCP].sport)
+            print(self.pkt[IP].dst)
+            print(self.pkt[TCP].dport)
+            print(self.pkt)
             print("Unknown pkt proto...ignoring")
 
     def update_bi_5_tuple(self):
@@ -316,8 +380,8 @@ class TransPkt:
     def printSummary(self):
         return self.pkt.summary()
 
-    def len(self):
-        return len(self.pkt)
+    # def len(self):
+    #     return len(self.pkt)
 
     def addSYNOptions(self):
         self.pkt[TCP].options.extend([('MSS', 1460), ('WScale', 5), ('NOP', None), ('SAckOK', 'b'), ('EOL', None)])
@@ -336,7 +400,7 @@ class TransPkt:
     def __le__(self, other):
         return(self.ts <= other.ts)
     def __repr__(self):
-        print(self.pkt.show())
-        return "Pkt({} @ ts: {}".format(self.flow_tuple, self.ts)
+        # print(self.pkt.show())
+        return "Pkt({} @ ts: {}, load: {}".format(self.flow_tuple, self.ts, self.pload_len)
         # return "Pkt({} @ ts: {}, ip_len: {}, ip_id: {}, seq_num: {}, ack_num: {}, pload: {})"\
         #     .format(self.flow_tuple, self.ts, self.ip_len, self.ip_id, self.seq_num, self.ack_num, str(self.http_pload))

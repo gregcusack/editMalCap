@@ -6,15 +6,26 @@ from scapy.all import *
 from TransformClasses.Splitter import Splitter
 from TransformClasses.Merger import Merger
 from TransformClasses.Injector import Injector
+from TransformClasses.TransIATimes import TransIATimes
+from scipy.stats import truncnorm
+from math import ceil
+from random import randint, uniform
+
 
 MAX_PKT_LOOPS = 6
 MAX_SPLIT_PKT = 6
 MAX_FRAME_SIZE = 3000
+MAX_PKT_IAT_LOOPS = 3
+
+def get_truncnorm(mean=0, sd=1, low=0, upp=10):
+    print("target iat (mean, std, min, max): ({}, {}, {}, {})".format(mean, sd, low, upp))
+    return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
 
 class Transform:
-    def __init__(self, flowObj, config):
+    def __init__(self, flowObj, config, logger):
         self.flow = flowObj
         self.config = config
+        self.logger = logger
         # print("transform create")
         #self.pktsToRemove = []
 
@@ -22,9 +33,10 @@ class Transform:
         raise NotImplementedError()
 
 class LengthTransform(Transform):
-    def __init__(self, flowObj, config, biFlowFlag):
-        Transform.__init__(self, flowObj, config)
+    def __init__(self, flowObj, config, biFlowFlag, logger, flowtable):
+        Transform.__init__(self, flowObj, config, logger)
         self.biFlowFlag = biFlowFlag
+        self.FT = flowtable
 
         self.og_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["og"]
         self.adv_tot_fwd_pkts = self.config["Tot Fwd Pkts"]["adv"]
@@ -36,89 +48,213 @@ class LengthTransform(Transform):
         # print("Creating new LengthTransform Object")
 
     def Process(self):
-        print("processing Length Transformation: {}".format(self.flow))
+        # return
+        self.logger.info("processing Length Transformation: {}".format(self.flow))
+        # print("processing Length Transformation: {}".format(self.flow))
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
-        # print("LengthTransform Process()")
+        print("LengthTransform Process()")
         # print("flow: {}".format(self.flow))
 
         if self.og_tot_fwd_pkts != self.adv_tot_fwd_pkts:
             if self.flow.flowStats.maxLen == 0:
-                print("max pkt length == 0.  Can't split.  Need to inject hella")
-                injector = Injector(self.flow)
+                self.logger.info("max pkt length == 0.  Can't split.  Need to inject hella")
+                injector = Injector(self.flow, self.config, self.logger, self.FT)
                 injector.inject_many(self.flow.pkts[len(self.flow.pkts) - 1],
                                      self.adv_tot_fwd_pkts, self.adv_fwd_pkt_len_max, self.adv_fwd_pkt_len_min)
             else:
                 self.fixTotFwdPkts()
         elif self.og_tot_fwd_pkts == self.adv_tot_fwd_pkts:
             if self.flow.flowStats.maxLen < self.adv_fwd_pkt_len_max:
-                print("og and adv tot pkts the same.  Fixing max packet len")
-                split = Splitter(self.flow, self.config)
+                self.logger.info("og and adv tot pkts the same.  Fixing max packet len")
+                split = Splitter(self.flow, self.config, self.logger, self.FT)
                 index = split.create_max_packet_len()
                 if index != -1:
-                    print("Able to set max packet length!")
+                    self.logger.info("Able to set max packet length!")
                 else:
-                    print("unable to set max pkt len")
+                    self.logger.info("unable to set max pkt len")
             elif self.flow.flowStats.maxLen == self.adv_fwd_pkt_len_max:
-                print("max pkts same.")
+                self.logger.info("max pkts same.")
             else:
-                print("cant set max pkt len.  config requires us to remove information")
+                self.logger.info("cant set max pkt len.  config requires us to remove information")
 
         self.flow.calcPktLenStats()
 
-
-
-        print("after length transform stats: {}".format(self.flow.flowStats))
+        self.logger.info("after length transform stats: {}".format(self.flow.flowStats))
 
 
     def fixTotFwdPkts(self):
-        print("fixing Tot Fwd Pkts")
+        self.logger.info("fixing Tot Fwd Pkts")
 
         if self.og_tot_fwd_pkts < self.adv_tot_fwd_pkts:
-            split = Splitter(self.flow, self.config)
+            split = Splitter(self.flow, self.config, self.logger, self.FT)
             if self.og_fwd_pkt_len_max == self.adv_fwd_pkt_len_max:
                 split.split_max_lens_eq()
             elif self.og_fwd_pkt_len_max < self.adv_fwd_pkt_len_max:
-                print("og pkt len max < adv pkt len max -- merge 2 then split")
+                self.logger.info("og pkt len max < adv pkt len max -- merge 2 then split")
                 split.split_og_max_len_lt()
             else:
-                print("og pkt len max > adv pkt len max -- split then merge 2")
+                self.logger.info("og pkt len max > adv pkt len max -- split then merge 2")
                 split.split_og_max_len_gt()
 
             if self.flow.flowStats.minLen != self.adv_fwd_pkt_len_min:
                 split.set_min_packet_length()
         else:                                                                       #og pkts > adv pkts -> so merge
-            merge = Merger(self.flow, self.config)
+            merge = Merger(self.flow, self.config, self.logger)
+            self.logger.info("NEED TO MERGE PACKETS")
 
-
-
-
-                # self.splitLooper_v2()
-            # self.splitLooper()
-        # else:
-        #     self.mergeLooper()
 
 class TimeTransform(Transform):
-    def __init__(self, flowObj, config, biFlowFlag):
-        Transform.__init__(self, flowObj, config)
+    def __init__(self, flowObj, config, biFlowFlag, logger):
+        Transform.__init__(self, flowObj, config, logger)
         self.biFlowFlag = biFlowFlag
-        print("creating new TimeTransform Object")
+        self.logger.info("creating new TimeTransform Object")
+        self.flow.get_old_flow_duration()
+        # Times are in us
+        self.og_flow_dur = self.config["Flow Duration"]["og"]           /   1000000
+        self.adv_flow_dur = self.config["Flow Duration"]["adv"]         /   1000000
+        self.og_flow_iat_max = self.config["Flow IAT Max"]["og"]        /   1000000
+        self.adv_flow_iat_max = self.config["Flow IAT Max"]["adv"]      /   1000000
+        self.og_flow_iat_min = self.config["Flow IAT Min"]["og"]        /   1000000
+        self.adv_flow_iat_min = self.config["Flow IAT Min"]["adv"]      /   1000000
+        self.og_fwd_iat_max = self.config["Fwd IAT Max"]["og"]          /   1000000
+        self.adv_fwd_iat_max = self.config["Fwd IAT Max"]["adv"]        /   1000000
+        self.og_fwd_iat_min = self.config["Fwd IAT Min"]["og"]          /   1000000
+        self.adv_fwd_iat_min = self.config["Fwd IAT Min"]["adv"]        /   1000000
+        self.og_fwd_iat_mean = self.config["Fwd IAT Mean"]["og"]        /   1000000
+        self.adv_fwd_iat_mean = self.config["Fwd IAT Mean"]["adv"]      /   1000000
+        self.og_fwd_iat_std = self.config["Fwd IAT Std"]["og"]          /   1000000
+        self.adv_fwd_iat_std = self.config["Fwd IAT Std"]["adv"]        /   1000000
+
 
     def Process(self):
+        # print(len(self.flow.pkts))
+        # self.flow.pkts = self.flow.pkts[:-3]# = self.flow.pkts[1:]
+        # print(len(self.flow.pkts))
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
+        self.logger.info("TimeTransform Process()")
         print("TimeTransform Process()")
 
-class FlagTransform(Transform):
-    def __init__(self, flowObj, config):
-        Transform.__init__(self, flowObj, config)
-        print("Creating new FlagTransform Object")
+        if self.adv_flow_dur <= 0 or self.og_flow_dur <= 0:
+            self.logger.info("adv_flow dur or og flow dur <= 0")
+            return
+        if self.adv_fwd_iat_max > self.adv_flow_dur:
+            self.logger.info("adv_fwd_iat_max > adv_flow_dur. Going to set flow duration = iat_max*1.1")
+            # print("old adv flow dur: {}".format(self.adv_flow_dur))
+            self.adv_flow_dur = self.adv_fwd_iat_max * 1.1
+            self.flow.adj_flow_dir = self.adv_flow_dur                  # used for testing
+            # print("new adv flow dur: {}".format(self.adv_flow_dur))
 
-    def Process(self):
+        TransTimes = TransIATimes(self.flow, self.config, self.logger, self.biFlowFlag)
+        directions = TransTimes.get_start_and_end_pkt_directon()
+
+        if self.biFlowFlag:
+            if self.flow.flowStats.flowLen == 1:
+                self.logger.info("can't change flow length of flow with 1 pkt")
+                return
+            self.flow.getDiffs()
+            # print(len(self.flow.diffs))
+
+
+            # print(len(self.flow.diffs))
+            if self.adv_flow_dur > self.og_flow_dur:
+                # print("adv_flow_dur > og_flow_dur")
+                self.logger.info("adv_flow_dur > og_flow_dur")
+
+                toextend = self.adv_flow_dur - self.og_flow_dur
+                if directions[0] == "F" and directions[1] == "F":
+                    self.logger.info("F -> F adv_dur > og_dur")
+                    TransTimes.process_increase_duration_F_F(directions, toextend)
+                elif directions[0] == "F" and directions[1] == "B":
+                    self.logger.info("F -> B adv_dur > og_dur")
+                    TransTimes.process_increase_duration_F_B(directions, toextend)
+
+                elif directions[0] == "B" and directions[1] == "F":
+                    self.logger.info(" > Start B end F")
+                else:
+                    self.logger.info(" > Start B end B")
+
+            elif self.adv_flow_dur < self.og_flow_dur:
+                # print("adv_flow_dur < og_flow_dur")
+                self.logger.info("adv_flow_dur < og_flow_dur")
+                toreduce = self.og_flow_dur - self.adv_flow_dur
+                if directions[0] == "F" and directions[1] == "F":
+                    self.logger.info("F -> F adv_dur < og_dur")
+                    TransTimes.process_decrease_duration_F_F(directions, toreduce)
+
+                elif directions[0] == "F" and directions[1] == "B":
+                    self.logger.info("F -> B adv_dur < og_dur")
+                    TransTimes.process_decrease_duration_F_B(directions, toreduce)
+
+                elif directions[0] == "B" and directions[1] == "F":
+                    self.logger.info(" < Start B end F")
+                else:
+                    self.logger.info(" < Start B end B")
+
+            # self.avgStdIATimes()
+            # print("Done updating iatimes")
+            TransTimes.updateBiTS()
+            # self.updateBiTS()
+            self.flow.getDiffs()
+        else:
+            TransTimes.process_noBiPkts()
+
         self.flow.calcPktLenStats()
         self.flow.calcPktIAStats()
-        print("FlagTransform Process()")
 
+        if directions[1] == "F":
+            self.flow.flowEndTime = self.flow.pkts[self.flow.flowStats.flowLen - 1].ts
+        else:
+            self.flow.flowEndTime = self.flow.biPkts[len(self.flow.biPkts) - 1].ts
+
+        # print("post iat trans stats: {}".format(self.flow.flowStats))
+
+# class FlagTransform(Transform):
+#     def __init__(self, flowObj, config, biFlowFlag, logger):
+#         Transform.__init__(self, flowObj, config, logger)
+#         self.logger.info("Creating new FlagTransform Object")
+#         self.biFlowFlag = biFlowFlag
+#
+#         self.extra_fwd_psh_flags = self.config["Fwd PSH Flags"]["adv"] - self.config["Fwd PSH Flags"]["og"]
+#         self.extra_fwd_urg_flags = self.config["Fwd URG Flags"]["adv"] - self.config["Fwd URG Flags"]["og"]
+#         self.extra_flow_urg_flags = self.config["URG Flag Cnt"]["adv"] - self.config["URG Flag Cnt"]["og"]
+#         self.extra_flow_fin_flags = self.config["FIN Flag Cnt"]["adv"] - self.config["FIN Flag Cnt"]["og"]
+#         self.extra_flow_syn_flags = self.config["SYN Flag Cnt"]["adv"] - self.config["SYN Flag Cnt"]["og"]
+#         self.extra_flow_rst_flags = self.config["RST Flag Cnt"]["adv"] - self.config["RST Flag Cnt"]["og"]
+#         self.extra_flow_psh_flags = self.config["PSH Flag Cnt"]["adv"] - self.config["PSH Flag Cnt"]["og"]
+#         self.extra_flow_ack_flags = self.config["ACK Flag Cnt"]["adv"] - self.config["ACK Flag Cnt"]["og"]
+#         self.extra_flow_ece_flags = self.config["ECE Flag Cnt"]["adv"] - self.config["ECE Flag Cnt"]["og"]
+#         self.extra_flow_cwe_flags = self.config["CWE Flag Count"]["adv"] - self.config["CWE Flag Count"]["og"]
+#
+#         self.injector = Injector(self.flow, self.config, self.logger)
+#
+#     def Process(self):
+#         self.flow.calcPktLenStats()
+#         self.flow.calcPktIAStats()
+#         self.logger.info("FlagTransform Process()")
+#
+#         # if self.og_fwd_psh_flag < self.adv_fwd_psh_flag:
+#         #     self.injector.inject_many()
+
+class WindowTransform(Transform):
+    def __init__(self, flowObj, config, logger,):
+        Transform.__init__(self, flowObj, config, logger)
+
+        self.flow = flowObj
+        self.config = config
+        self.logger = logger
+
+    def Process(self):
+        new_window_size = 0
+        if int(self.config["Init Fwd Win Byts"]["adv"]) > 65535:
+            new_window_size = 65535
+        elif int(self.config["Init Fwd Win Byts"]["adv"]) < 0:
+            new_window_size = 0
+        else:
+            new_window_size = int(self.config["Init Fwd Win Byts"]["adv"])
+
+        self.flow.pkts[0].tcp_window = new_window_size
 
 
 ####################################################

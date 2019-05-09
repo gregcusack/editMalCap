@@ -10,4 +10,6 @@ config.json
 feature_set_test.json
 *.log
 .log
-
+Logs/
+*.swp
+timetransform-old.py

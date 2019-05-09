@@ -16,43 +16,47 @@ def check_input():
 def gen_tshark_filter(iname, onameMOD, onameUNMOD, config):
     query = ""
     with open(config) as f:
-        for key in f:
-            key = key[:-1].split(',')
+        data = json.load(f)
 
-            proto = "ip.proto == " + key[0]
-            srcIP = "ip.src == " + key[1]
-            dstIP = "ip.dst == " + key[3]
+    for k,v in data["flows"].items():
+        key = [x.strip() for x in k.split(',')]
 
-            if key[0] == "6":
-                srcPort = "tcp.srcport == " + key[2]
-                dstPort = "tcp.dstport == " + key[4]
-            elif key[0] == "17":
-                srcPort = "udp.srcport == " + key[2]
-                dstPort = "udp.dstport == " + key[4]
-            else:
-                print("Error: Invalid protocol number entered in " + config)
-                exit()
+        proto = "ip.proto == " + key[0]
+        srcIP = "ip.src == " + key[1]
+        dstIP = "ip.dst == " + key[3]
 
-            query += ("(" + proto + " and " + srcIP + " and " + srcPort + " and " + dstIP + " and " + dstPort + ") or ")
+        if key[0] == "6":
+            srcPort = "tcp.srcport == " + key[2]
+            dstPort = "tcp.dstport == " + key[4]
+        elif key[0] == "17":
+            srcPort = "udp.srcport == " + key[2]
+            dstPort = "udp.dstport == " + key[4]
+        else:
+            continue
+            # print("Error: Invalid protocol number entered in " + config)
+            # exit()
 
-            # now get biflow query
-            srcIP = "ip.src == " + key[3]
-            dstIP = "ip.dst == " + key[1]
-            if key[0] == "6":
-                srcPort = "tcp.srcport == " + key[4]
-                dstPort = "tcp.dstport == " + key[2]
-            elif key[0] == "17":
-                srcPort = "udp.srcport == " + key[4]
-                dstPort = "udp.dstport == " + key[2]
-            else:
-                print("Error: Invalid protocl number entered in " + config)
-                exit()
+        query += ("(" + proto + " and " + srcIP + " and " + srcPort + " and " + dstIP + " and " + dstPort + ") or ")
 
-            query += ("(" + proto + " and " + srcIP + " and " + srcPort + " and " + dstIP + " and " + dstPort + ") or ")
+        # now get biflow query
+        srcIP = "ip.src == " + key[3]
+        dstIP = "ip.dst == " + key[1]
+        if key[0] == "6":
+            srcPort = "tcp.srcport == " + key[4]
+            dstPort = "tcp.dstport == " + key[2]
+        elif key[0] == "17":
+            srcPort = "udp.srcport == " + key[4]
+            dstPort = "udp.dstport == " + key[2]
+        else:
+            continue
+        #     print("Error: Invalid protocl number entered in " + config)
+        #     exit()
 
-        query = query[:-4]# + "-"
-        notquery = "not (" + query + ")"
-        return query, notquery
+        query += ("(" + proto + " and " + srcIP + " and " + srcPort + " and " + dstIP + " and " + dstPort + ") or ")
+
+    query = query[:-4]# + "-"
+    notquery = "not (" + query + ")"
+    return query, notquery
 
 
 
@@ -63,7 +67,7 @@ def main(iname, onameMOD, onameUNMOD):
     # pkts = rdpcap(iname)
 
     # config = Config("config.json")
-    q, notq = gen_tshark_filter(iname, onameMOD, onameUNMOD, "flows-to-extract.txt")
+    q, notq = gen_tshark_filter(iname, onameMOD, onameUNMOD, "../NetSploit-files/json_files/BiGAN/feature_set_DDoS_307.json")
     print(q + "," + notq)
 
 

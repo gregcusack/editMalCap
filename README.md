@@ -27,3 +27,9 @@
 * add intro
 * put config file details after intro
 * fix so don't require 3 pcaps to write to
+            
+            
+Dependencies:
+numpy
+scapy
+scipy
