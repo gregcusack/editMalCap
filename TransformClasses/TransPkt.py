@@ -203,11 +203,36 @@ class TransPkt:
             exit(-1)
 
     def set_pload(self, size_pload):
-        if "Raw" in self.pkt or "Padding" in self.pkt:
-            print("ERROR! Must prune packet before settting pload via prune()")
-            exit(-1)
-        pload = "\x00" * int(size_pload)
-        self.pkt = self.pkt / Raw(load=pload)
+        # self.pkt.show()
+        # pload = "\x00" * int(size_pload)
+        if "Raw" in self.pkt:
+            # diff = int(size_pload) - len(self.pkt[Raw].load)
+            size_pload = len(self.pkt[Raw].load)
+            pload = "\x00" * int(size_pload)
+            self.pkt[Raw].load =  pload # "\x00" #pload
+            self.pkt[IP].len += 0#diff
+            # print("diff: {}".format(diff))
+
+        # if "Raw" in self.pkt or "Padding" in self.pkt:
+        #     print("ERROR! Must prune packet before settting pload via prune()")
+        #     exit(-1)
+        # pload = "\x00" * int(size_pload)
+        # self.pkt = self.pkt / Raw(load=pload)
+        # self.pkt[IP].len = len(pload)
+
+    def create_pkt(self, size_pload):
+        pload = "\x00" * size_pload
+        pkt = Ether()
+        pkt[Ether].src = self.pkt[Ether].src
+        pkt[Ether].dst = self.pkt[Ether].dst
+        pkt[Ether].type = self.pkt[Ether].type
+        pkt = pkt / IP(version=4, ihl=5, len=20+32+size_pload, id=self.pkt[IP].id, ttl=self.pkt[IP].ttl,
+                       proto=self.pkt[IP].proto, src=self.pkt[IP].src, dst=self.pkt[IP].dst)
+        pkt = pkt / TCP(sport=self.pkt[TCP].sport, dport=self.pkt[TCP].dport, seq=self.pkt[TCP].seq, ack=self.pkt[TCP].ack,
+                        flags=self.pkt[TCP].flags, window=self.pkt[TCP].window, options=self.pkt[TCP].options)
+        pkt = pkt / Raw(load=pload)
+        pkt.time = self.pkt.time
+        return pkt
 
     def get_flags(self):
         # return self.pkt[TCP].flags
@@ -355,8 +380,8 @@ class TransPkt:
     def printSummary(self):
         return self.pkt.summary()
 
-    def len(self):
-        return len(self.pkt)
+    # def len(self):
+    #     return len(self.pkt)
 
     def addSYNOptions(self):
         self.pkt[TCP].options.extend([('MSS', 1460), ('WScale', 5), ('NOP', None), ('SAckOK', 'b'), ('EOL', None)])

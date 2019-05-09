@@ -1,4 +1,5 @@
 import copy
+from TransformClasses import TransPkt
 
 
 class Injector:
@@ -10,42 +11,46 @@ class Injector:
         self.FT = flowtable
 
     def inject_one(self, pkt, size_payload):
-        if size_payload > 1400:
-            size_payload = 1400
+        # return
+        # if size_payload > 1400:
+        #     size_payload = 1400
         self.logger.info("inject_one() with payload size: {}".format(size_payload))
-        injectPacket = copy.deepcopy(pkt)
+        # injectPacket = copy.deepcopy(pkt)
 
         # self.flow.flowStats.get_flag_counts(self.flow.pkts)
         # flags = self.get_top_flags()
         # self.update_flag_queue()            # re-sort flag queue
 
         flags = self.get_flags()
+        # print("flags: {}".format(flags))
+
+        injectPacket = pkt.create_pkt(int(size_payload))
+        injectPacket = TransPkt.TransPkt(injectPacket)
 
         self.init_pkt(injectPacket, flags)
-        injectPacket.prune()
-        injectPacket.set_pload(size_payload)
+
+        # print("inject payload size: {}".format(injectPacket.http_pload))
+        # print("inject pkt ts: {}".format(injectPacket.ts))
 
         self.flow.pkts.append(injectPacket)
 
     def inject_many(self, pkt, tot_fwd_pkts, fwd_pkt_len_max, fwd_pkt_len_min):
-        if fwd_pkt_len_max > 1400:
-            fwd_pkt_len_max = 1400
         self.logger.info("inject_many()")
-        dummy_pkt = copy.deepcopy(pkt)
+        # dummy_pkt = copy.deepcopy(pkt)
 
         flags = self.get_flags()
 
-        self.init_pkt(dummy_pkt, flags)
-        dummy_pkt.prune()
+        # self.init_pkt(dummy_pkt, flags)
+        # dummy_pkt.prune()
 
         inj = 0     # dictates if we inject one extra packet
 
         if self.flow.flowStats.maxLen < fwd_pkt_len_max:
-            self.generate_and_inject(dummy_pkt, fwd_pkt_len_max)
+            self.generate_and_inject(pkt, fwd_pkt_len_max)
             inj = 1
 
         for i in range(int(tot_fwd_pkts - self.flow.flowStats.flowLen - inj)):
-            self.generate_and_inject(dummy_pkt, fwd_pkt_len_min)
+            self.generate_and_inject(pkt, fwd_pkt_len_min)
 
 
     def init_pkt(self, pkt, flags):
@@ -53,17 +58,22 @@ class Injector:
             pkt.set_flags(flags)
         else:
             pkt.unset_flags()
-        # pkt.tcp_chksum = 0x00
-        # pkt.ip_chksum = 0x00
+        # pkt.set_flags(flags)
+        pkt.tcp_chksum = 0x00
+        pkt.ip_chksum = 0x00
 
-    def generate_and_inject(self, dummy_pkt, pload_len):
-        injectPacket = copy.deepcopy(dummy_pkt)
-
+    def generate_and_inject(self, pkt, pload_len):
         flags = self.get_flags()
+        injectPacket = pkt.create_pkt(int(pload_len))
+        injectPacket = TransPkt.TransPkt(injectPacket)
+        self.init_pkt(injectPacket, flags)
+        # injectPacket = copy.deepcopy(dummy_pkt)
+
+
         # self.update_flag_queue()  # re-sort flag queue
 
-        self.init_pkt(dummy_pkt, flags)
-        injectPacket.set_pload(pload_len)  # create pkt with len == min_pkt_len
+        # self.init_pkt(dummy_pkt, flags)
+        # injectPacket.set_pload(pload_len)  # create pkt with len == min_pkt_len
         self.flow.pkts.append(injectPacket)
 
 
@@ -77,6 +87,7 @@ class Injector:
 
     def get_top_flags(self):
         flags = ""
+        # print(self.flagQueue)
         for flag in self.flagQueue:
             if flag[0] > 0:
                 flags += flag[1]
@@ -116,4 +127,5 @@ class Injector:
             self.flagQueue.append((self.config["ECE Flag Cnt"]["adv"] - self.flow.flowStats.eceFlags, "E"))
             self.flagQueue.append((self.config["CWE Flag Count"]["adv"] - self.flow.flowStats.cweFlags, "C"))
 
+        # print("update flagqueue: {}".format(self.flagQueue))
         self.flagQueue.sort(reverse = True)

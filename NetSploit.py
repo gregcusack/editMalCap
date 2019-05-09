@@ -38,11 +38,11 @@ class NetSploit:
     def ProcessFlows(self):
         # print("flow table: {}".format(self.flowTable.FT))
         len_FT = len(self.flowTable.FT)
-        print("total flows in table: {}".format(len_FT))
+        # print("total flows in table: {}".format(len_FT))
         self.logger.info("total flows in table: {}".format(len_FT))
         count = 0
         for tuple,flow in self.flowTable.FT.items():
-            print("flow start, end ts, end fin?: {}, {}, {}".format(flow.flowStartTime, flow.flowEndTime, flow.end_fin))
+            # print("flow start, end ts, end fin?: {}, {}, {}".format(flow.flowStartTime, flow.flowEndTime, flow.end_fin))
             # print("processing: {} -- {}".format(tuple, flow))
             biflow = False # need to check if biflow exists
             if flow.flowKey[0] == 6:
@@ -195,19 +195,20 @@ class NetSploit:
                 next_flow = flows[i + 1][1]
                 # flow.calcPktLenStats()
                 # next_flow.calcPktLenStats()
-                print("flow: {}".format(flow))
+                # print("flow: {}".format(flow))
                 timeout = flows[i][0][0]
                 if flow.flowEndTime > next_flow.flowStartTime:
                     # print(flow)
-                    print("WOAH: {}".format(flow))
-                    print("flow extend: {}".format(flow.amount_flow_extended))
+                    # print("WOAH: {}".format(flow))
+                    # print("flow extend: {}".format(flow.amount_flow_extended))
                     toextend = flow.amount_flow_extended
                     for j in range(i + 1, len(flows)):
                         flow_to_mod = flows[i + 1][1]
                         for pkt in flow_to_mod.pkts:
                             pkt.ts += toextend
-                        for pkt in flow_to_mod.biPkts:
-                            pkt.ts += toextend
+                        if flow_to_mod.biPkts:
+                            for pkt in flow_to_mod.biPkts:
+                                pkt.ts += toextend
                 prev_flow = flow
                 i += 1
 
