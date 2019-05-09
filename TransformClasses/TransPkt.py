@@ -221,14 +221,26 @@ class TransPkt:
         # self.pkt[IP].len = len(pload)
 
     def create_pkt(self, size_pload):
-        if size_pload > 5000: #+ 32 + 20 + 14 + 1000 > 65535:
-            size_pload = 5000 #65535 - 32 - 20 - 14 - 1000
-        pload = "\x00" * size_pload
+        # if size_pload > 5000: #32 + 20 + 14 + 1000 > 65535:
+        #     size_pload = 5000 #65535 - 32 - 20 - 14 - 1000
+        # pload = "\x00" * size_pload
         pkt = Ether()
         pkt[Ether].src = self.pkt[Ether].src
         pkt[Ether].dst = self.pkt[Ether].dst
         pkt[Ether].type = self.pkt[Ether].type
-        pkt = pkt / IP(version=4, ihl=5, len=20+32+size_pload, id=self.pkt[IP].id, ttl=self.pkt[IP].ttl,
+        id = self.pkt[IP].id
+        if id > 65535:
+            id = 65535
+        ttl = self.pkt[IP].ttl
+        if ttl > 65535:
+            ttl = 65535
+        length = size_pload + 32 + 20
+        if length > 65535:
+            size_pload = 65535 - 32 - 20 - 14 - 30000
+            length = size_pload + 32 + 20
+        pload = "\x00" * size_pload
+
+        pkt = pkt / IP(version=4, ihl=5, len=length, id=id, ttl=ttl,
                        proto=self.pkt[IP].proto, src=self.pkt[IP].src, dst=self.pkt[IP].dst)
         pkt = pkt / TCP(sport=self.pkt[TCP].sport, dport=self.pkt[TCP].dport, seq=self.pkt[TCP].seq, ack=self.pkt[TCP].ack,
                         flags=self.pkt[TCP].flags, window=self.pkt[TCP].window, options=self.pkt[TCP].options)

@@ -13,3 +13,6 @@ feature_set_test.json
 Logs/
 *.swp
 timetransform-old.py
+scapy*
+scapy.ipynb
+scapyplay.py
