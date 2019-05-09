@@ -231,7 +231,7 @@ class TransIATimes():
             prev_ts = self.flow.biPkts[0].ts
             j += 1
         elif prev_dir == "S":
-            print("ERROR? FLOW STARTS AT SAME TIME?!?!?! in updateBiTS()")
+            print("ERROR? FLOW STARTS AT SAME TIME?!?!?! in distribute()")
             print("Exiting...")
             exit(-1)
             # i += 1
@@ -449,10 +449,10 @@ class TransIATimes():
             j += 1
         elif prev_dir == "S":
             print("ERROR? FLOW STARTS AT SAME TIME?!?!?! in updateBiTS()")
-            print("Exiting...")
-            exit(-1)
-            # i += 1
-            # j += 1
+            # print("Exiting...")
+            # exit(-1)
+            i += 1
+            j += 1
         else:
             print("ERROR! updateBiTS() error!")
             exit(-1)

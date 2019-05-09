@@ -40,7 +40,8 @@ class Injector:
 
     def inject_many(self, pkt, tot_fwd_pkts, fwd_pkt_len_max, fwd_pkt_len_min):
         self.logger.info("inject_many()")
-        # dummy_pkt = copy.deepcopy(pkt)
+        # dummy_pkt = copy.deepcopy(pkt):q
+
 
         flags = self.get_flags()
 
@@ -78,7 +79,13 @@ class Injector:
 
         # self.init_pkt(dummy_pkt, flags)
         # injectPacket.set_pload(pload_len)  # create pkt with len == min_pkt_len
-        self.flow.pkts.append(injectPacket)
+
+        if "F" in self.flow.pkts[len(self.flow.pkts) - 1].get_flags():
+            # print("Last pkt a FIN!")
+            self.flow.pkts.insert(len(self.flow.pkts) - 1, injectPacket)
+        else:
+            self.flow.pkts.append(injectPacket)
+        # self.flow.pkts.append(injectPacket)
 
 
     def get_flags(self):
