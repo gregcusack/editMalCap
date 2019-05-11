@@ -2,14 +2,15 @@ import logging
 
 
 class TestFlowTransformation:
-    def __init__(self, config, flow_table):
+    def __init__(self, config, flow_table, logger):
         self.config = config
         self.flow_table = flow_table
-        logging.basicConfig(filename="logger-check-results.log",
-                            format='%(message)s',
-                            filemode='w')
-        self.logger = logging.getLogger()
-        self.logger.setLevel(logging.DEBUG)
+        self.logger = logger
+        # logging.basicConfig(filename="logger-check-results.log",
+        #                     format='%(message)s',
+        #                     filemode='w')
+        # self.logger = logging.getLogger()
+        # self.logger.setLevel(logging.DEBUG)
         self.percent_leeway = 0.05
 
     def check_flow_transformations(self):

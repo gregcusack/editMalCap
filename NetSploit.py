@@ -254,7 +254,7 @@ class NetSploit:
 
 
     def run_flow_transformation_test(self):
-        TestFT = TestFlowTransformation(self.config, self.flowTable)
+        TestFT = TestFlowTransformation(self.config, self.flowTable, self.logger)
         TestFT.check_flow_transformations()
 
     def print_feats_to_match(self, fc, flow):
